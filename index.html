@@ -10,7 +10,7 @@
 <title>Alankaboot Sport</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.13/dist/hls.min.js"></script>
-<script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mqtt@5.10.1/dist/mqtt.min.js"></script>
 <style>
   *{box-sizing:border-box;font-family:'Cairo',sans-serif;margin:0;padding:0;
     -webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;
@@ -77,7 +77,7 @@
   .ring2{inset:16px;border-bottom-color:#8b5cf6;border-left-color:#8b5cf6;animation:spinRing 2.8s linear infinite reverse;filter:drop-shadow(0 0 10px rgba(139,92,246,.9))}
   .ring3{inset:32px;border-top-color:#3b82f6;border-left-color:#3b82f6;animation:spinRing 1.9s linear infinite;filter:drop-shadow(0 0 10px rgba(59,130,246,.9))}
   @keyframes spinRing{to{transform:rotate(360deg)}}
-  .splash-logo{width:96px;height:96px;border-radius:50%;object-fit:contain;padding:12px;background:rgba(10,10,15,.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 0 40px rgba(225,29,46,.55),inset 0 0 20px rgba(255,255,255,.12);animation:logoPulse 3s ease-in-out infinite;position:relative;z-index:3}
+  .splash-logo{width:96px;height:96px;border-radius:50%;object-fit:contain;padding:12px;background:rgba(10,10,15,.85);box-shadow:0 0 40px rgba(225,29,46,.55),inset 0 0 20px rgba(255,255,255,.12);animation:logoPulse 3s ease-in-out infinite;position:relative;z-index:3}
   @keyframes logoPulse{0%,100%{transform:scale(1);box-shadow:0 0 40px rgba(225,29,46,.55),inset 0 0 20px rgba(255,255,255,.12)}50%{transform:scale(1.07);box-shadow:0 0 65px rgba(225,29,46,.85),inset 0 0 20px rgba(255,255,255,.25)}}
   .splash-brand{color:#fff;font-size:30px;font-weight:900;letter-spacing:-.5px;margin-bottom:8px;text-align:center;z-index:2;position:relative;background:linear-gradient(90deg,#fff 0%,#ff6b7a 25%,#fff 50%,#a78bfa 75%,#fff 100%);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:shimmer 3s ease-in-out infinite}
   @keyframes shimmer{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
@@ -94,24 +94,23 @@
   #activationScreen{position:fixed;inset:0;z-index:9998;background:linear-gradient(135deg,#05050a 0%,#0a0a12 50%,#05050a 100%);display:none;justify-content:center;align-items:center;padding:20px;overflow-y:auto}
   #activationScreen.show{display:flex;animation:fadeInScreen .4s ease}
   @keyframes fadeInScreen{from{opacity:0}to{opacity:1}}
-  #activationScreen::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 20% 30%,rgba(225,29,46,.1),transparent 40%),radial-gradient(circle at 80% 70%,rgba(139,92,246,.1),transparent 40%);pointer-events:none}
   .act-wrapper{position:relative;z-index:1;max-width:420px;width:100%;animation:slideUp .5s cubic-bezier(.16,1,.3,1)}
   @keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
   .act-brand{display:flex;flex-direction:column;align-items:center;margin-bottom:24px}
-  .act-brand-logo{width:80px;height:80px;border-radius:22px;background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));padding:12px;border:1px solid rgba(255,255,255,.1);box-shadow:0 20px 40px rgba(0,0,0,.5),0 0 40px rgba(225,29,46,.15);margin-bottom:14px;position:relative}
+  .act-brand-logo{width:80px;height:80px;border-radius:22px;background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));padding:12px;border:1px solid rgba(255,255,255,.1);box-shadow:0 20px 40px rgba(0,0,0,.5),0 0 40px rgba(225,29,46,.15);margin-bottom:14px}
   .act-brand-logo img{width:100%;height:100%;object-fit:contain}
-  .act-brand-name{font-size:22px;font-weight:900;letter-spacing:-.3px;background:linear-gradient(135deg,#fff 0%,#ff6b7a 50%,#a78bfa 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-  .act-brand-sub{color:#8a8a9a;font-size:11.5px;font-weight:600;margin-top:4px;letter-spacing:.3px}
+  .act-brand-name{font-size:22px;font-weight:900;background:linear-gradient(135deg,#fff 0%,#ff6b7a 50%,#a78bfa 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .act-brand-sub{color:#8a8a9a;font-size:11.5px;font-weight:600;margin-top:4px}
   .act-card{background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.1);border-radius:24px;padding:28px 24px 24px;position:relative;overflow:hidden;box-shadow:0 30px 60px rgba(0,0,0,.6)}
   .act-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#e11d2e 20%,#8b5cf6 80%,transparent);opacity:.85}
-  .act-lock{width:60px;height:60px;border-radius:18px;background:linear-gradient(135deg,rgba(225,29,46,.15),rgba(139,92,246,.15));border:1px solid rgba(225,29,46,.3);display:flex;justify-content:center;align-items:center;margin:0 auto 16px;box-shadow:0 10px 24px rgba(225,29,46,.2)}
+  .act-lock{width:60px;height:60px;border-radius:18px;background:linear-gradient(135deg,rgba(225,29,46,.15),rgba(139,92,246,.15));border:1px solid rgba(225,29,46,.3);display:flex;justify-content:center;align-items:center;margin:0 auto 16px}
   .act-lock svg{width:28px;height:28px;fill:#ff3b52}
   .act-premium-badge{display:flex;align-items:center;justify-content:center;gap:6px;padding:7px 14px;border-radius:100px;background:linear-gradient(135deg,rgba(255,193,7,.15),rgba(255,152,0,.1));border:1px solid rgba(255,193,7,.3);color:#fbbf24;font-size:11.5px;font-weight:800;margin-bottom:20px;width:fit-content;margin-inline:auto}
   .act-premium-badge svg{width:14px;height:14px;fill:currentColor}
   .act-title{text-align:center;color:#fff;font-size:20px;font-weight:900;margin-bottom:6px}
   .act-sub{text-align:center;color:#8a8a9a;font-size:12.5px;font-weight:600;line-height:1.6;margin-bottom:20px;padding:0 6px}
   .act-input-wrap{position:relative;margin-bottom:6px}
-  .act-input{width:100%;background:rgba(0,0,0,.5);border:1.5px solid rgba(255,255,255,.1);border-radius:14px;padding:16px 50px 16px 18px;color:#fff;font-size:15px;font-weight:700;outline:none;transition:.3s;text-align:center;letter-spacing:3px;direction:ltr}
+  .act-input{width:100%;background:rgba(0,0,0,.5);border:1.5px solid rgba(255,255,255,.1);border-radius:14px;padding:16px 50px 16px 18px;color:#fff;font-size:15px;font-weight:700;outline:none;text-align:center;letter-spacing:3px;direction:ltr}
   .act-input::placeholder{color:#4a4a5a;font-weight:500;letter-spacing:0;direction:rtl;font-size:13px}
   .act-input:focus{border-color:#e11d2e;box-shadow:0 0 0 4px rgba(225,29,46,.12);background:rgba(225,29,46,.03)}
   .act-input-icon{position:absolute;right:16px;top:50%;transform:translateY(-50%);width:20px;height:20px;pointer-events:none;fill:#5a5a6a}
@@ -172,14 +171,13 @@
   .live-card .lc-logo{width:44px;height:44px;border-radius:11px;background:rgba(255,255,255,.05);padding:5px;object-fit:contain;flex-shrink:0;border:1px solid var(--border)}
   .live-card .lc-info{flex:1;min-width:0;text-align:right}
   .live-card .lc-name{color:#fff;font-weight:800;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px}
-  .live-card .lc-cat{color:var(--text-dim);font-size:10px;font-weight:600;display:flex;align-items:center;gap:4px}
-  .live-card .lc-cat svg{width:10px;height:10px;fill:var(--accent-2);flex-shrink:0}
+  .live-card .lc-cat{color:var(--text-dim);font-size:10px;font-weight:600}
   .live-card .lc-badge{display:flex;align-items:center;gap:4px;padding:4px 10px;border-radius:100px;font-size:10px;font-weight:800;flex-shrink:0}
   .live-card.on .lc-badge{background:linear-gradient(180deg,#4ade80,#16a34a);color:#fff}
   .live-card.off .lc-badge{background:rgba(255,255,255,.05);color:var(--text-dim);border:1px solid var(--border)}
   .live-card.off{opacity:.55}
   .live-card.off::before{background:rgba(255,255,255,.15)}
-  .live-header{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;margin:0 0 12px;background:linear-gradient(135deg,rgba(225,29,46,.18),rgba(139,92,246,.12));border:1px solid rgba(225,29,46,.22);border-radius:16px;position:relative;overflow:hidden}
+  .live-header{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;margin:0 0 12px;background:linear-gradient(135deg,rgba(225,29,46,.18),rgba(139,92,246,.12));border:1px solid rgba(225,29,46,.22);border-radius:16px}
   .live-header .lh-icon{width:40px;height:40px;border-radius:12px;background:linear-gradient(180deg,var(--accent-2),var(--accent));display:flex;justify-content:center;align-items:center;flex-shrink:0}
   .live-header .lh-icon svg{width:20px;height:20px;fill:#fff}
   .live-header .lh-text{flex:1;text-align:right;padding-inline-end:10px}
@@ -232,7 +230,6 @@
   .player-box.rotate-css .video-aspect{position:fixed !important;inset:0 !important;width:100% !important;height:100% !important;max-width:none !important;aspect-ratio:auto !important;background:#000 !important;z-index:5}
   .player-box.rotate-css video{position:absolute !important;top:50% !important;left:50% !important;width:100vh !important;height:100vw !important;max-width:none !important;max-height:none !important;transform:translate(-50%,-50%) rotate(90deg) !important;object-fit:contain !important}
   .player-box.rotate-css .stream-loader{transform:rotate(90deg)}
-
   .player-box.screen-mode .video-aspect{position:fixed !important;inset:0 !important;width:100% !important;height:100% !important;max-width:none !important;aspect-ratio:auto !important;background:#000 !important;z-index:5}
   .player-box.screen-mode video{position:absolute !important;top:0 !important;left:0 !important;width:100% !important;height:100% !important;transform:none !important;object-fit:contain !important}
 
@@ -405,9 +402,11 @@
 <div class="toast" id="toast"></div>
 
 <script>
+  // ===== متغيرات عامة =====
   var PROXY_BASE = 'https://alankaboot-proxy.kamlnot61.workers.dev';
   var tokenToUrl = function(t){ return PROXY_BASE + '/s?t=' + encodeURIComponent(t); };
 
+  // حماية
   document.addEventListener('keydown', function(e){
     if((e.ctrlKey||e.metaKey) && (e.key === 'u' || e.key === 'U')) e.preventDefault();
     if(e.key === 'F12') e.preventDefault();
@@ -421,6 +420,17 @@
   var TOPIC_CODES = 'kwtspta_9f3a2b1c/codes';
   var MY_ID = 'v_' + Math.random().toString(36).slice(2,10);
   var ACTIVATION_KEY = 'alankaboot_activation';
+
+  // ===== تخزين آمن (يتوافق مع Sketchware اللي بيوقف localStorage) =====
+  function safeGet(key){
+    try { return localStorage.getItem(key) || ''; } catch(e){ return ''; }
+  }
+  function safeSet(key, val){
+    try { localStorage.setItem(key, val); } catch(e){}
+  }
+  function safeRemove(key){
+    try { localStorage.removeItem(key); } catch(e){}
+  }
 
   var $ = function(id){ return document.getElementById(id); };
   var splash = $('splash'), app = $('app');
@@ -443,7 +453,7 @@
 
   var hls = null, currentChannelId = null, categoriesData = [];
   var currentCatIndex = -1, isStreamViewOpen = false, isScreenMode = false;
-  var userCode = localStorage.getItem(ACTIVATION_KEY) || '';
+  var userCode = safeGet(ACTIVATION_KEY); // ⭐ آمن
   var validCodes = [], codesReceived = false, appStarted = false;
 
   var ICON_DESKTOP = 'M21 2H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h7v2H8v2h8v-2h-2v-2h7c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H3V4h18v12z';
@@ -459,7 +469,7 @@
   }
   function setActStatus(t, c){ activationStatus.textContent = t; activationStatus.className = 'act-status ' + (c||''); }
 
-  /* ===== الخطوط والجزيئات ===== */
+  // ===== خطوط الخلفية =====
   (function(){
     var wrap = document.getElementById('bgLines');
     if(!wrap) return;
@@ -477,6 +487,8 @@
       wrap.appendChild(s);
     }
   })();
+
+  // ===== الجزيئات =====
   (function(){
     var container = document.getElementById('splashParticles');
     if(container){
@@ -503,14 +515,14 @@
     }, 90);
   })();
 
-  /* ===== تفعيل ===== */
+  // ===== التفعيل =====
   function submitActivation(){
     var code = activationInput.value.trim().toLowerCase();
     if(!code){ setActStatus('من فضلك أدخل الكود', 'error'); return; }
     if(!codesReceived){ setActStatus('من فضلك انتظر ثانية...', ''); return; }
     if(validCodes.indexOf(code) !== -1){
       userCode = code;
-      localStorage.setItem(ACTIVATION_KEY, code);
+      safeSet(ACTIVATION_KEY, code); // ⭐ آمن
       setActStatus('تم التفعيل بنجاح ✅', 'success');
       activationBtn.disabled = true;
       setTimeout(function(){
@@ -535,7 +547,7 @@
   }
   function kickOut(reason){
     userCode = '';
-    localStorage.removeItem(ACTIVATION_KEY);
+    safeRemove(ACTIVATION_KEY); // ⭐ آمن
     appStarted = false;
     if(isStreamViewOpen) closeStreamUI();
     app.classList.remove('show');
@@ -544,7 +556,7 @@
     setActStatus(reason || 'تم إيقاف الكود من قِبل الإدارة', 'error');
   }
 
-  /* ===== شاشة Splash → بعدها قرر ===== */
+  // ===== Splash → بعدها قرر =====
   setTimeout(function(){
     splash.classList.add('hide');
     setTimeout(function(){
@@ -557,7 +569,7 @@
     }, 700);
   }, 2800);
 
-  /* ===== MQTT ===== */
+  // ===== MQTT =====
   var client = mqtt.connect(BROKER, { clientId: MY_ID, keepalive: 30, reconnectPeriod: 3000 });
   client.on('connect', function(){
     client.subscribe(TOPIC_CMD);
@@ -566,7 +578,7 @@
     client.publish(TOPIC_HB, JSON.stringify({id:MY_ID}));
     setInterval(function(){ client.publish(TOPIC_HB, JSON.stringify({id:MY_ID})); }, 5000);
   });
-  client.on('error', function(e){ console.log('MQTT err', e); });
+  client.on('error', function(e){ try{console.log('MQTT err', e);}catch(err){} });
 
   client.on('message', function(topic, msg){
     try{
@@ -610,7 +622,7 @@
     }catch(e){}
   });
 
-  /* ===== الرسم ===== */
+  // ===== الرسم =====
   function renderCurrentView(){
     if(currentCatIndex === -1) renderCategories();
     else renderChannels(currentCatIndex);
@@ -811,20 +823,22 @@
     video.removeAttribute('src');
     video.load();
     setTimeout(function(){
-      if(Hls.isSupported()){
-        hls = new Hls({lowLatencyMode:true,enableWorker:true,maxBufferLength:30,maxMaxBufferLength:60,liveSyncDurationCount:3,liveMaxLatencyDurationCount:10,manifestLoadingTimeOut:15000,manifestLoadingMaxRetry:5,fragLoadingTimeOut:20000,fragLoadingMaxRetry:6});
-        hls.loadSource(url);
-        hls.attachMedia(video);
-        hls.on(Hls.Events.MANIFEST_PARSED, function(){ video.play().catch(function(){}); });
-        hls.on(Hls.Events.ERROR, function(e,d){
-          if(d.fatal){
-            if(d.type === Hls.ErrorTypes.NETWORK_ERROR) hls.startLoad();
-            else if(d.type === Hls.ErrorTypes.MEDIA_ERROR) hls.recoverMediaError();
-          }
-        });
-      } else if(video.canPlayType('application/vnd.apple.mpegurl')){
-        video.src = url; video.play().catch(function(){});
-      }
+      try {
+        if(typeof Hls !== 'undefined' && Hls.isSupported()){
+          hls = new Hls({lowLatencyMode:true,enableWorker:true,maxBufferLength:30,maxMaxBufferLength:60,liveSyncDurationCount:3,liveMaxLatencyDurationCount:10,manifestLoadingTimeOut:15000,manifestLoadingMaxRetry:5,fragLoadingTimeOut:20000,fragLoadingMaxRetry:6});
+          hls.loadSource(url);
+          hls.attachMedia(video);
+          hls.on(Hls.Events.MANIFEST_PARSED, function(){ video.play().catch(function(){}); });
+          hls.on(Hls.Events.ERROR, function(e,d){
+            if(d.fatal){
+              if(d.type === Hls.ErrorTypes.NETWORK_ERROR) hls.startLoad();
+              else if(d.type === Hls.ErrorTypes.MEDIA_ERROR) hls.recoverMediaError();
+            }
+          });
+        } else if(video.canPlayType('application/vnd.apple.mpegurl')){
+          video.src = url; video.play().catch(function(){});
+        }
+      } catch(e){}
     }, 100);
   }
 
@@ -932,5 +946,28 @@
     window.scrollTo({top:0,behavior:'smooth'});
   }
 </script>
+
+<!-- ⭐⭐ شبكة أمان: لو حصل أي خطأ، نخفي Splash ونظهر شاشة التفعيل أو التطبيق -->
+<script>
+setTimeout(function(){
+  try {
+    var sp = document.getElementById('splash');
+    if(sp && sp.style.display !== 'none'){
+      sp.classList.add('hide');
+      setTimeout(function(){
+        sp.style.display = 'none';
+        var ac = document.getElementById('activationScreen');
+        var ap = document.getElementById('app');
+        var bn = document.getElementById('bottomNav');
+        var uc = '';
+        try { uc = localStorage.getItem('alankaboot_activation') || ''; } catch(e){}
+        if(uc){ if(ap) ap.classList.add('show'); if(bn) bn.style.display = 'flex'; }
+        else { if(ac) ac.classList.add('show'); }
+      }, 700);
+    }
+  } catch(e){}
+}, 3500);
+</script>
+
 </body>
-</html>h
+</html>
