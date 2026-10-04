@@ -14,8 +14,7 @@
 <style>
   *{box-sizing:border-box;font-family:'Cairo',sans-serif;margin:0;padding:0;
     -webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;
-    touch-action:manipulation;-webkit-font-smoothing:antialiased;
-    text-rendering:optimizeSpeed}
+    touch-action:manipulation;-webkit-font-smoothing:antialiased;text-rendering:optimizeSpeed}
   :root{
     --bg:#0a0a0f;--card:rgba(255,255,255,0.04);--card-2:rgba(255,255,255,0.07);
     --border:rgba(255,255,255,0.08);--border-hi:rgba(255,255,255,0.14);
@@ -247,13 +246,11 @@
     border:1px solid var(--border);position:relative;z-index:1}
   .live-card .lc-info{flex:1;min-width:0;text-align:right;position:relative;z-index:1}
   .live-card .lc-name{color:#fff;font-weight:800;font-size:13px;
-    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-    margin-bottom:2px}
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px}
   .live-card .lc-cat{color:var(--text-dim);font-size:10px;font-weight:600;
     display:flex;align-items:center;gap:4px;
     white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .live-card .lc-cat svg{width:10px;height:10px;fill:var(--accent-2);
-    flex-shrink:0;opacity:.8}
+  .live-card .lc-cat svg{width:10px;height:10px;fill:var(--accent-2);flex-shrink:0;opacity:.8}
   .live-card .lc-badge{display:flex;align-items:center;gap:4px;
     padding:4px 10px;border-radius:100px;font-size:10px;font-weight:800;
     flex-shrink:0;position:relative;z-index:1}
@@ -496,7 +493,6 @@
       <div class="section-title">الأقسام</div>
       <div class="cats-grid" id="catsGrid"></div>
     </div>
-
     <div id="viewChannels" style="display:none">
       <div class="back-row">
         <button class="back-cat-btn" onclick="backToCategories()">
@@ -507,7 +503,6 @@
       <div class="section-title" id="catTitle">قنوات القسم</div>
       <div class="channels-grid" id="channelsGrid"></div>
     </div>
-
     <div id="viewLive" style="display:none">
       <div class="back-row">
         <button class="back-cat-btn" onclick="navHome()">
@@ -588,11 +583,6 @@
     } catch(e){}
   })();
 
-  try {
-    localStorage.removeItem('alankaboot_session_v1');
-    sessionStorage.removeItem('alankaboot_session_v1');
-  } catch(e){}
-
   const PROXY_BASE = 'https://alankaboot-proxy.kamlnot61.workers.dev';
   const tokenToUrl = t => PROXY_BASE + '/s?t=' + encodeURIComponent(t);
 
@@ -610,6 +600,10 @@
   const TOPIC_HB    = 'kwtspta_9f3a2b1c/hb';
   const TOPIC_CODES = 'kwtspta_9f3a2b1c/codes';
   const MY_ID = 'v_' + Math.random().toString(36).slice(2,10);
+
+  /* 🔑 مفاتيح التخزين */
+  const SESSION_KEY = 'alankaboot_session_v3';
+  const CODE_START_KEY = 'alankaboot_code_starts_v3';
 
   const $ = id => document.getElementById(id);
   const lockScreen = $('lockScreen'), app = $('app');
@@ -640,6 +634,37 @@
 
   const ICON_DESKTOP = 'M21 2H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h7v2H8v2h8v-2h-2v-2h7c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H3V4h18v12z';
   const ICON_PHONE   = 'M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z';
+
+  /* 🗂️ تخزين بدايات الأكواد */
+  function loadCodeStarts(){
+    try { return JSON.parse(localStorage.getItem(CODE_START_KEY) || '{}'); }
+    catch(e){ return {}; }
+  }
+  function saveCodeStart(code, ts){
+    try {
+      const m = loadCodeStarts();
+      m[code] = ts;
+      localStorage.setItem(CODE_START_KEY, JSON.stringify(m));
+    } catch(e){}
+  }
+  function getCodeStart(code){
+    const m = loadCodeStarts();
+    return m[code] || null;
+  }
+
+  /* 💾 الجلسة الحالية */
+  function saveSession(s){
+    try { localStorage.setItem(SESSION_KEY, JSON.stringify(s)); } catch(e){}
+  }
+  function loadSession(){
+    try {
+      const s = JSON.parse(localStorage.getItem(SESSION_KEY) || 'null');
+      return s && s.expiresAt ? s : null;
+    } catch(e){ return null; }
+  }
+  function clearSession(){
+    try { localStorage.removeItem(SESSION_KEY); } catch(e){}
+  }
 
   function showToast(msg){
     toast.textContent = msg;
@@ -692,19 +717,16 @@
       setLockMsg('🔌 جاري الاتصال بالسيرفر...','info');
       return;
     }
-
     setLockBtnLoading(true);
     setLockMsg('🔐 جاري التحقق من الكود...','info');
 
     setTimeout(()=>{
-      if(!codesLoaded){
-        setTimeout(()=> runCodeCheck(code), 1500);
-      } else {
-        runCodeCheck(code);
-      }
+      if(!codesLoaded){ setTimeout(()=> runCodeCheck(code), 1500); }
+      else { runCodeCheck(code); }
     }, 400);
   }
 
+  /* ✅ الدالة الأساسية — بتحترم الوقت الحقيقي وبداية الكود الأولى */
   function runCodeCheck(code){
     const found = activationCodes.find(c =>
       String(c.code||'').toUpperCase() === code && c.active !== false
@@ -718,23 +740,50 @@
       return;
     }
 
-    /* ✅ دعم الدقائق: durationMin لو موجود، وإلا duration * 60 (توافق مع الأكواد القديمة) */
+    /* المدة بالدقائق (دعم durationMin الجديد و duration القديم) */
     const durationMinutes = Number(found.durationMin)
       || (Number(found.duration) * 60)
       || 1440;
     const durationMs = durationMinutes * 60 * 1000;
     const now = Date.now();
 
-    /* ⏰ الجلسة بتشتغل بالوقت الحقيقي — بتخلص حتى لو التطبيق مقفول */
+    /* 🕐 لو الكود اتفعّل قبل كده → كمّل من نفس النقطة */
+    let startedAt = getCodeStart(code);
+    if(!startedAt){
+      startedAt = now;
+      saveCodeStart(code, startedAt);
+    }
+
+    const expiresAt = startedAt + durationMs;
+    const remain = expiresAt - now;
+
+    if(remain <= 0){
+      /* الكود انتهى فعلاً */
+      setLockBtnLoading(false);
+      const passedMin = Math.floor((now - startedAt) / 60000);
+      setLockMsg('⏰ انتهت مدة هذا الكود (' + passedMin + ' دقيقة مضت) — اطلب كود جديد','err');
+      codeInput.classList.add('err');
+      setTimeout(()=> codeInput.classList.remove('err'), 1200);
+      return;
+    }
+
+    /* ✅ لسه فيه وقت — ابدأ جلسة بالوقت المتبقي */
     userSession = {
       code: code,
-      activatedAt: now,
-      expiresAt: now + durationMs,
+      startedAt: startedAt,
+      expiresAt: expiresAt,
       durationMinutes: durationMinutes
     };
+    saveSession(userSession);
+
+    const remainMin = Math.floor(remain / 60000);
+    const remainSec = Math.floor((remain % 60000) / 1000);
+    const remainTxt = remainMin > 0
+      ? remainMin + ' دقيقة و ' + remainSec + ' ثانية'
+      : remainSec + ' ثانية';
 
     codeInput.classList.add('ok');
-    setLockMsg('✅ تم التفعيل بنجاح! جاري فتح التطبيق...','ok');
+    setLockMsg('✅ تم التفعيل! باقي ' + remainTxt,'ok');
 
     setTimeout(()=>{
       setLockBtnLoading(false);
@@ -775,6 +824,7 @@
     if(isStreamViewOpen) closeStreamUI();
     stopStream();
     userSession = null;
+    clearSession();
 
     app.classList.remove('show');
     setTimeout(()=> app.style.display = 'none', 300);
@@ -828,6 +878,28 @@
     else if(remain < 30*60*1000) sessionChip.classList.add('warn');
   }
 
+  /* 🔄 استرجاع الجلسة تلقائياً عند فتح الصفحة */
+  function tryRestoreSession(){
+    const s = loadSession();
+    if(!s || !s.expiresAt) return false;
+    if(Date.now() >= s.expiresAt){
+      clearSession();
+      return false;
+    }
+    userSession = s;
+    lockScreen.style.display = 'none';
+    app.classList.add('show');
+    bottomNav.style.display = 'flex';
+    startExpiryMonitor();
+    updateSessionChip();
+    return true;
+  }
+
+  window.addEventListener('load', ()=>{
+    setTimeout(()=>{ tryRestoreSession(); }, 200);
+  });
+
+  /* ⚠️ مهم جداً: لما المستخدم يرجع للصفحة، شيك فوراً لو انتهت */
   document.addEventListener('visibilitychange', ()=>{
     if(!userSession) return;
     if(!document.hidden){
@@ -836,6 +908,11 @@
       } else {
         updateSessionChip();
       }
+    }
+  });
+  window.addEventListener('pageshow', ()=>{
+    if(userSession && Date.now() >= userSession.expiresAt){
+      lockUser('⏰ انتهت مدة الكود، يرجى إدخال كود جديد');
     }
   });
 
@@ -852,9 +929,7 @@
     client.publish(TOPIC_HB, JSON.stringify({id:MY_ID}));
     setInterval(()=> client.publish(TOPIC_HB, JSON.stringify({id:MY_ID})), 5000);
 
-    setTimeout(()=>{
-      if(!codesLoaded){ codesLoaded = true; }
-    }, 3000);
+    setTimeout(()=>{ if(!codesLoaded) codesLoaded = true; }, 3000);
   });
 
   client.on('offline', ()=>{
@@ -883,9 +958,7 @@
           const stillValid = activationCodes.some(c =>
             String(c.code||'').toUpperCase() === userSession.code && c.active !== false
           );
-          if(!stillValid){
-            lockUser('❌ تم إلغاء الكود من قِبل الإدارة');
-          }
+          if(!stillValid){ lockUser('❌ تم إلغاء الكود من قِبل الإدارة'); }
         }
         return;
       }
