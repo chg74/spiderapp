@@ -40,7 +40,7 @@
   body{background:#0a0a0f;color:var(--text);min-height:100vh;position:relative;
     overscroll-behavior:none;-webkit-overflow-scrolling:touch}
 
-  /* ================= الخلفية المتحركة ================= */
+  /* ================= الخلفية المتحركة (بره) ================= */
   .bg-layer{position:fixed;inset:0;z-index:-4;background:#05050a}
   .bg-mesh{position:fixed;inset:0;z-index:-3;pointer-events:none;
     background:
@@ -93,6 +93,7 @@
     100%{transform:translateY(110vh);opacity:0}
   }
 
+  /* ================= جوه البث: الخلفية تنور وتطفي ببطء ================= */
   body.stream-open .bg-mesh{
     animation:bgPulseSoft 5s ease-in-out infinite !important;
   }
@@ -107,8 +108,12 @@
     0%,100%{opacity:.35;transform:scale(1)}
     50%{opacity:.75;transform:scale(1.12)}
   }
-  body.stream-open .bg-lines span{display:none}
-  body.stream-open .bg-noise{opacity:.02}
+  body.stream-open .bg-lines span{
+    display:none;
+  }
+  body.stream-open .bg-noise{
+    opacity:.02;
+  }
 
   /* ================= Splash ================= */
   #splash{position:fixed;inset:0;background:#05050a;
@@ -155,102 +160,6 @@
   @keyframes flowGradient{0%{background-position:0% 50%}100%{background-position:400% 50%}}
   .splash-percent{color:#fff;font-size:13px;font-weight:800;margin-top:14px;letter-spacing:2px;text-shadow:0 0 14px rgba(225,29,46,.7);font-variant-numeric:tabular-nums}
 
-  /* ================= شاشة التفعيل ================= */
-  #activationScreen{position:fixed;inset:0;z-index:9998;
-    background:linear-gradient(135deg,#05050a 0%,#0a0a12 50%,#05050a 100%);
-    display:none;justify-content:center;align-items:center;padding:20px;overflow-y:auto}
-  #activationScreen.show{display:flex;animation:fadeInScreen .4s ease}
-  @keyframes fadeInScreen{from{opacity:0}to{opacity:1}}
-  #activationScreen::before{content:'';position:absolute;inset:0;
-    background:
-      radial-gradient(circle at 20% 30%,rgba(225,29,46,.1),transparent 40%),
-      radial-gradient(circle at 80% 70%,rgba(139,92,246,.1),transparent 40%);
-    pointer-events:none}
-  .act-wrapper{position:relative;z-index:1;max-width:420px;width:100%;
-    animation:slideUp .5s cubic-bezier(.16,1,.3,1)}
-  @keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
-  .act-brand{display:flex;flex-direction:column;align-items:center;margin-bottom:24px}
-  .act-brand-logo{width:80px;height:80px;border-radius:22px;
-    background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));
-    padding:12px;border:1px solid rgba(255,255,255,.1);
-    box-shadow:0 20px 40px rgba(0,0,0,.5),0 0 40px rgba(225,29,46,.15);
-    margin-bottom:14px;position:relative}
-  .act-brand-logo::after{content:'';position:absolute;inset:-3px;border-radius:24px;
-    background:linear-gradient(135deg,rgba(225,29,46,.4),rgba(139,92,246,.4));
-    z-index:-1;filter:blur(10px);opacity:.5}
-  .act-brand-logo img{width:100%;height:100%;object-fit:contain}
-  .act-brand-name{font-size:22px;font-weight:900;letter-spacing:-.3px;
-    background:linear-gradient(135deg,#fff 0%,#ff6b7a 50%,#a78bfa 100%);
-    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-  .act-brand-sub{color:#8a8a9a;font-size:11.5px;font-weight:600;margin-top:4px;letter-spacing:.3px}
-  .act-card{background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02));
-    border:1px solid rgba(255,255,255,.1);border-radius:24px;
-    padding:28px 24px 24px;position:relative;overflow:hidden;
-    box-shadow:0 30px 60px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.06)}
-  .act-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;
-    background:linear-gradient(90deg,transparent,#e11d2e 20%,#8b5cf6 80%,transparent);opacity:.85}
-  .act-lock{width:60px;height:60px;border-radius:18px;
-    background:linear-gradient(135deg,rgba(225,29,46,.15),rgba(139,92,246,.15));
-    border:1px solid rgba(225,29,46,.3);
-    display:flex;justify-content:center;align-items:center;
-    margin:0 auto 16px;position:relative;
-    box-shadow:0 10px 24px rgba(225,29,46,.2)}
-  .act-lock svg{width:28px;height:28px;fill:#ff3b52}
-  .act-premium-badge{display:flex;align-items:center;justify-content:center;gap:6px;
-    padding:7px 14px;border-radius:100px;
-    background:linear-gradient(135deg,rgba(255,193,7,.15),rgba(255,152,0,.1));
-    border:1px solid rgba(255,193,7,.3);color:#fbbf24;font-size:11.5px;font-weight:800;
-    margin-bottom:20px;width:fit-content;margin-inline:auto}
-  .act-premium-badge svg{width:14px;height:14px;fill:currentColor}
-  .act-title{text-align:center;color:#fff;font-size:20px;font-weight:900;
-    margin-bottom:6px;letter-spacing:-.2px}
-  .act-sub{text-align:center;color:#8a8a9a;font-size:12.5px;font-weight:600;
-    line-height:1.6;margin-bottom:20px;padding:0 6px}
-  .act-input-wrap{position:relative;margin-bottom:6px}
-  .act-input{width:100%;background:rgba(0,0,0,.5);
-    border:1.5px solid rgba(255,255,255,.1);border-radius:14px;
-    padding:16px 50px 16px 18px;color:#fff;font-size:15px;font-weight:700;
-    font-family:ui-monospace,'Cairo',monospace;outline:none;transition:.3s;
-    text-align:center;letter-spacing:3px;direction:ltr}
-  .act-input::placeholder{color:#4a4a5a;font-weight:500;
-    letter-spacing:0;direction:rtl;font-family:'Cairo',sans-serif;font-size:13px}
-  .act-input:focus{border-color:#e11d2e;
-    box-shadow:0 0 0 4px rgba(225,29,46,.12),0 8px 24px rgba(225,29,46,.15);
-    background:rgba(225,29,46,.03)}
-  .act-input-icon{position:absolute;right:16px;top:50%;transform:translateY(-50%);
-    width:20px;height:20px;pointer-events:none;fill:#5a5a6a;transition:.3s}
-  .act-input:focus ~ .act-input-icon{fill:#e11d2e}
-  .act-btn{width:100%;position:relative;overflow:hidden;
-    background:linear-gradient(135deg,#ff3b52 0%,#e11d2e 50%,#c41020 100%);
-    border:none;border-radius:14px;padding:16px;
-    color:#fff;font-size:15.5px;font-weight:900;font-family:'Cairo',sans-serif;
-    cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;
-    box-shadow:0 12px 28px rgba(225,29,46,.4),inset 0 1px 0 rgba(255,255,255,.25);
-    transition:.25s;margin-top:8px}
-  .act-btn:active{transform:translateY(2px)}
-  .act-btn:disabled{opacity:.6}
-  .act-btn svg{width:18px;height:18px;fill:currentColor}
-  .act-status{margin-top:14px;font-size:13px;font-weight:700;
-    min-height:20px;text-align:center;line-height:1.5;padding:8px 12px;border-radius:10px}
-  .act-status.error{color:#ff6b7a;background:rgba(225,29,46,.08);border:1px solid rgba(225,29,46,.2)}
-  .act-status.success{color:#4ade80;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2)}
-  .act-status:empty{padding:0;background:transparent;border:none}
-  .act-divider{display:flex;align-items:center;gap:12px;
-    margin:20px 0 16px;color:#5a5a6a;font-size:11px;font-weight:700}
-  .act-divider::before,.act-divider::after{content:'';flex:1;height:1px;
-    background:linear-gradient(90deg,transparent,rgba(255,255,255,.1),transparent)}
-  .act-help-btn{display:flex;align-items:center;justify-content:center;gap:8px;
-    width:100%;background:rgba(59,130,246,.08);
-    border:1px solid rgba(59,130,246,.25);border-radius:14px;
-    padding:13px 18px;text-decoration:none;color:#60a5fa;
-    font-weight:800;font-size:13px;font-family:'Cairo',sans-serif;transition:.25s}
-  .act-help-btn:active{transform:scale(.97)}
-  .act-help-btn svg{width:16px;height:16px;fill:currentColor}
-  .act-footer{display:flex;align-items:center;justify-content:center;gap:14px;
-    margin-top:20px;color:#5a5a6a;font-size:10.5px;font-weight:600}
-  .act-footer-item{display:flex;align-items:center;gap:5px}
-  .act-footer-item svg{width:12px;height:12px;fill:#22c55e;opacity:.8}
-
   /* ================= APP Layout ================= */
   #app{display:none;opacity:0;transition:opacity .7s;min-height:100vh;
     padding-top:calc(var(--safe-top) + 12px);
@@ -278,6 +187,7 @@
   .section-title::before{content:'';width:3px;height:16px;border-radius:4px;background:linear-gradient(180deg,var(--accent-2),var(--accent));box-shadow:0 0 12px var(--accent-glow)}
   .section-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(225,29,46,.35),transparent)}
 
+  /* ============ الأقسام - تصميم رفيع ============ */
   .cats-grid{display:flex;flex-direction:column;gap:8px}
   .cat-tile{background:linear-gradient(90deg,rgba(255,255,255,.06),rgba(255,255,255,.02));
     border:1px solid var(--border);border-radius:14px;
@@ -306,6 +216,7 @@
     flex-shrink:0;position:relative;z-index:1;border:1px solid var(--border)}
   .cat-tile .cat-arrow svg{width:12px;height:12px;fill:var(--text-dim)}
 
+  /* ============ القنوات ============ */
   .channels-grid{display:flex;flex-direction:column;gap:8px}
   .channel-tile{background:linear-gradient(90deg,rgba(255,255,255,.06),rgba(255,255,255,.02));
     border:1px solid var(--border);border-radius:14px;
@@ -338,6 +249,7 @@
   .channel-tile:not(.live) .status{background:rgba(255,255,255,.06);
     color:var(--text-dim);border:1px solid var(--border)}
 
+  /* ============ تاب مباشر ============ */
   .live-list{display:flex;flex-direction:column;gap:8px}
   .live-card{position:relative;display:flex;align-items:center;gap:12px;
     background:linear-gradient(90deg,rgba(225,29,46,.10),rgba(139,92,246,.06) 40%,rgba(255,255,255,.02));
@@ -413,14 +325,14 @@
     background:linear-gradient(180deg,rgba(10,10,15,.85),rgba(10,10,15,.98));
     backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
     border-top:1px solid rgba(255,255,255,.06);
-    padding:8px 4px calc(8px + var(--safe-bottom));
+    padding:8px 12px calc(8px + var(--safe-bottom));
     display:flex;justify-content:space-around;align-items:center;
     box-shadow:0 -8px 30px rgba(0,0,0,.5)}
   .nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;
-    padding:6px 4px;border-radius:14px;cursor:pointer;transition:.25s;
+    padding:6px 14px;border-radius:14px;cursor:pointer;transition:.25s;
     text-decoration:none;color:var(--text-dim);
-    font-size:9.5px;font-weight:700;font-family:'Cairo',sans-serif;
-    background:transparent;border:none;min-width:52px}
+    font-size:10px;font-weight:700;font-family:'Cairo',sans-serif;
+    background:transparent;border:none;min-width:64px}
   .nav-item svg{width:22px;height:22px;fill:currentColor;transition:.25s}
   .nav-item.active{color:var(--accent-2);background:rgba(225,29,46,.1)}
   .nav-item.active svg{filter:drop-shadow(0 0 8px var(--accent-glow))}
@@ -434,6 +346,7 @@
   .video-aspect{position:relative;aspect-ratio:16/9;width:100%;max-width:calc(100vh * 16 / 9);background:#000;overflow:hidden}
   .video-aspect video{width:100%;height:100%;display:block;object-fit:contain;background:#000;pointer-events:none}
 
+  /* ============ اللودر المركزي ============ */
   .stream-loader{position:absolute;inset:0;z-index:60;
     display:flex;flex-direction:column;justify-content:center;align-items:center;gap:16px;
     background:transparent;pointer-events:none;
@@ -471,17 +384,6 @@
   .back-btn:active{background:var(--accent);border-color:var(--accent);
     box-shadow:0 6px 20px var(--accent-glow);transform:scale(.95)}
 
-  .mode-btn{position:absolute;top:calc(var(--safe-top) + 14px);right:14px;z-index:40;
-    background:rgba(10,10,15,.75);color:#fff;border:1px solid rgba(255,255,255,.18);
-    padding:8px 15px;font-size:12.5px;font-family:'Cairo',sans-serif;font-weight:700;
-    border-radius:100px;cursor:pointer;transition:.25s;
-    backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-    display:flex;align-items:center;gap:6px;white-space:nowrap}
-  .mode-btn svg{width:15px;height:15px;fill:currentColor;flex-shrink:0}
-  .mode-btn:active{transform:scale(.95)}
-  .mode-btn.active{background:linear-gradient(180deg,var(--accent-2),var(--accent));
-    border-color:var(--accent);box-shadow:0 6px 20px var(--accent-glow)}
-
   .custom-controls{position:absolute;bottom:0;left:0;right:0;z-index:30;
     display:flex;align-items:center;gap:8px;
     padding:16px 14px calc(16px + var(--safe-bottom));
@@ -505,7 +407,7 @@
   .placeholder svg{width:48px;height:48px;fill:#2a2a34;opacity:.7}
   .placeholder span{font-size:13px;font-weight:600}
 
-  /* Rotation (وضع الهاتف) */
+  /* ============ Rotation ============ */
   .player-box.rotate-css .video-aspect{
     position:fixed !important;inset:0 !important;
     width:100% !important;height:100% !important;
@@ -521,40 +423,14 @@
     transform-origin:center center !important;
     object-fit:contain !important;
   }
+  /* ⭐ اللودر يدور مع الفيديو */
   .player-box.rotate-css .stream-loader{
     transform:rotate(90deg);
     transform-origin:center center;
   }
 
-  /* Desktop Mode (وضع الشاشات) */
-  .player-box.desktop-mode .video-aspect,
-  .player-box.desktop-mode.rotate-css .video-aspect{
-    position:fixed !important;inset:0 !important;
-    width:100% !important;height:100% !important;
-    max-width:none !important;aspect-ratio:auto !important;
-    overflow:hidden !important;background:#000 !important;
-    z-index:5;
-  }
-  .player-box.desktop-mode video,
-  .player-box.desktop-mode.rotate-css video{
-    position:absolute !important;
-    top:0 !important;left:0 !important;
-    width:100% !important;height:100% !important;
-    max-width:none !important;max-height:none !important;
-    transform:none !important;
-    transform-origin:center center !important;
-    object-fit:contain !important;
-  }
-  .player-box.desktop-mode .stream-loader,
-  .player-box.desktop-mode.rotate-css .stream-loader{
-    transform:none !important;
-  }
-  .player-box.desktop-mode .placeholder{z-index:6}
-
   .toast{position:fixed;bottom:calc(90px + var(--safe-bottom));left:50%;transform:translateX(-50%) translateY(10px);background:linear-gradient(180deg,var(--accent-2),var(--accent));color:#fff;padding:11px 22px;border-radius:100px;font-weight:700;font-size:12.5px;z-index:999999;opacity:0;transition:.35s cubic-bezier(.34,1.56,.64,1);box-shadow:0 12px 32px var(--accent-glow),inset 0 1px 0 rgba(255,255,255,.2);pointer-events:none;font-family:'Cairo',sans-serif;white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-  .toast.error{background:linear-gradient(180deg,#ff3b52,#b31226)}
-  .toast.success{background:linear-gradient(180deg,#4ade80,#16a34a)}
 </style>
 </head>
 <body>
@@ -597,56 +473,6 @@
       <div class="splash-progress-fill"></div>
     </div>
     <div class="splash-percent" id="splashPercent">0%</div>
-  </div>
-</div>
-
-<!-- شاشة التفعيل -->
-<div id="activationScreen">
-  <div class="act-wrapper">
-    <div class="act-brand">
-      <div class="act-brand-logo">
-        <img src="https://i.postimg.cc/xT8rcsT1/file-000000008bb4820ebcd371e64fff0469.png" alt="">
-      </div>
-      <div class="act-brand-name">Alankaboot Sport</div>
-      <div class="act-brand-sub">Premium Streaming Service</div>
-    </div>
-    <div class="act-card">
-      <div class="act-lock">
-        <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
-      </div>
-      <div class="act-premium-badge">
-        <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-        نسخة Premium
-      </div>
-      <div class="act-title">تفعيل الاشتراك</div>
-      <div class="act-sub">أدخل مفتاح الترخيص الخاص بك لتفعيل الوصول الكامل</div>
-      <div class="act-input-wrap">
-        <input type="text" class="act-input" id="activationInput" placeholder="أدخل كود الترخيص" autocomplete="off" spellcheck="false" maxlength="30">
-        <svg class="act-input-icon" viewBox="0 0 24 24"><path d="M12.65 10C11.83 7.67 9.61 6 7 6c-3.31 0-6 2.69-6 6s2.69 6 6 6c2.61 0 4.83-1.67 5.65-4H17v4h4v-4h2v-4H12.65zM7 14c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/></svg>
-      </div>
-      <button class="act-btn" id="activationBtn" onclick="submitActivation()">
-        <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-        <span>تفعيل الاشتراك</span>
-      </button>
-      <div class="act-status" id="activationStatus"></div>
-      <div class="act-divider">ليس لديك مفتاح؟</div>
-      <a class="act-help-btn" href="https://t.me/alankabootsport" target="_blank">
-        <svg viewBox="0 0 24 24"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg>
-        <span>الحصول على مفتاح الترخيص</span>
-        <svg viewBox="0 0 24 24" style="width:14px;height:14px;opacity:.6"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
-      </a>
-    </div>
-    <div class="act-footer">
-      <div class="act-footer-item">
-        <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>اتصال آمن
-      </div>
-      <div class="act-footer-item">
-        <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>مشفر
-      </div>
-      <div class="act-footer-item">
-        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>موثوق
-      </div>
-    </div>
   </div>
 </div>
 
@@ -725,10 +551,6 @@
     <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
     ادعمنا
   </a>
-  <a class="nav-item" href="https://t.me/omrmejo" target="_blank" rel="noopener">
-    <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-    المطور
-  </a>
 </div>
 
 <div id="streamView">
@@ -753,11 +575,6 @@
       <button class="back-btn" id="backBtn" onclick="closeStream()">
         <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:currentColor"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
         رجوع
-      </button>
-
-      <button class="mode-btn" id="modeBtn" onclick="toggleDesktopMode()">
-        <svg id="modeIcon" viewBox="0 0 24 24"><path d="M21 2H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h7v2H8v2h8v-2h-2v-2h7c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H3V4h18v12z"/></svg>
-        <span id="modeText">وضع الشاشات</span>
       </button>
 
       <div class="custom-controls" id="customControls">
@@ -791,19 +608,13 @@
   document.addEventListener('contextmenu', e=>e.preventDefault());
 
   const BROKER = 'wss://broker.emqx.io:8084/mqtt';
-  const TOPIC_CMD   = 'kwtspta_9f3a2b1c/cmd';
-  const TOPIC_DATA  = 'kwtspta_9f3a2b1c/data';
-  const TOPIC_HB    = 'kwtspta_9f3a2b1c/hb';
-  const TOPIC_CODES = 'kwtspta_9f3a2b1c/codes';
+  const TOPIC_CMD  = 'kwtspta_9f3a2b1c/cmd';
+  const TOPIC_DATA = 'kwtspta_9f3a2b1c/data';
+  const TOPIC_HB   = 'kwtspta_9f3a2b1c/hb';
   const MY_ID = 'v_' + Math.random().toString(36).slice(2,10);
-  const ACTIVATION_KEY = 'alankaboot_activation';
 
   const $ = id => document.getElementById(id);
   const splash = $('splash'), app = $('app');
-  const activationScreen = $('activationScreen');
-  const activationInput = $('activationInput');
-  const activationBtn = $('activationBtn');
-  const activationStatus = $('activationStatus');
   const catsGrid = $('catsGrid'), channelsGrid = $('channelsGrid');
   const viewCategories = $('viewCategories'), viewChannels = $('viewChannels');
   const viewLive = $('viewLive'), liveList = $('liveList'), liveCount = $('liveCount');
@@ -815,70 +626,16 @@
   const toast = $('toast');
   const bottomNav = $('bottomNav');
   const streamLoader = $('streamLoader');
-  const modeBtn = $('modeBtn'), modeText = $('modeText'), modeIcon = $('modeIcon');
 
   let hls = null, currentChannelId = null, categoriesData = [];
   let currentCatIndex = -1, isStreamViewOpen = false;
-  let isDesktopMode = false;
-  let userCode = localStorage.getItem(ACTIVATION_KEY) || '';
-  let validCodes = [], codesReceived = false, appStarted = false;
 
-  const ICON_DESKTOP = 'M21 2H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h7v2H8v2h8v-2h-2v-2h7c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H3V4h18v12z';
-  const ICON_PHONE   = 'M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z';
-
-  function showToast(msg, type){
+  function showToast(msg){
     toast.textContent = msg;
-    toast.classList.remove('error','success');
-    if(type) toast.classList.add(type);
     toast.classList.add('show');
-    clearTimeout(showToast._t);
-    showToast._t = setTimeout(()=> toast.classList.remove('show'), 2200);
-  }
-  function setActStatus(t, c){ activationStatus.textContent = t; activationStatus.className = 'act-status ' + (c||''); }
-
-  /* ========== Activation ========== */
-  function submitActivation(){
-    const code = activationInput.value.trim().toLowerCase();
-    if(!code){ setActStatus('من فضلك أدخل الكود', 'error'); return; }
-    if(!codesReceived){ setActStatus('من فضلك انتظر ثانية...', ''); return; }
-    if(validCodes.includes(code)){
-      userCode = code;
-      localStorage.setItem(ACTIVATION_KEY, code);
-      setActStatus('تم التفعيل بنجاح ✅', 'success');
-      activationBtn.disabled = true;
-      setTimeout(()=>{
-        activationScreen.classList.remove('show');
-        enterApp();
-        activationInput.value = '';
-        activationBtn.disabled = false;
-        setActStatus('', '');
-      }, 700);
-    } else {
-      setActStatus('كود غير صحيح ❌', 'error');
-      activationInput.value = '';
-    }
-  }
-  activationInput.addEventListener('keydown', e=>{ if(e.key === 'Enter') submitActivation(); });
-
-  function enterApp(){
-    if(appStarted) return;
-    appStarted = true;
-    app.classList.add('show');
-    bottomNav.style.display = 'flex';
-  }
-  function kickOut(reason){
-    userCode = '';
-    localStorage.removeItem(ACTIVATION_KEY);
-    appStarted = false;
-    if(isStreamViewOpen) closeStreamUI();
-    app.classList.remove('show');
-    bottomNav.style.display = 'none';
-    activationScreen.classList.add('show');
-    setActStatus(reason || 'تم إيقاف الكود من قِبل الإدارة', 'error');
-    showToast('تم إيقاف الكود', 'error');
+    setTimeout(()=> toast.classList.remove('show'), 2200);
   }
 
-  /* ========== Background Lines ========== */
   (function initBgLines(){
     const wrap = document.getElementById('bgLines');
     if(!wrap) return;
@@ -898,7 +655,6 @@
     }
   })();
 
-  /* ========== Splash Particles ========== */
   (function initSplash(){
     const container = document.getElementById('splashParticles');
     if(container){
@@ -929,21 +685,15 @@
     splash.classList.add('hide');
     setTimeout(()=>{
       splash.style.display = 'none';
-      /* لو عنده كود محفوظ → دخل، لو لأ → شاشة تفعيل */
-      if(userCode){
-        enterApp();
-      } else {
-        activationScreen.classList.add('show');
-      }
+      app.classList.add('show');
+      bottomNav.style.display = 'flex';
     }, 700);
   }, 2800);
 
-  /* ========== MQTT ========== */
   const client = mqtt.connect(BROKER, { clientId: MY_ID });
   client.on('connect', ()=>{
     client.subscribe(TOPIC_CMD);
     client.subscribe(TOPIC_DATA);
-    client.subscribe(TOPIC_CODES);
     client.publish(TOPIC_HB, JSON.stringify({id:MY_ID}));
     setInterval(()=> client.publish(TOPIC_HB, JSON.stringify({id:MY_ID})), 5000);
   });
@@ -951,23 +701,10 @@
   client.on('message', (topic, msg)=>{
     try{
       const data = JSON.parse(msg.toString());
-
-      if(topic === TOPIC_CODES){
-        validCodes = Array.isArray(data.codes) ? data.codes.map(c=>String(c).toLowerCase()) : [];
-        codesReceived = true;
-        if(userCode){
-          if(validCodes.includes(userCode)){ if(!appStarted) enterApp(); }
-          else { kickOut('تم إيقاف الكود من قِبل الإدارة'); }
-        }
-        return;
-      }
-
       if(topic === TOPIC_DATA){
         categoriesData = Array.isArray(data) ? data : [];
         renderCurrentView();
-        return;
       }
-
       if(topic === TOPIC_CMD){
         if(data.action === 'stopAll'){ if(isStreamViewOpen) closeStreamUI(); return; }
         if(data.action === 'play' && data.token){
@@ -990,7 +727,6 @@
     }catch(e){}
   });
 
-  /* ========== Rendering ========== */
   function renderCurrentView(){
     if(currentCatIndex === -1) renderCategories();
     else renderChannels(currentCatIndex);
@@ -1126,16 +862,12 @@
     autoRotateAndFS();
   }
 
-  /* ========== Display Mode (Phone / Desktop) ========== */
   function autoRotateAndFS(){
-    if(isDesktopMode){
-      playerBox.classList.add('desktop-mode');
-      playerBox.classList.remove('rotate-css');
-      enterFullscreen();
-      return;
-    }
     playerBox.classList.add('rotate-css');
-    enterFullscreen();
+    try {
+      if (playerBox.requestFullscreen) playerBox.requestFullscreen().catch(()=>{});
+      else if (playerBox.webkitRequestFullscreen) playerBox.webkitRequestFullscreen();
+    } catch(e){}
     setTimeout(()=>{
       try {
         if (screen.orientation && screen.orientation.lock) {
@@ -1151,14 +883,6 @@
     }, 200);
   }
 
-  function enterFullscreen(){
-    try {
-      if (document.fullscreenElement || document.webkitFullscreenElement) return;
-      if (playerBox.requestFullscreen) playerBox.requestFullscreen().catch(()=>{});
-      else if (playerBox.webkitRequestFullscreen) playerBox.webkitRequestFullscreen();
-    } catch(e){}
-  }
-
   function exitFsSafe(){
     playerBox.classList.remove('rotate-css');
     try {
@@ -1171,46 +895,6 @@
       if (screen.orientation && screen.orientation.unlock) screen.orientation.unlock();
       else if (screen.unlockOrientation) screen.unlockOrientation();
     } catch(e){}
-  }
-
-  function toggleDesktopMode(){
-    isDesktopMode = !isDesktopMode;
-
-    if(isDesktopMode){
-      playerBox.classList.add('desktop-mode');
-      playerBox.classList.remove('rotate-css');
-      modeBtn.classList.add('active');
-      modeText.textContent = 'وضع الهاتف';
-      modeIcon.innerHTML = '<path d="'+ICON_PHONE+'"/>';
-      try {
-        if (screen.orientation && screen.orientation.unlock) screen.orientation.unlock();
-      } catch(e){}
-      enterFullscreen();
-      resetHideTimer();
-      showToast('تم تفعيل وضع الشاشات 🖥️');
-    } else {
-      playerBox.classList.remove('desktop-mode');
-      modeBtn.classList.remove('active');
-      modeText.textContent = 'وضع الشاشات';
-      modeIcon.innerHTML = '<path d="'+ICON_DESKTOP+'"/>';
-      showToast('تم إلغاء الوضع');
-      if(isStreamViewOpen){
-        playerBox.classList.add('rotate-css');
-        try {
-          if (screen.orientation && screen.orientation.lock) {
-            screen.orientation.lock('landscape').catch(()=>{});
-          } else if (screen.lockOrientation) {
-            screen.lockOrientation('landscape');
-          } else if (screen.mozLockOrientation) {
-            screen.mozLockOrientation('landscape');
-          } else if (screen.msLockOrientation) {
-            screen.msLockOrientation('landscape');
-          }
-        } catch(e){}
-        enterFullscreen();
-      }
-      resetHideTimer();
-    }
   }
 
   window.addEventListener('popstate', function() {
@@ -1358,7 +1042,6 @@
   playerBox.addEventListener('click', (e) => {
     if (customControls.contains(e.target)) { resetHideTimer(); return; }
     if (e.target.closest('.back-btn')) return;
-    if (e.target.closest('.mode-btn')) return;
     if (isDraggingSeek) return;
     if (controlsVisible) hideControls();
     else showControls();
@@ -1367,7 +1050,6 @@
   playerBox.addEventListener('touchstart', (e) => {
     if (customControls.contains(e.target)) { resetHideTimer(); return; }
     if (e.target.closest('.back-btn')) return;
-    if (e.target.closest('.mode-btn')) return;
     if (isDraggingSeek) return;
     if (controlsVisible) hideControls();
     else showControls();
