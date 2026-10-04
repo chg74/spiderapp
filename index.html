@@ -441,9 +441,9 @@
       <img class="lock-logo" src="https://i.postimg.cc/xT8rcsT1/file-000000008bb4820ebcd371e64fff0469.png" alt="">
     </div>
     <h1 class="lock-title">Alankaboot Sport</h1>
-    <div class="lock-sub" id="lockSub">
+    <div class="lock-sub online" id="lockSub">
       <span class="lock-dot"></span>
-      <span id="lockSubText">نظام التفعيل الآمن</span>
+      <span id="lockSubText">متصل - جاهز للتفعيل</span>
     </div>
     <div class="lock-input-wrap">
       <input type="text" id="codeInput" class="lock-input"
@@ -462,7 +462,7 @@
       </a>
     </div>
     <div class="lock-security">
-      <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+      <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10.14 17l6.59-6.59L18 9l-8 8z"/></svg>
       <span>اتصال مشفر وآمن</span>
     </div>
   </div>
@@ -602,7 +602,6 @@
   const TOPIC_CODES = 'kwtspta_9f3a2b1c/codes';
   const MY_ID = 'v_' + Math.random().toString(36).slice(2,10);
 
-  /* 🔑 مفتاح تخزين وقت بداية كل كود (مش جلسة) */
   const CODE_START_KEY = 'alankaboot_code_starts_v4';
 
   const $ = id => document.getElementById(id);
@@ -629,13 +628,12 @@
   let activationCodes = [];
   let codesLoaded = false;
   let mqttConnected = false;
-  let userSession = null;   /* الجلسة في الذاكرة فقط (مش بتتحفظ) */
+  let userSession = null;
   let expiryTimer = null;
 
   const ICON_DESKTOP = 'M21 2H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h7v2H8v2h8v-2h-2v-2h7c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H3V4h18v12z';
   const ICON_PHONE   = 'M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z';
 
-  /* 🗂️ تخزين أوقات بدايات الأكواد */
   function loadCodeStarts(){
     try { return JSON.parse(localStorage.getItem(CODE_START_KEY) || '{}'); }
     catch(e){ return {}; }
@@ -712,7 +710,6 @@
     }, 400);
   }
 
-  /* 🎯 الدالة الأساسية */
   function runCodeCheck(code){
     const found = activationCodes.find(c =>
       String(c.code||'').toUpperCase() === code && c.active !== false
@@ -732,7 +729,6 @@
     const durationMs = durationMinutes * 60 * 1000;
     const now = Date.now();
 
-    /* 🔍 شوف هل الكود ده اتفعّل قبل كده؟ */
     let startedAt = getCodeStart(code);
     const isFirstTime = !startedAt;
 
@@ -744,7 +740,6 @@
     const expiresAt = startedAt + durationMs;
     const remain = expiresAt - now;
 
-    /* ⛔ لو انتهى خلاص */
     if(remain <= 0){
       setLockBtnLoading(false);
       const passedMin = Math.floor((now - startedAt) / 60000);
@@ -757,7 +752,6 @@
       return;
     }
 
-    /* ✅ لسه فيه وقت — ابني الجلسة بالوقت المتبقي */
     userSession = {
       code: code,
       startedAt: startedAt,
@@ -765,7 +759,6 @@
       durationMinutes: durationMinutes
     };
 
-    /* 📢 رسالة توضح الباقي */
     const remainMin = Math.floor(remain / 60000);
     const remainSec = Math.floor((remain % 60000) / 1000);
 
@@ -876,7 +869,6 @@
     else if(remain < 30*60*1000) sessionChip.classList.add('warn');
   }
 
-  /* ⚠️ رجوع للصفحة → شيك على الجلسة */
   document.addEventListener('visibilitychange', ()=>{
     if(!userSession) return;
     if(!document.hidden){
