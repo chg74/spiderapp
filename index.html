@@ -163,15 +163,21 @@
     min-height:20px;transition:.3s;line-height:1.5}
   .activation-status.error{color:#ff6b7a}
   .activation-status.success{color:#4ade80}
-  .activation-status.checking{color:#f59e0b}
   .activation-status .spin{display:inline-block;width:12px;height:12px;
     border-radius:50%;border:2px solid rgba(245,158,11,.3);
     border-top-color:#f59e0b;animation:spinRing .8s linear infinite;
     margin-left:6px;vertical-align:middle}
-  .activation-hint{margin-top:20px;font-size:11px;color:var(--text-dim);
-    font-weight:600;line-height:1.6;padding-top:16px;
+  .activation-hint{margin-top:22px;padding-top:18px;
     border-top:1px solid rgba(255,255,255,.05)}
-  .activation-hint a{color:var(--accent-2);text-decoration:none;font-weight:800}
+  .activation-hint a{
+    display:inline-flex;align-items:center;gap:8px;
+    color:var(--accent-2);text-decoration:none;font-weight:800;font-size:13px;
+    padding:10px 18px;border-radius:100px;
+    background:rgba(225,29,46,.1);
+    border:1px solid rgba(225,29,46,.3);
+    transition:.25s}
+  .activation-hint a:active{transform:scale(.96);background:rgba(225,29,46,.2)}
+  .activation-hint a svg{width:16px;height:16px;fill:currentColor}
 
   /* ================= APP Layout ================= */
   #app{display:none;opacity:0;transition:opacity .7s;min-height:100vh;
@@ -212,6 +218,46 @@
   .section-title::after{content:'';flex:1;height:1px;
     background:linear-gradient(90deg,rgba(225,29,46,.35),transparent)}
 
+  /* ============ Matches (البوستات المباشرة) ============ */
+  #matchesSection{margin-bottom:22px}
+  .matches-scroll{display:flex;gap:12px;overflow-x:auto;
+    padding:2px 4px 8px;margin:0 -12px;padding-inline:12px;
+    scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;
+    scrollbar-width:none}
+  .matches-scroll::-webkit-scrollbar{display:none}
+  .match-card{flex:0 0 270px;scroll-snap-align:start;position:relative;
+    border-radius:16px;overflow:hidden;cursor:pointer;transition:.25s;
+    border:1px solid var(--border);background:#111;
+    aspect-ratio:16/10;box-shadow:0 10px 26px rgba(0,0,0,.5)}
+  .match-card:active{transform:scale(.97);border-color:rgba(225,29,46,.5)}
+  .match-card img{width:100%;height:100%;object-fit:cover;display:block}
+  .match-card .match-overlay{position:absolute;inset:0;
+    background:linear-gradient(180deg,rgba(0,0,0,.35) 0%,transparent 30%,transparent 50%,rgba(0,0,0,.92) 100%);
+    display:flex;flex-direction:column;justify-content:flex-end;
+    padding:12px 13px}
+  .match-card .match-badge{position:absolute;top:10px;right:10px;
+    background:linear-gradient(180deg,#ff3b52,#e11d2e);
+    color:#fff;font-size:10px;font-weight:800;
+    padding:4px 10px;border-radius:100px;
+    display:flex;align-items:center;gap:4px;
+    box-shadow:0 4px 12px var(--accent-glow)}
+  .match-card .match-badge::before{content:'';width:5px;height:5px;border-radius:50%;
+    background:#fff;animation:blink 1.2s infinite}
+  .match-card .match-time{position:absolute;top:10px;left:10px;
+    background:rgba(0,0,0,.7);backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+    color:#fff;font-size:11px;font-weight:800;
+    padding:4px 10px;border-radius:100px;
+    border:1px solid rgba(255,255,255,.18)}
+  .match-card .match-title{color:#fff;font-size:14px;font-weight:800;
+    letter-spacing:-.2px;margin-bottom:3px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .match-card .match-sub{color:rgba(255,255,255,.75);font-size:11px;
+    font-weight:600;display:flex;align-items:center;gap:5px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .match-card .match-sub svg{width:11px;height:11px;fill:var(--accent-2);flex-shrink:0}
+
+  /* ============ الأقسام ============ */
   .cats-grid{display:flex;flex-direction:column;gap:8px}
   .cat-tile{background:linear-gradient(90deg,rgba(255,255,255,.06),rgba(255,255,255,.02));
     border:1px solid var(--border);border-radius:14px;padding:9px 12px;cursor:pointer;
@@ -336,7 +382,6 @@
   .nav-item.dev{color:#a78bfa}
   .nav-item.dev svg{fill:#a78bfa}
 
-  /* ================= Stream View ================= */
   #streamView{display:none;position:fixed;inset:0;background:#000;z-index:100}
   #streamView.show{display:flex;flex-direction:column}
   .stream-player-wrap{flex:1;display:flex;justify-content:center;align-items:center;
@@ -417,7 +462,6 @@
   .placeholder svg{width:48px;height:48px;fill:#2a2a34;opacity:.7}
   .placeholder span{font-size:13px;font-weight:600}
 
-  /* Rotation */
   .player-box.rotate-css .video-aspect{position:fixed !important;inset:0 !important;
     width:100% !important;height:100% !important;max-width:none !important;
     aspect-ratio:auto !important;overflow:hidden !important;background:#000 !important;z-index:5}
@@ -428,7 +472,6 @@
     transform-origin:center center !important;object-fit:contain !important}
   .player-box.rotate-css .stream-loader{transform:rotate(90deg);transform-origin:center center}
 
-  /* Desktop mode */
   .player-box.desktop-mode .video-aspect,
   .player-box.desktop-mode.rotate-css .video-aspect{position:fixed !important;
     inset:0 !important;width:100% !important;height:100% !important;
@@ -501,8 +544,10 @@
     </button>
     <div class="activation-status" id="activationStatus"></div>
     <div class="activation-hint">
-      للحصول على كود تفعيل، تواصل مع المطور
-      <a href="https://t.me/omrmejo" target="_blank">@omrmejo</a>
+      <a href="https://t.me/alankabootsport" target="_blank">
+        <svg viewBox="0 0 24 24"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg>
+        للحصول على كود تفعيل، تواصل عبر قناة التليجرام
+      </a>
     </div>
   </div>
 </div>
@@ -526,6 +571,12 @@
 
   <div class="app-content">
     <div id="viewCategories">
+      <!-- ⭐ البوستات المباشرة -->
+      <div id="matchesSection" style="display:none">
+        <div class="section-title">مباشر الآن</div>
+        <div class="matches-scroll" id="matchesScroll"></div>
+      </div>
+
       <div class="section-title">الأقسام</div>
       <div class="cats-grid" id="catsGrid"></div>
     </div>
@@ -633,10 +684,11 @@ const PROXY_BASE = 'https://alankaboot-proxy.kamlnot61.workers.dev';
 const tokenToUrl = t => PROXY_BASE + '/s?t=' + encodeURIComponent(t);
 
 const BROKER = 'wss://broker.emqx.io:8084/mqtt';
-const TOPIC_CMD   = 'kwtspta_9f3a2b1c/cmd';
-const TOPIC_DATA  = 'kwtspta_9f3a2b1c/data';
-const TOPIC_HB    = 'kwtspta_9f3a2b1c/hb';
-const TOPIC_CODES = 'kwtspta_9f3a2b1c/codes';
+const TOPIC_CMD     = 'kwtspta_9f3a2b1c/cmd';
+const TOPIC_DATA    = 'kwtspta_9f3a2b1c/data';
+const TOPIC_HB      = 'kwtspta_9f3a2b1c/hb';
+const TOPIC_CODES   = 'kwtspta_9f3a2b1c/codes';
+const TOPIC_MATCHES = 'kwtspta_9f3a2b1c/matches';
 const MY_ID = 'v_' + Math.random().toString(36).slice(2,10);
 const ACTIVATION_KEY = 'alankaboot_activation';
 
@@ -668,6 +720,7 @@ const streamLoader = $('streamLoader');
 const modeBtn = $('modeBtn'), modeText = $('modeText'), modeIcon = $('modeIcon');
 
 let hls = null, currentChannelId = null, categoriesData = [];
+let matchesData = [];
 let currentCatIndex = -1, isStreamViewOpen = false;
 let isDesktopMode = false;
 
@@ -694,7 +747,6 @@ function setActivationStatus(text, cls){
   activationStatus.className = 'activation-status' + (cls ? ' ' + cls : '');
 }
 
-/* ========== إظهار/إخفاء شاشة التفعيل ========== */
 function showActivationScreen(){
   activationScreen.classList.add('show');
   app.classList.remove('show');
@@ -704,7 +756,6 @@ function hideActivationScreen(){
   activationScreen.classList.remove('show');
 }
 
-/* ========== إدخال كود التفعيل ========== */
 function submitActivation(){
   const code = activationInput.value.trim().toLowerCase();
   if(!code){
@@ -712,7 +763,7 @@ function submitActivation(){
     return;
   }
   if(!codesReceived){
-    setActivationStatus('جاري التحقق من الأكواد... <span class="spin"></span>', 'checking');
+    setActivationStatus('من فضلك انتظر قليلاً...', 'checking');
     return;
   }
   if(validCodes.includes(code)){
@@ -737,7 +788,6 @@ function submitActivation(){
 }
 activationInput.addEventListener('keydown', e=>{ if(e.key === 'Enter') submitActivation(); });
 
-/* ========== الدخول للتطبيق ========== */
 function enterApp(){
   if(appStarted) return;
   appStarted = true;
@@ -745,7 +795,6 @@ function enterApp(){
   bottomNav.style.display = 'flex';
 }
 
-/* ========== طرد المستخدم ========== */
 function kickOut(reason){
   userCode = '';
   localStorage.removeItem(ACTIVATION_KEY);
@@ -774,13 +823,13 @@ setTimeout(()=>{
   splash.classList.add('hide');
   setTimeout(()=>{
     splash.style.display = 'none';
-    /* لو عنده كود محفوظ → دخل على طول، لو لأ → شاشة تفعيل */
+    /* ⭐ لو عنده كود محفوظ → دخل على طول، لو لأ → شاشة تفعيل من غير رسالة */
     if(userCode){
       enterApp();
-      /* نتحقق من الكود في الخلفية بعد ما تكتمل قائمة الأكواد */
     } else {
       showActivationScreen();
-      setActivationStatus('جاري التحقق من الخادم... <span class="spin"></span>', 'checking');
+      /* ⭐ شيلنا رسالة "جاري التحقق من السيرفر" — نسيبها فاضية */
+      setActivationStatus('', '');
     }
   }, 700);
 }, 2800);
@@ -792,6 +841,7 @@ client.on('connect', ()=>{
   client.subscribe(TOPIC_CMD);
   client.subscribe(TOPIC_DATA);
   client.subscribe(TOPIC_CODES);
+  client.subscribe(TOPIC_MATCHES);
   client.publish(TOPIC_HB, JSON.stringify({id:MY_ID}));
   setInterval(()=> client.publish(TOPIC_HB, JSON.stringify({id:MY_ID})), 5000);
 });
@@ -806,19 +856,15 @@ client.on('message', (topic, msg)=>{
       const firstTime = !codesReceived;
       codesReceived = true;
 
-      /* لو المستخدم عنده كود محفوظ */
       if(userCode){
         if(validCodes.includes(userCode)){
-          /* الكود لسه صالح */
           if(!appStarted){ enterApp(); }
         } else {
-          /* الكود اتوقف */
           kickOut('تم إيقاف الكود من قِبل الإدارة');
           return;
         }
       }
 
-      /* لو لسه في شاشة التفعيل */
       if(!appStarted && firstTime){
         setActivationStatus('', '');
       }
@@ -828,6 +874,17 @@ client.on('message', (topic, msg)=>{
     if(topic === TOPIC_DATA){
       categoriesData = Array.isArray(data) ? data : [];
       renderCurrentView();
+      return;
+    }
+
+    /* ⭐ البوستات المباشرة */
+    if(topic === TOPIC_MATCHES){
+      try{
+        const parsed = JSON.parse(msg.toString());
+        matchesData = Array.isArray(parsed) ? parsed : (parsed.matches || []);
+      }catch(e){ matchesData = []; }
+      renderMatches();
+      return;
     }
 
     if(topic === TOPIC_CMD){
@@ -861,6 +918,68 @@ function renderCurrentView(){
   else renderChannels(currentCatIndex);
 }
 
+/* ============ البوستات المباشرة ============ */
+function renderMatches(){
+  const section = document.getElementById('matchesSection');
+  const scroll = document.getElementById('matchesScroll');
+  if(!section || !scroll) return;
+
+  if(!matchesData.length){
+    section.style.display = 'none';
+    return;
+  }
+
+  section.style.display = 'block';
+
+  scroll.innerHTML = matchesData.map((m, i) => {
+    const isLive = m.status === 'live';
+    const badge = isLive ? '<span class="match-badge">مباشر</span>' : '';
+    const timeHtml = (m.time && !isLive)
+      ? `<div class="match-time">${escapeHtml(m.time)}</div>`
+      : '';
+    return `
+      <div class="match-card" onclick="openMatch(${i})">
+        <img src="${escapeAttr(m.poster || '')}" onerror="this.style.opacity=.15" alt="">
+        ${badge}
+        ${timeHtml}
+        <div class="match-overlay">
+          <div class="match-title">${escapeHtml(m.title || '')}</div>
+          <div class="match-sub">
+            <svg viewBox="0 0 24 24"><path d="M21 6h-7.59l3.29-3.29L16 2l-4 4-4-4-1.29 1.41L10.59 6H3c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 13H3V8h18v11zM9 10v6l5-3-5-3z"/></svg>
+            ${escapeHtml(m.subtitle || '')}
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function openMatch(i){
+  const m = matchesData[i];
+  if(!m) return;
+  if(m.channelId){
+    for(let ci = 0; ci < categoriesData.length; ci++){
+      const cat = categoriesData[ci];
+      const ch = (cat.channels || []).find(c => c.id === m.channelId);
+      if(ch){ playChannelObject(ch); return; }
+    }
+    showToast('القناة غير متاحة');
+  } else if(m.token){
+    /* تشغيل مباشر بالتوكن */
+    currentChannelId = m.id || 'match_' + i;
+    isStreamViewOpen = true;
+    streamView.classList.add('show');
+    document.body.style.overflow = 'hidden';
+    document.body.classList.add('stream-open');
+    playStream(tokenToUrl(m.token));
+    history.pushState({stream: true}, '');
+    autoRotateAndFS();
+  } else {
+    showToast(m.title || '');
+  }
+}
+
+/* ============ الأقسام ============ */
 function renderCategories(){
   if(!categoriesData.length){
     catsGrid.innerHTML = '<div class="empty-msg">📺<br>لا توجد أقسام متاحة حالياً<br>تابع قناتنا على تيليجرام ليصلك كل جديد</div>';
