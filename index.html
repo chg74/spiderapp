@@ -14,7 +14,8 @@
 <style>
   *{box-sizing:border-box;font-family:'Cairo',sans-serif;margin:0;padding:0;
     -webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;
-    touch-action:manipulation;-webkit-font-smoothing:antialiased;text-rendering:optimizeSpeed}
+    touch-action:manipulation;-webkit-font-smoothing:antialiased;
+    text-rendering:optimizeSpeed}
   :root{
     --bg:#0a0a0f;--card:rgba(255,255,255,0.04);--card-2:rgba(255,255,255,0.07);
     --border:rgba(255,255,255,0.08);--border-hi:rgba(255,255,255,0.14);
@@ -134,11 +135,10 @@
   .lock-btn svg{width:17px;height:17px;fill:#fff}
   .lock-btn .spinner-mini{width:15px;height:15px;border:2px solid rgba(255,255,255,.3);
     border-top-color:#fff;border-radius:50%;animation:spinRing .8s linear infinite}
-  .lock-msg{margin-top:14px;font-size:13px;font-weight:700;min-height:20px;line-height:1.6}
+  .lock-msg{margin-top:14px;font-size:12.5px;font-weight:700;min-height:20px;line-height:1.5}
   .lock-msg.err{color:#f87171}
   .lock-msg.ok{color:#4ade80}
   .lock-msg.info{color:#93b8f5}
-  .lock-msg.warn{color:#fbbf24}
   .lock-footer{margin-top:22px;padding-top:18px;
     border-top:1px solid rgba(255,255,255,.06);
     display:flex;justify-content:center}
@@ -247,11 +247,13 @@
     border:1px solid var(--border);position:relative;z-index:1}
   .live-card .lc-info{flex:1;min-width:0;text-align:right;position:relative;z-index:1}
   .live-card .lc-name{color:#fff;font-weight:800;font-size:13px;
-    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px}
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    margin-bottom:2px}
   .live-card .lc-cat{color:var(--text-dim);font-size:10px;font-weight:600;
     display:flex;align-items:center;gap:4px;
     white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .live-card .lc-cat svg{width:10px;height:10px;fill:var(--accent-2);flex-shrink:0;opacity:.8}
+  .live-card .lc-cat svg{width:10px;height:10px;fill:var(--accent-2);
+    flex-shrink:0;opacity:.8}
   .live-card .lc-badge{display:flex;align-items:center;gap:4px;
     padding:4px 10px;border-radius:100px;font-size:10px;font-weight:800;
     flex-shrink:0;position:relative;z-index:1}
@@ -441,9 +443,9 @@
       <img class="lock-logo" src="https://i.postimg.cc/xT8rcsT1/file-000000008bb4820ebcd371e64fff0469.png" alt="">
     </div>
     <h1 class="lock-title">Alankaboot Sport</h1>
-    <div class="lock-sub online" id="lockSub">
+    <div class="lock-sub" id="lockSub">
       <span class="lock-dot"></span>
-      <span id="lockSubText">متصل - جاهز للتفعيل</span>
+      <span id="lockSubText">نظام التفعيل الآمن</span>
     </div>
     <div class="lock-input-wrap">
       <input type="text" id="codeInput" class="lock-input"
@@ -462,7 +464,7 @@
       </a>
     </div>
     <div class="lock-security">
-      <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10.14 17l6.59-6.59L18 9l-8 8z"/></svg>
+      <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
       <span>اتصال مشفر وآمن</span>
     </div>
   </div>
@@ -494,6 +496,7 @@
       <div class="section-title">الأقسام</div>
       <div class="cats-grid" id="catsGrid"></div>
     </div>
+
     <div id="viewChannels" style="display:none">
       <div class="back-row">
         <button class="back-cat-btn" onclick="backToCategories()">
@@ -504,6 +507,7 @@
       <div class="section-title" id="catTitle">قنوات القسم</div>
       <div class="channels-grid" id="channelsGrid"></div>
     </div>
+
     <div id="viewLive" style="display:none">
       <div class="back-row">
         <button class="back-cat-btn" onclick="navHome()">
@@ -584,6 +588,11 @@
     } catch(e){}
   })();
 
+  try {
+    localStorage.removeItem('alankaboot_session_v1');
+    sessionStorage.removeItem('alankaboot_session_v1');
+  } catch(e){}
+
   const PROXY_BASE = 'https://alankaboot-proxy.kamlnot61.workers.dev';
   const tokenToUrl = t => PROXY_BASE + '/s?t=' + encodeURIComponent(t);
 
@@ -601,8 +610,6 @@
   const TOPIC_HB    = 'kwtspta_9f3a2b1c/hb';
   const TOPIC_CODES = 'kwtspta_9f3a2b1c/codes';
   const MY_ID = 'v_' + Math.random().toString(36).slice(2,10);
-
-  const CODE_START_KEY = 'alankaboot_code_starts_v4';
 
   const $ = id => document.getElementById(id);
   const lockScreen = $('lockScreen'), app = $('app');
@@ -633,22 +640,6 @@
 
   const ICON_DESKTOP = 'M21 2H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h7v2H8v2h8v-2h-2v-2h7c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H3V4h18v12z';
   const ICON_PHONE   = 'M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z';
-
-  function loadCodeStarts(){
-    try { return JSON.parse(localStorage.getItem(CODE_START_KEY) || '{}'); }
-    catch(e){ return {}; }
-  }
-  function getCodeStart(code){
-    const m = loadCodeStarts();
-    return m[code] || null;
-  }
-  function setCodeStart(code, ts){
-    try {
-      const m = loadCodeStarts();
-      m[code] = ts;
-      localStorage.setItem(CODE_START_KEY, JSON.stringify(m));
-    } catch(e){}
-  }
 
   function showToast(msg){
     toast.textContent = msg;
@@ -701,12 +692,16 @@
       setLockMsg('🔌 جاري الاتصال بالسيرفر...','info');
       return;
     }
+
     setLockBtnLoading(true);
     setLockMsg('🔐 جاري التحقق من الكود...','info');
 
     setTimeout(()=>{
-      if(!codesLoaded){ setTimeout(()=> runCodeCheck(code), 1500); }
-      else { runCodeCheck(code); }
+      if(!codesLoaded){
+        setTimeout(()=> runCodeCheck(code), 1500);
+      } else {
+        runCodeCheck(code);
+      }
     }, 400);
   }
 
@@ -723,63 +718,28 @@
       return;
     }
 
+    /* ✅ دعم الدقائق: durationMin لو موجود، وإلا duration * 60 (توافق مع الأكواد القديمة) */
     const durationMinutes = Number(found.durationMin)
       || (Number(found.duration) * 60)
       || 1440;
     const durationMs = durationMinutes * 60 * 1000;
     const now = Date.now();
 
-    let startedAt = getCodeStart(code);
-    const isFirstTime = !startedAt;
-
-    if(isFirstTime){
-      startedAt = now;
-      setCodeStart(code, startedAt);
-    }
-
-    const expiresAt = startedAt + durationMs;
-    const remain = expiresAt - now;
-
-    if(remain <= 0){
-      setLockBtnLoading(false);
-      const passedMin = Math.floor((now - startedAt) / 60000);
-      const passedTxt = passedMin >= 60
-        ? Math.floor(passedMin/60) + ' ساعة و ' + (passedMin%60) + ' دقيقة'
-        : passedMin + ' دقيقة';
-      setLockMsg('⏰ انتهت مدة هذا الكود (مرّ عليه ' + passedTxt + ')<br>اطلب كود جديد من تيليجرام', 'err');
-      codeInput.classList.add('err');
-      setTimeout(()=> codeInput.classList.remove('err'), 1200);
-      return;
-    }
-
+    /* ⏰ الجلسة بتشتغل بالوقت الحقيقي — بتخلص حتى لو التطبيق مقفول */
     userSession = {
       code: code,
-      startedAt: startedAt,
-      expiresAt: expiresAt,
+      activatedAt: now,
+      expiresAt: now + durationMs,
       durationMinutes: durationMinutes
     };
 
-    const remainMin = Math.floor(remain / 60000);
-    const remainSec = Math.floor((remain % 60000) / 1000);
-
-    let remainTxt;
-    if(remainMin >= 60){
-      const h = Math.floor(remainMin / 60);
-      const m = remainMin % 60;
-      remainTxt = h + ' ساعة' + (m > 0 ? ' و ' + m + ' دقيقة' : '');
-    } else if(remainMin >= 1){
-      remainTxt = remainMin + ' دقيقة' + (remainSec > 0 ? ' و ' + remainSec + ' ثانية' : '');
-    } else {
-      remainTxt = remainSec + ' ثانية';
-    }
-
-    const prefix = isFirstTime ? '✅ تم التفعيل! ' : '✅ الكود صالح! ';
-    setLockMsg(prefix + 'باقي ' + remainTxt, 'ok');
+    codeInput.classList.add('ok');
+    setLockMsg('✅ تم التفعيل بنجاح! جاري فتح التطبيق...','ok');
 
     setTimeout(()=>{
       setLockBtnLoading(false);
       openApp();
-    }, 900);
+    }, 700);
   }
 
   function setLockBtnLoading(on){
@@ -795,7 +755,7 @@
   }
 
   function setLockMsg(msg, type){
-    lockMsg.innerHTML = msg;
+    lockMsg.textContent = msg;
     lockMsg.className = 'lock-msg ' + (type || '');
   }
 
@@ -803,7 +763,6 @@
     lockScreen.classList.add('hide');
     setTimeout(()=>{
       lockScreen.style.display = 'none';
-      app.style.display = 'block';
       app.classList.add('show');
       bottomNav.style.display = 'flex';
       startExpiryMonitor();
@@ -893,7 +852,9 @@
     client.publish(TOPIC_HB, JSON.stringify({id:MY_ID}));
     setInterval(()=> client.publish(TOPIC_HB, JSON.stringify({id:MY_ID})), 5000);
 
-    setTimeout(()=>{ if(!codesLoaded) codesLoaded = true; }, 3000);
+    setTimeout(()=>{
+      if(!codesLoaded){ codesLoaded = true; }
+    }, 3000);
   });
 
   client.on('offline', ()=>{
@@ -922,7 +883,9 @@
           const stillValid = activationCodes.some(c =>
             String(c.code||'').toUpperCase() === userSession.code && c.active !== false
           );
-          if(!stillValid){ lockUser('❌ تم إلغاء الكود من قِبل الإدارة'); }
+          if(!stillValid){
+            lockUser('❌ تم إلغاء الكود من قِبل الإدارة');
+          }
         }
         return;
       }
