@@ -130,11 +130,15 @@
     transition:transform .15s;display:flex;align-items:center;justify-content:center;gap:8px}
   .lock-btn:active{transform:scale(.97)}
   .lock-btn:disabled{opacity:.6;cursor:not-allowed}
+  .lock-btn.loading{background:linear-gradient(180deg,#8a1f28,#6b0a15)}
   .lock-btn svg{width:17px;height:17px;fill:#fff}
+  .lock-btn .spinner-mini{width:15px;height:15px;border:2px solid rgba(255,255,255,.3);
+    border-top-color:#fff;border-radius:50%;animation:spinRing .6s linear infinite}
   .lock-msg{margin-top:14px;font-size:13px;font-weight:700;min-height:20px;line-height:1.6}
   .lock-msg.err{color:#f87171}
   .lock-msg.ok{color:#4ade80}
   .lock-msg.info{color:#93b8f5}
+  .lock-msg.warn{color:#fbbf24}
   .lock-footer{margin-top:22px;padding-top:18px;
     border-top:1px solid rgba(255,255,255,.06);
     display:flex;justify-content:center}
@@ -622,11 +626,6 @@
   let currentCatIndex = -1, isStreamViewOpen = false;
   let isDesktopMode = false;
 
-  /* ============================================================
-     💾 التخزين المحلي
-     - CODES_CACHE_KEY : كل الأكواد اللي جاية من السيرفر
-     - ACTIVATED_KEY   : الأكواد اللي المستخدم فعّلها قبل كده + وقت انتهائها
-     ============================================================ */
   function loadCachedCodes(){
     try {
       const c = JSON.parse(localStorage.getItem(CODES_CACHE_KEY) || '[]');
@@ -647,12 +646,11 @@
   }
 
   let activationCodes = loadCachedCodes();
-  let codesLoaded = activationCodes.length > 0;
   let mqttConnected = false;
   let userSession = null;
   let expiryTimer = null;
   let pendingCode = null;
-  let pendingTimeout = null;
+  let pollInterval = null;
 
   const ICON_DESKTOP = 'M21 2H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h7v2H8v2h8v-2h-2v-2h7c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H3V4h18v12z';
   const ICON_PHONE   = 'M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z';
@@ -689,7 +687,8 @@
     e.target.classList.remove('err','ok');
     lockMsg.className = 'lock-msg';
     lockMsg.textContent = '';
-    if(pendingTimeout){ clearTimeout(pendingTimeout); pendingTimeout = null; }
+    /* ❌ إلغاء أي فحص معلق */
+    if(pollInterval){ clearInterval(pollInterval); pollInterval = null; }
     pendingCode = null;
   });
   codeInput.addEventListener('keypress', e=>{
@@ -707,37 +706,22 @@
     }
     const code = raw.slice(0,4) + '-' + raw.slice(4);
 
-    /* ✅ 1) شوف الأول: هل الكود ده اتفتح قبل كده؟ → يفتح فورًا بدون أي انتظار */
+    /* ✅ 1) الكود اتفتح قبل كده → فتح فوري */
     const activated = loadActivated();
     if(activated[code]){
       const expiresAt = activated[code].expiresAt;
       if(expiresAt && Date.now() < expiresAt){
-        /* ✅ لسه فيه وقت → افتح فورًا */
+        const remain = expiresAt - Date.now();
         userSession = {
           code: code,
           startedAt: activated[code].startedAt,
           expiresAt: expiresAt,
           durationMinutes: activated[code].durationMin
         };
-        const remain = expiresAt - Date.now();
-        const remainMin = Math.floor(remain / 60000);
-        const remainSec = Math.floor((remain % 60000) / 1000);
-        let txt;
-        if(remainMin >= 60){
-          const h = Math.floor(remainMin/60);
-          const m = remainMin % 60;
-          txt = h + ' ساعة' + (m > 0 ? ' و ' + m + ' دقيقة' : '');
-        } else if(remainMin >= 1){
-          txt = remainMin + ' دقيقة' + (remainSec > 0 ? ' و ' + remainSec + ' ثانية' : '');
-        } else {
-          txt = remainSec + ' ثانية';
-        }
-        codeInput.classList.add('ok');
-        setLockMsg('✅ الكود صالح! باقي ' + txt, 'ok');
-        setTimeout(()=> openApp(), 250);
+        setLockMsg('✅ الكود صالح! باقي ' + fmtDuration(remain), 'ok');
+        setTimeout(()=> openApp(), 150);
         return;
       } else {
-        /* ⏰ انتهى فعلاً */
         setLockMsg('⏰ انتهت مدة هذا الكود — اطلب كود جديد من تيليجرام','err');
         codeInput.classList.add('err');
         setTimeout(()=> codeInput.classList.remove('err'), 1200);
@@ -745,30 +729,55 @@
       }
     }
 
-    /* ✅ 2) شوف في كاش الأكواد (اللي جاية من السيرفر) */
+    /* ✅ 2) دور في كاش الأكواد */
     const found = activationCodes.find(c =>
       String(c.code||'').toUpperCase() === code && c.active !== false
     );
-
     if(found){
-      /* الكود موجود → ابدأ الجلسة واحفظها محليًا */
       activateAndCache(code, found);
       return;
     }
 
-    /* ⏳ 3) مش موجود في أي مكان → استنى السيرفر بسرعة */
+    /* ⏳ 3) مش موجود → دور كل 500ms لحد 20 ثانية */
     pendingCode = code;
-    setLockMsg('🔐 جاري التحقق...','info');
+    setLockBtnLoading(true);
+    setLockMsg('🔐 جاري التحقق من السيرفر...','info');
 
-    if(pendingTimeout) clearTimeout(pendingTimeout);
-    pendingTimeout = setTimeout(()=>{
-      if(pendingCode === code){
-        pendingCode = null;
-        setLockMsg('❌ الكود غير موجود، تأكد منه','err');
-        codeInput.classList.add('err');
-        setTimeout(()=> codeInput.classList.remove('err'), 800);
+    if(pollInterval){ clearInterval(pollInterval); }
+    let pollCount = 0;
+    pollInterval = setInterval(()=>{
+      if(pendingCode !== code){
+        clearInterval(pollInterval);
+        pollInterval = null;
+        return;
       }
-    }, 5000);
+      pollCount++;
+
+      /* كل دورة: دور في الكاش */
+      const f = activationCodes.find(c =>
+        String(c.code||'').toUpperCase() === code && c.active !== false
+      );
+      if(f){
+        clearInterval(pollInterval);
+        pollInterval = null;
+        pendingCode = null;
+        activateAndCache(code, f);
+        return;
+      }
+
+      /* لو عدا 20 ثانية → وقف واظهر خطأ */
+      if(pollCount >= 40){
+        clearInterval(pollInterval);
+        pollInterval = null;
+        if(pendingCode === code){
+          pendingCode = null;
+          setLockBtnLoading(false);
+          setLockMsg('❌ الكود غير موجود، تأكد منه أو اطلب كود جديد','err');
+          codeInput.classList.add('err');
+          setTimeout(()=> codeInput.classList.remove('err'), 900);
+        }
+      }
+    }, 500);
   }
 
   /* 💾 تفعيل + تخزين محلي */
@@ -780,11 +789,9 @@
     const now = Date.now();
 
     const activated = loadActivated();
-    /* لو الكود موجود قبل كده → كمّل من نفس البداية */
     const startedAt = activated[code] ? activated[code].startedAt : now;
     const expiresAt = startedAt + durationMs;
 
-    /* احفظ في التخزين */
     activated[code] = { startedAt, expiresAt, durationMin: durationMinutes };
     saveActivated(activated);
 
@@ -803,22 +810,31 @@
       return;
     }
 
-    const remainMin = Math.floor(remain / 60000);
-    const remainSec = Math.floor((remain % 60000) / 1000);
-    let txt;
-    if(remainMin >= 60){
-      const h = Math.floor(remainMin/60);
-      const m = remainMin % 60;
-      txt = h + ' ساعة' + (m > 0 ? ' و ' + m + ' دقيقة' : '');
-    } else if(remainMin >= 1){
-      txt = remainMin + ' دقيقة' + (remainSec > 0 ? ' و ' + remainSec + ' ثانية' : '');
-    } else {
-      txt = remainSec + ' ثانية';
-    }
-
     codeInput.classList.add('ok');
-    setLockMsg('✅ تم التفعيل! باقي ' + txt, 'ok');
+    setLockMsg('✅ تم التفعيل! باقي ' + fmtDuration(remain), 'ok');
     setTimeout(()=> openApp(), 350);
+  }
+
+  function fmtDuration(ms){
+    const totalSec = Math.floor(ms / 1000);
+    const d = Math.floor(totalSec / 86400);
+    const h = Math.floor((totalSec % 86400) / 3600);
+    const m = Math.floor((totalSec % 3600) / 60);
+    const s = totalSec % 60;
+    if(d > 0) return d + ' يوم و ' + h + ' ساعة';
+    if(h > 0) return h + ' ساعة' + (m > 0 ? ' و ' + m + ' دقيقة' : '');
+    if(m > 0) return m + ' دقيقة' + (s > 0 ? ' و ' + s + ' ثانية' : '');
+    return s + ' ثانية';
+  }
+
+  function setLockBtnLoading(on){
+    if(on){
+      activateBtn.disabled = true;
+      activateBtn.innerHTML = '<div class="spinner-mini"></div><span>جاري التحقق...</span>';
+    } else {
+      activateBtn.disabled = false;
+      activateBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm3 12c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/></svg><span>تفعيل الكود</span>';
+    }
   }
 
   function setLockMsg(msg, type){
@@ -835,7 +851,7 @@
       bottomNav.style.display = 'flex';
       startExpiryMonitor();
       updateSessionChip();
-    }, 300);
+    }, 250);
   }
 
   function lockUser(reason){
@@ -864,7 +880,6 @@
       if(!userSession) return;
       const remain = userSession.expiresAt - Date.now();
       if(remain <= 0){
-        /* علّم الكود كمستخدم ومنتهي */
         lockUser('⏰ انتهت مدة الكود، يرجى إدخال كود جديد');
         return;
       }
@@ -908,7 +923,6 @@
     }
   });
 
-  /* ⚡ اتصال MQTT */
   const client = mqtt.connect(BROKER, {
     clientId: MY_ID,
     clean: true,
@@ -929,29 +943,8 @@
 
     client.publish(TOPIC_HB, JSON.stringify({id:MY_ID}));
     setInterval(()=> client.publish(TOPIC_HB, JSON.stringify({id:MY_ID})), 5000);
-
-    /* لو فيه كود معلّق → افحصه */
-    if(pendingCode){
-      setTimeout(()=>{
-        if(pendingCode){
-          const pc = pendingCode;
-          pendingCode = null;
-          if(pendingTimeout){ clearTimeout(pendingTimeout); pendingTimeout = null; }
-          const f = activationCodes.find(c =>
-            String(c.code||'').toUpperCase() === pc && c.active !== false
-          );
-          if(f) activateAndCache(pc, f);
-          else {
-            setLockMsg('❌ الكود غير موجود، تأكد منه','err');
-            codeInput.classList.add('err');
-            setTimeout(()=> codeInput.classList.remove('err'), 800);
-          }
-        }
-      }, 500);
-    }
   });
 
-  /* ❌ مفيش رسائل "جاري إعادة الاتصال" — عشان ما تزعجش المستخدم */
   client.on('offline', ()=>{ mqttConnected = false; });
   client.on('reconnect', ()=>{ mqttConnected = false; });
   client.on('error', ()=>{ mqttConnected = false; });
@@ -961,9 +954,11 @@
       const data = JSON.parse(msg.toString());
 
       if(topic === TOPIC_CODES){
-        activationCodes = Array.isArray(data) ? data : [];
-        codesLoaded = true;
-        saveCachedCodes(activationCodes);
+        /* 🛡️ تحقق إنها مصفوفة قبل الحفظ */
+        if(Array.isArray(data)){
+          activationCodes = data;
+          saveCachedCodes(activationCodes);
+        }
 
         if(userSession){
           const stillValid = activationCodes.some(c =>
@@ -971,22 +966,7 @@
           );
           if(!stillValid){ lockUser('❌ تم إلغاء الكود من قِبل الإدارة'); }
         }
-
-        /* لو فيه كود معلّق → افحصه فورًا */
-        if(pendingCode){
-          const pc = pendingCode;
-          pendingCode = null;
-          if(pendingTimeout){ clearTimeout(pendingTimeout); pendingTimeout = null; }
-          const f = activationCodes.find(c =>
-            String(c.code||'').toUpperCase() === pc && c.active !== false
-          );
-          if(f) activateAndCache(pc, f);
-          else {
-            setLockMsg('❌ الكود غير موجود، تأكد منه','err');
-            codeInput.classList.add('err');
-            setTimeout(()=> codeInput.classList.remove('err'), 800);
-          }
-        }
+        /* ملاحظة: مفيش فحص فوري لـ pendingCode هنا — الفحص بيتم كل 500ms في polling */
         return;
       }
 
