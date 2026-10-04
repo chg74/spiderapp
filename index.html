@@ -384,6 +384,19 @@
   .back-btn:active{background:var(--accent);border-color:var(--accent);
     box-shadow:0 6px 20px var(--accent-glow);transform:scale(.95)}
 
+  /* ⭐ زر وضع الكمبيوتر */
+  .mode-btn{position:absolute;top:calc(var(--safe-top) + 14px);right:14px;z-index:40;
+    background:rgba(10,10,15,.75);color:#fff;border:1px solid rgba(255,255,255,.18);
+    padding:8px 15px;font-size:12.5px;font-family:'Cairo',sans-serif;font-weight:700;
+    border-radius:100px;cursor:pointer;transition:.25s;
+    backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+    display:flex;align-items:center;gap:6px;white-space:nowrap}
+  .mode-btn svg{width:15px;height:15px;fill:currentColor;flex-shrink:0}
+  .mode-btn:active{transform:scale(.95)}
+  .mode-btn.active{background:linear-gradient(180deg,var(--accent-2),var(--accent));
+    border-color:var(--accent);box-shadow:0 6px 20px var(--accent-glow)}
+  .mode-btn.active svg{filter:drop-shadow(0 0 6px rgba(255,255,255,.6))}
+
   .custom-controls{position:absolute;bottom:0;left:0;right:0;z-index:30;
     display:flex;align-items:center;gap:8px;
     padding:16px 14px calc(16px + var(--safe-bottom));
@@ -407,7 +420,7 @@
   .placeholder svg{width:48px;height:48px;fill:#2a2a34;opacity:.7}
   .placeholder span{font-size:13px;font-weight:600}
 
-  /* ============ Rotation ============ */
+  /* ============ Rotation (وضع الهاتف) ============ */
   .player-box.rotate-css .video-aspect{
     position:fixed !important;inset:0 !important;
     width:100% !important;height:100% !important;
@@ -428,6 +441,31 @@
     transform:rotate(90deg);
     transform-origin:center center;
   }
+
+  /* ⭐⭐⭐ وضع الكمبيوتر / الشاشات الكبيرة ⭐⭐⭐ */
+  .player-box.desktop-mode .video-aspect,
+  .player-box.desktop-mode.rotate-css .video-aspect{
+    position:fixed !important;inset:0 !important;
+    width:100% !important;height:100% !important;
+    max-width:none !important;aspect-ratio:auto !important;
+    overflow:hidden !important;background:#000 !important;
+    z-index:5;
+  }
+  .player-box.desktop-mode video,
+  .player-box.desktop-mode.rotate-css video{
+    position:absolute !important;
+    top:0 !important;left:0 !important;
+    width:100% !important;height:100% !important;
+    max-width:none !important;max-height:none !important;
+    transform:none !important;
+    transform-origin:center center !important;
+    object-fit:contain !important;
+  }
+  .player-box.desktop-mode .stream-loader,
+  .player-box.desktop-mode.rotate-css .stream-loader{
+    transform:none !important;
+  }
+  .player-box.desktop-mode .placeholder{z-index:6}
 
   .toast{position:fixed;bottom:calc(90px + var(--safe-bottom));left:50%;transform:translateX(-50%) translateY(10px);background:linear-gradient(180deg,var(--accent-2),var(--accent));color:#fff;padding:11px 22px;border-radius:100px;font-weight:700;font-size:12.5px;z-index:999999;opacity:0;transition:.35s cubic-bezier(.34,1.56,.64,1);box-shadow:0 12px 32px var(--accent-glow),inset 0 1px 0 rgba(255,255,255,.2);pointer-events:none;font-family:'Cairo',sans-serif;white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -577,6 +615,12 @@
         رجوع
       </button>
 
+      <!-- ⭐ زر وضع الكمبيوتر -->
+      <button class="mode-btn" id="modeBtn" onclick="toggleDesktopMode()">
+        <svg id="modeIcon" viewBox="0 0 24 24"><path d="M21 2H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h7v2H8v2h8v-2h-2v-2h7c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H3V4h18v12z"/></svg>
+        <span id="modeText">وضع الكمبيوتر</span>
+      </button>
+
       <div class="custom-controls" id="customControls">
         <button class="ctrl-btn" onclick="togglePlay()">
           <svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
@@ -626,9 +670,16 @@
   const toast = $('toast');
   const bottomNav = $('bottomNav');
   const streamLoader = $('streamLoader');
+  const modeBtn = $('modeBtn'), modeText = $('modeText'), modeIcon = $('modeIcon');
 
   let hls = null, currentChannelId = null, categoriesData = [];
   let currentCatIndex = -1, isStreamViewOpen = false;
+
+  /* ⭐ حالة وضع الكمبيوتر — افتراضياً مقفول (وضع الهاتف) */
+  let isDesktopMode = false;
+
+  const ICON_DESKTOP = 'M21 2H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h7v2H8v2h8v-2h-2v-2h7c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H3V4h18v12z';
+  const ICON_PHONE   = 'M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z';
 
   function showToast(msg){
     toast.textContent = msg;
@@ -862,12 +913,18 @@
     autoRotateAndFS();
   }
 
+  /* ================== وضع الشاشة ================== */
   function autoRotateAndFS(){
+    /* ⭐ لو وضع الكمبيوتر مفعّل: شاشة كاملة أفقية عادية بدون دوران */
+    if(isDesktopMode){
+      playerBox.classList.add('desktop-mode');
+      playerBox.classList.remove('rotate-css');
+      enterFullscreen();
+      return;
+    }
+    /* وضع الهاتف (الافتراضي) زي ما كان */
     playerBox.classList.add('rotate-css');
-    try {
-      if (playerBox.requestFullscreen) playerBox.requestFullscreen().catch(()=>{});
-      else if (playerBox.webkitRequestFullscreen) playerBox.webkitRequestFullscreen();
-    } catch(e){}
+    enterFullscreen();
     setTimeout(()=>{
       try {
         if (screen.orientation && screen.orientation.lock) {
@@ -883,6 +940,14 @@
     }, 200);
   }
 
+  function enterFullscreen(){
+    try {
+      if (document.fullscreenElement || document.webkitFullscreenElement) return;
+      if (playerBox.requestFullscreen) playerBox.requestFullscreen().catch(()=>{});
+      else if (playerBox.webkitRequestFullscreen) playerBox.webkitRequestFullscreen();
+    } catch(e){}
+  }
+
   function exitFsSafe(){
     playerBox.classList.remove('rotate-css');
     try {
@@ -896,6 +961,64 @@
       else if (screen.unlockOrientation) screen.unlockOrientation();
     } catch(e){}
   }
+
+  /* ⭐⭐⭐ دالة زر وضع الكمبيوتر ⭐⭐⭐ */
+  function toggleDesktopMode(){
+    isDesktopMode = !isDesktopMode;
+
+    if(isDesktopMode){
+      /* تفعيل وضع الكمبيوتر */
+      playerBox.classList.add('desktop-mode');
+      playerBox.classList.remove('rotate-css');   /* نشيل الدوران */
+      modeBtn.classList.add('active');
+      modeText.textContent = 'وضع الهاتف';
+      modeIcon.innerHTML = '<path d="'+ICON_PHONE+'"/>';
+
+      try {
+        if (screen.orientation && screen.orientation.unlock) screen.orientation.unlock();
+      } catch(e){}
+
+      enterFullscreen();
+      resetHideTimer();
+      showToast('تم تفعيل وضع الكمبيوتر 🖥️');
+    } else {
+      /* إلغاء وضع الكمبيوتر */
+      playerBox.classList.remove('desktop-mode');
+      modeBtn.classList.remove('active');
+      modeText.textContent = 'وضع للشاشات';
+      modeIcon.innerHTML = '<path d="'+ICON_DESKTOP+'"/>';
+
+      showToast('تم إلغاء الوضع');
+
+      /* نرجّع وضع الهاتف: دوران + قفل الشاشة أفقي */
+      if(isStreamViewOpen){
+        playerBox.classList.add('rotate-css');
+        try {
+          if (screen.orientation && screen.orientation.lock) {
+            screen.orientation.lock('landscape').catch(()=>{});
+          } else if (screen.lockOrientation) {
+            screen.lockOrientation('landscape');
+          } else if (screen.mozLockOrientation) {
+            screen.mozLockOrientation('landscape');
+          } else if (screen.msLockOrientation) {
+            screen.msLockOrientation('landscape');
+          }
+        } catch(e){}
+        enterFullscreen();
+      }
+      resetHideTimer();
+    }
+  }
+
+  /* لو المستخدم خرج من الفول سكرين بزر ESC وهو في وضع الكمبيوتر */
+  function onFsChange(){
+    const fsEl = document.fullscreenElement || document.webkitFullscreenElement;
+    if(!fsEl && isStreamViewOpen && isDesktopMode){
+      /* نسيبه في وضع الكمبيوتر لكن الفيديو لسه بيملأ الشاشة بالـ CSS */
+    }
+  }
+  document.addEventListener('fullscreenchange', onFsChange);
+  document.addEventListener('webkitfullscreenchange', onFsChange);
 
   window.addEventListener('popstate', function() {
     if (isStreamViewOpen) closeStreamUI();
@@ -1042,6 +1165,7 @@
   playerBox.addEventListener('click', (e) => {
     if (customControls.contains(e.target)) { resetHideTimer(); return; }
     if (e.target.closest('.back-btn')) return;
+    if (e.target.closest('.mode-btn')) return;   /* ⭐ ما يتلغبطش مع زر الوضع */
     if (isDraggingSeek) return;
     if (controlsVisible) hideControls();
     else showControls();
@@ -1050,6 +1174,7 @@
   playerBox.addEventListener('touchstart', (e) => {
     if (customControls.contains(e.target)) { resetHideTimer(); return; }
     if (e.target.closest('.back-btn')) return;
+    if (e.target.closest('.mode-btn')) return;   /* ⭐ ما يتلغبطش مع زر الوضع */
     if (isDraggingSeek) return;
     if (controlsVisible) hideControls();
     else showControls();
