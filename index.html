@@ -14,7 +14,8 @@
 <style>
   *{box-sizing:border-box;font-family:'Cairo',sans-serif;margin:0;padding:0;
     -webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;
-    touch-action:manipulation;-webkit-font-smoothing:antialiased;text-rendering:optimizeSpeed}
+    touch-action:manipulation;-webkit-font-smoothing:antialiased;
+    text-rendering:optimizeSpeed}
   :root{
     --bg:#0a0a0f;--card:rgba(255,255,255,0.04);--card-2:rgba(255,255,255,0.07);
     --border:rgba(255,255,255,0.08);--border-hi:rgba(255,255,255,0.14);
@@ -55,7 +56,7 @@
       radial-gradient(ellipse at 25% 15%, rgba(225,29,46,.30), transparent 55%),
       radial-gradient(ellipse at 75% 85%, rgba(139,92,246,.25), transparent 55%),
       #05050a;
-    overflow:hidden;transition:opacity .4s ease}
+    overflow:hidden;transition:opacity .5s ease}
   #lockScreen.hide{opacity:0;pointer-events:none}
   .lock-orb{position:absolute;border-radius:50%;filter:blur(60px);opacity:.5;
     pointer-events:none;will-change:transform;transform:translate3d(0,0,0)}
@@ -106,8 +107,8 @@
   .lock-sub .lock-dot{width:7px;height:7px;border-radius:50%;
     background:var(--accent-2);box-shadow:0 0 10px var(--accent-glow);
     animation:blink 1.4s infinite}
-  .lock-sub.online .lock-dot{background:#22c55e;box-shadow:0 0 10px rgba(34,197,94,.7);
-    animation:none}
+  .lock-sub.online .lock-dot{background:#22c55e;box-shadow:0 0 10px rgba(34,197,94,.7)}
+  .lock-sub.offline .lock-dot{background:#f59e0b;box-shadow:0 0 10px rgba(245,158,11,.7)}
   @keyframes blink{50%{opacity:.35}}
   .lock-input-wrap{position:relative;margin-bottom:14px}
   .lock-input{width:100%;background:rgba(0,0,0,.45);
@@ -134,11 +135,10 @@
   .lock-btn svg{width:17px;height:17px;fill:#fff}
   .lock-btn .spinner-mini{width:15px;height:15px;border:2px solid rgba(255,255,255,.3);
     border-top-color:#fff;border-radius:50%;animation:spinRing .6s linear infinite}
-  .lock-msg{margin-top:14px;font-size:13px;font-weight:700;min-height:20px;line-height:1.6}
+  .lock-msg{margin-top:14px;font-size:12.5px;font-weight:700;min-height:20px;line-height:1.5}
   .lock-msg.err{color:#f87171}
   .lock-msg.ok{color:#4ade80}
   .lock-msg.info{color:#93b8f5}
-  .lock-msg.warn{color:#fbbf24}
   .lock-footer{margin-top:22px;padding-top:18px;
     border-top:1px solid rgba(255,255,255,.06);
     display:flex;justify-content:center}
@@ -152,7 +152,7 @@
   .lock-security{margin-top:14px;display:flex;align-items:center;justify-content:center;
     gap:6px;color:rgba(255,255,255,.35);font-size:10.5px;font-weight:600}
   .lock-security svg{width:12px;height:12px;fill:currentColor;opacity:.7}
-  #app{display:none;opacity:0;transition:opacity .3s;min-height:100vh;
+  #app{display:none;opacity:0;transition:opacity .5s;min-height:100vh;
     padding-top:calc(var(--safe-top) + 12px);
     padding-bottom:calc(96px + var(--safe-bottom));position:relative;z-index:1}
   #app.show{display:block;opacity:1}
@@ -247,11 +247,13 @@
     border:1px solid var(--border);position:relative;z-index:1}
   .live-card .lc-info{flex:1;min-width:0;text-align:right;position:relative;z-index:1}
   .live-card .lc-name{color:#fff;font-weight:800;font-size:13px;
-    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px}
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    margin-bottom:2px}
   .live-card .lc-cat{color:var(--text-dim);font-size:10px;font-weight:600;
     display:flex;align-items:center;gap:4px;
     white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .live-card .lc-cat svg{width:10px;height:10px;fill:var(--accent-2);flex-shrink:0;opacity:.8}
+  .live-card .lc-cat svg{width:10px;height:10px;fill:var(--accent-2);
+    flex-shrink:0;opacity:.8}
   .live-card .lc-badge{display:flex;align-items:center;gap:4px;
     padding:4px 10px;border-radius:100px;font-size:10px;font-weight:800;
     flex-shrink:0;position:relative;z-index:1}
@@ -494,6 +496,7 @@
       <div class="section-title">الأقسام</div>
       <div class="cats-grid" id="catsGrid"></div>
     </div>
+
     <div id="viewChannels" style="display:none">
       <div class="back-row">
         <button class="back-cat-btn" onclick="backToCategories()">
@@ -504,6 +507,7 @@
       <div class="section-title" id="catTitle">قنوات القسم</div>
       <div class="channels-grid" id="channelsGrid"></div>
     </div>
+
     <div id="viewLive" style="display:none">
       <div class="back-row">
         <button class="back-cat-btn" onclick="navHome()">
@@ -600,9 +604,9 @@
   const TOPIC_DATA  = 'kwtspta_9f3a2b1c/data';
   const TOPIC_HB    = 'kwtspta_9f3a2b1c/hb';
   const TOPIC_CODES = 'kwtspta_9f3a2b1c/codes';
-  const TOPIC_REQ   = 'kwtspta_9f3a2b1c/req'; // 📤 طلب الأكواد من الأدمن
   const MY_ID = 'v_' + Math.random().toString(36).slice(2,10);
 
+  /* ⚡ مفاتيح التخزين المحلي */
   const CODES_CACHE_KEY = 'alankaboot_codes_cache_v1';
   const ACTIVATED_KEY   = 'alankaboot_activated_v1';
 
@@ -627,6 +631,7 @@
   let currentCatIndex = -1, isStreamViewOpen = false;
   let isDesktopMode = false;
 
+  /* ⚡ تحميل فوري من الكاش */
   function loadCachedCodes(){
     try {
       const c = JSON.parse(localStorage.getItem(CODES_CACHE_KEY) || '[]');
@@ -647,6 +652,7 @@
   }
 
   let activationCodes = loadCachedCodes();
+  let codesLoaded = activationCodes.length > 0;
   let mqttConnected = false;
   let userSession = null;
   let expiryTimer = null;
@@ -695,16 +701,7 @@
     if(e.key === 'Enter') submitActivationCode();
   });
 
-  /* ⚡ طلب الأكواد من الأدمن */
-  function requestCodesFromAdmin(){
-    try {
-      if(client && mqttConnected){
-        client.publish(TOPIC_REQ, JSON.stringify({ id: MY_ID, ts: Date.now() }), {qos:0});
-      }
-    } catch(e){}
-  }
-
-  /* ⚡⚡ الدالة الأساسية */
+  /* ⚡⚡ التحقق الفوري */
   function submitActivationCode(){
     const raw = codeInput.value.replace(/[^A-Za-z0-9]/g,'').toUpperCase();
     if(raw.length !== 8){
@@ -715,7 +712,7 @@
     }
     const code = raw.slice(0,4) + '-' + raw.slice(4);
 
-    /* 1) اتحقق من المفتوحات قبل كده */
+    /* ✅ 1) الكود اتحفظ قبل كده → افتح فورًا */
     const activated = loadActivated();
     if(activated[code]){
       const expiresAt = activated[code].expiresAt;
@@ -738,7 +735,7 @@
       }
     }
 
-    /* 2) دور في الكاش */
+    /* ✅ 2) موجود في كاش الأكواد → افتح فورًا */
     const found = activationCodes.find(c =>
       String(c.code||'').toUpperCase() === code && c.active !== false
     );
@@ -747,15 +744,13 @@
       return;
     }
 
-    /* 3) اطلب من الأدمن + استنى */
+    /* ⏳ 3) مش موجود → استنى السيرفر (بدون رسائل انتظار طويلة) */
     pendingCode = code;
     setLockBtnLoading(true);
-    setLockMsg('📤 جاري طلب الكود من السيرفر...','info');
-    requestCodesFromAdmin();
+    setLockMsg('🔐 جاري التحقق...','info');
 
     if(pollInterval) clearInterval(pollInterval);
     let pollCount = 0;
-    let requestCount = 0;
     pollInterval = setInterval(()=>{
       if(pendingCode !== code){
         clearInterval(pollInterval);
@@ -764,13 +759,6 @@
       }
       pollCount++;
 
-      /* كل 2 ثانية: أعد الطلب من الأدمن */
-      if(pollCount % 4 === 0 && requestCount < 5){
-        requestCount++;
-        requestCodesFromAdmin();
-      }
-
-      /* دور كل 500ms */
       const f = activationCodes.find(c =>
         String(c.code||'').toUpperCase() === code && c.active !== false
       );
@@ -782,21 +770,22 @@
         return;
       }
 
-      /* بعد 20 ثانية → فشل */
-      if(pollCount >= 40){
+      /* 15 ثانية كحد أقصى */
+      if(pollCount >= 30){
         clearInterval(pollInterval);
         pollInterval = null;
         if(pendingCode === code){
           pendingCode = null;
           setLockBtnLoading(false);
-          setLockMsg('❌ الكود غير موجود. تأكد إنك ولّدته من لوحة التحكم وضغطت "توليد الأكواد"','err');
+          setLockMsg('❌ الكود غير موجود، تأكد منه','err');
           codeInput.classList.add('err');
-          setTimeout(()=> codeInput.classList.remove('err'), 1200);
+          setTimeout(()=> codeInput.classList.remove('err'), 900);
         }
       }
     }, 500);
   }
 
+  /* 💾 تفعيل + تخزين البداية في localStorage */
   function activateAndCache(code, found){
     const durationMinutes = Number(found.durationMin)
       || (Number(found.duration) * 60)
@@ -805,6 +794,7 @@
     const now = Date.now();
 
     const activated = loadActivated();
+    /* ⏰ الوقت الحقيقي: لو الكود ده اتفعّل قبل كده يكمّل من نفس البداية */
     const startedAt = activated[code] ? activated[code].startedAt : now;
     const expiresAt = startedAt + durationMs;
 
@@ -846,15 +836,17 @@
   function setLockBtnLoading(on){
     if(on){
       activateBtn.disabled = true;
+      activateBtn.classList.add('loading');
       activateBtn.innerHTML = '<div class="spinner-mini"></div><span>جاري التحقق...</span>';
     } else {
       activateBtn.disabled = false;
+      activateBtn.classList.remove('loading');
       activateBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm3 12c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/></svg><span>تفعيل الكود</span>';
     }
   }
 
   function setLockMsg(msg, type){
-    lockMsg.innerHTML = msg;
+    lockMsg.textContent = msg;
     lockMsg.className = 'lock-msg ' + (type || '');
   }
 
@@ -867,7 +859,7 @@
       bottomNav.style.display = 'flex';
       startExpiryMonitor();
       updateSessionChip();
-    }, 250);
+    }, 300);
   }
 
   function lockUser(reason){
@@ -953,10 +945,9 @@
     lockSub.classList.remove('offline'); lockSub.classList.add('online');
     lockSubText.textContent = 'متصل - جاهز للتفعيل';
 
-    client.subscribe(TOPIC_CMD, {qos:0});
-    client.subscribe(TOPIC_DATA, {qos:0});
-    client.subscribe(TOPIC_CODES, {qos:0});
-
+    client.subscribe(TOPIC_CMD);
+    client.subscribe(TOPIC_DATA);
+    client.subscribe(TOPIC_CODES);
     client.publish(TOPIC_HB, JSON.stringify({id:MY_ID}));
     setInterval(()=> client.publish(TOPIC_HB, JSON.stringify({id:MY_ID})), 5000);
   });
@@ -972,14 +963,18 @@
       if(topic === TOPIC_CODES){
         if(Array.isArray(data)){
           activationCodes = data;
+          codesLoaded = true;
           saveCachedCodes(activationCodes);
         }
         if(userSession){
           const stillValid = activationCodes.some(c =>
             String(c.code||'').toUpperCase() === userSession.code && c.active !== false
           );
-          if(!stillValid){ lockUser('❌ تم إلغاء الكود من قِبل الإدارة'); }
+          if(!stillValid){
+            lockUser('❌ تم إلغاء الكود من قِبل الإدارة');
+          }
         }
+        /* ⚡ لو فيه كود معلّق → الفحص في الـ poll هيلقطه تلقائي */
         return;
       }
 
