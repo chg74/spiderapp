@@ -17,29 +17,21 @@
   :root{
     --bg:#0a0a0f;
     --border:rgba(255,255,255,0.08);
-    --accent:#e11d2e;
-    --accent-2:#ff3b52;
-    --accent-glow:rgba(225,29,46,.45);
-    --purple:#8b5cf6;
-    --green:#22c55e;
-    --green-glow:rgba(34,197,94,.4);
-    --text:#ffffff;
-    --text-dim:#8a8a9a;
+    --accent:#e11d2e;--accent-2:#ff3b52;--accent-glow:rgba(225,29,46,.45);
+    --purple:#8b5cf6;--green:#22c55e;--green-glow:rgba(34,197,94,.4);
+    --text:#ffffff;--text-dim:#8a8a9a;
     --safe-top:env(safe-area-inset-top,0px);
     --safe-bottom:env(safe-area-inset-bottom,0px);
   }
   html,body{overflow-x:hidden;width:100%;position:relative;height:100%}
-  body{background:#0a0a0f;color:var(--text);min-height:100vh;position:relative;
-    overscroll-behavior:none}
+  body{background:#0a0a0f;color:var(--text);min-height:100vh;position:relative;overscroll-behavior:none}
 
-  /* ============ الخلفية الخفيفة ============ */
   .bg-layer{position:fixed;inset:0;z-index:-4;
     background:
       radial-gradient(ellipse 60% 50% at 15% 8%, rgba(225,29,46,.32), transparent 60%),
       radial-gradient(ellipse 55% 45% at 88% 15%, rgba(139,92,246,.28), transparent 60%),
       radial-gradient(ellipse 70% 55% at 50% 98%, rgba(59,130,246,.22), transparent 65%),
       radial-gradient(ellipse 45% 40% at 5% 75%, rgba(6,182,212,.16), transparent 60%),
-      radial-gradient(ellipse 50% 45% at 95% 65%, rgba(245,158,11,.14), transparent 60%),
       #05050a}
   .bg-grid{position:fixed;inset:0;z-index:-2;pointer-events:none;
     background-image:linear-gradient(rgba(255,255,255,.02) 1px,transparent 1px),
@@ -48,30 +40,22 @@
     mask-image:radial-gradient(ellipse at 50% 20%,black 10%,transparent 65%);
     -webkit-mask-image:radial-gradient(ellipse at 50% 20%,black 10%,transparent 65%)}
   .bg-orbs{position:fixed;inset:0;z-index:-2;pointer-events:none;overflow:hidden}
-  .bg-orbs .orb{position:absolute;border-radius:50%;will-change:transform;
-    backface-visibility:hidden;-webkit-backface-visibility:hidden;
-    transform:translate3d(0,0,0)}
+  .bg-orbs .orb{position:absolute;border-radius:50%;will-change:transform;transform:translate3d(0,0,0)}
   .orb1{width:340px;height:340px;top:-110px;left:-110px;
-    background:radial-gradient(circle,
-      rgba(225,29,46,.55) 0%,rgba(225,29,46,.20) 35%,
-      rgba(225,29,46,.06) 55%,transparent 72%);
+    background:radial-gradient(circle,rgba(225,29,46,.55) 0%,rgba(225,29,46,.20) 35%,transparent 72%);
     animation:orb1 24s ease-in-out infinite}
   .orb2{width:360px;height:360px;bottom:-130px;right:-130px;
-    background:radial-gradient(circle,
-      rgba(139,92,246,.50) 0%,rgba(139,92,246,.18) 35%,
-      rgba(139,92,246,.05) 55%,transparent 72%);
+    background:radial-gradient(circle,rgba(139,92,246,.50) 0%,rgba(139,92,246,.18) 35%,transparent 72%);
     animation:orb2 28s ease-in-out infinite}
   .orb3{width:280px;height:280px;top:42%;right:-110px;
-    background:radial-gradient(circle,
-      rgba(59,130,246,.45) 0%,rgba(59,130,246,.15) 35%,
-      rgba(59,130,246,.04) 55%,transparent 72%);
+    background:radial-gradient(circle,rgba(59,130,246,.45) 0%,rgba(59,130,246,.15) 35%,transparent 72%);
     animation:orb3 26s ease-in-out infinite}
   @keyframes orb1{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(60px,50px,0) scale(1.15)}}
   @keyframes orb2{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(-50px,-40px,0) scale(1.12)}}
   @keyframes orb3{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(-40px,42px,0) scale(1.08)}}
   body.stream-open .bg-orbs .orb{animation-play-state:paused;opacity:.9}
 
-  /* ================= Splash ================= */
+  /* Splash */
   #splash{position:fixed;inset:0;background:#05050a;
     display:flex;flex-direction:column;justify-content:center;align-items:center;
     z-index:9999;transition:opacity .8s;overflow:hidden;padding:20px}
@@ -83,119 +67,166 @@
       radial-gradient(ellipse at 50% 50%, rgba(59,130,246,.20), transparent 65%)}
   .splash-rings{position:relative;width:200px;height:200px;
     display:flex;justify-content:center;align-items:center;margin-bottom:30px;z-index:2}
-  .splash-ring{position:absolute;border-radius:50%;border:2.5px solid transparent;will-change:transform}
+  .splash-ring{position:absolute;border-radius:50%;border:2.5px solid transparent}
   .ring1{inset:0;border-top-color:#e11d2e;border-right-color:#e11d2e;animation:spinRing 2.2s linear infinite}
   .ring2{inset:16px;border-bottom-color:#8b5cf6;border-left-color:#8b5cf6;animation:spinRing 2.8s linear infinite reverse}
   .ring3{inset:32px;border-top-color:#3b82f6;border-left-color:#3b82f6;animation:spinRing 1.9s linear infinite}
   @keyframes spinRing{to{transform:rotate(360deg)}}
   .splash-logo{width:96px;height:96px;border-radius:50%;object-fit:contain;padding:12px;
     background:rgba(10,10,15,.85);box-shadow:0 0 40px rgba(225,29,46,.55);position:relative;z-index:3}
-  .splash-brand{color:#fff;font-size:30px;font-weight:900;letter-spacing:-.5px;
-    margin-bottom:8px;text-align:center;z-index:2;position:relative;
+  .splash-brand{color:#fff;font-size:30px;font-weight:900;
+    margin-bottom:8px;text-align:center;position:relative;z-index:2;
     background:linear-gradient(90deg,#fff 0%,#ff6b7a 25%,#fff 50%,#a78bfa 75%,#fff 100%);
     background-size:300% 100%;-webkit-background-clip:text;background-clip:text;
     -webkit-text-fill-color:transparent}
   .splash-tagline{color:rgba(255,255,255,.7);font-size:13px;font-weight:600;
-    margin-bottom:38px;letter-spacing:.4px;z-index:2;position:relative;
-    display:flex;align-items:center;gap:8px}
-  .splash-tagline .dot{width:6px;height:6px;border-radius:50%;background:var(--accent-2);
-    box-shadow:0 0 10px var(--accent-glow);animation:blink 1.2s infinite}
+    margin-bottom:38px;position:relative;z-index:2;display:flex;align-items:center;gap:8px}
+  .splash-tagline .dot{width:6px;height:6px;border-radius:50%;background:var(--accent-2);animation:blink 1.2s infinite}
   @keyframes blink{50%{opacity:.35}}
-  .splash-progress-wrap{width:240px;max-width:78%;z-index:2;position:relative;text-align:center}
+  .splash-progress-wrap{width:240px;max-width:78%;position:relative;z-index:2;text-align:center}
   .splash-progress{width:100%;height:5px;background:rgba(255,255,255,.08);border-radius:100px;
-    overflow:hidden;position:relative;border:1px solid rgba(255,255,255,.05)}
+    overflow:hidden;border:1px solid rgba(255,255,255,.05)}
   .splash-progress-fill{height:100%;width:0;
     background:linear-gradient(90deg,#e11d2e,#ff3b52,#8b5cf6,#3b82f6);border-radius:100px;
-    animation:fillProgress 2.6s cubic-bezier(.4,0,.2,1) forwards;
-    box-shadow:0 0 14px rgba(225,29,46,.75)}
+    animation:fillProgress 2.6s cubic-bezier(.4,0,.2,1) forwards}
   @keyframes fillProgress{to{width:100%}}
   .splash-percent{color:#fff;font-size:13px;font-weight:800;margin-top:14px;
     letter-spacing:2px;font-variant-numeric:tabular-nums}
 
-  /* ================= Activation Screen ================= */
+  /* ═══════════════ شاشة التفعيل الاحترافية ═══════════════ */
   #activationScreen{position:fixed;inset:0;z-index:9998;
-    background:rgba(5,5,10,.96);
-    display:flex;justify-content:center;align-items:center;
-    padding:20px;opacity:0;pointer-events:none;
-    transition:opacity .5s ease}
-  #activationScreen.show{opacity:1;pointer-events:auto}
-  .activation-card{background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));
-    border:1px solid var(--border);border-radius:24px;
-    padding:34px 24px 28px;max-width:420px;width:100%;text-align:center;
-    backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-    box-shadow:0 20px 60px rgba(0,0,0,.6),0 0 40px rgba(225,29,46,.1);
-    position:relative;overflow:hidden}
-  .activation-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;
-    background:linear-gradient(90deg,var(--accent),var(--purple),var(--accent-2))}
-  .activation-icon{width:76px;height:76px;border-radius:50%;
-    background:linear-gradient(180deg,rgba(225,29,46,.25),rgba(139,92,246,.15));
-    display:flex;justify-content:center;align-items:center;margin:0 auto 20px;
+    background:linear-gradient(135deg,#05050a 0%,#0a0a12 50%,#05050a 100%);
+    display:none;justify-content:center;align-items:center;
+    padding:20px;overflow-y:auto}
+  #activationScreen.show{display:flex;animation:fadeInScreen .4s ease}
+  @keyframes fadeInScreen{from{opacity:0}to{opacity:1}}
+  #activationScreen::before{content:'';position:absolute;inset:0;
+    background:
+      radial-gradient(circle at 20% 30%,rgba(225,29,46,.08),transparent 40%),
+      radial-gradient(circle at 80% 70%,rgba(139,92,246,.08),transparent 40%);
+    pointer-events:none}
+  .act-wrapper{position:relative;z-index:1;max-width:420px;width:100%;
+    animation:slideUp .5s cubic-bezier(.16,1,.3,1)}
+  @keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+  .act-brand{display:flex;flex-direction:column;align-items:center;margin-bottom:28px}
+  .act-brand-logo{width:72px;height:72px;border-radius:20px;
+    background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));
+    padding:12px;border:1px solid rgba(255,255,255,.1);
+    box-shadow:0 20px 40px rgba(0,0,0,.5),0 0 40px rgba(225,29,46,.15);
+    margin-bottom:14px;position:relative}
+  .act-brand-logo::after{content:'';position:absolute;inset:-3px;border-radius:22px;
+    background:linear-gradient(135deg,rgba(225,29,46,.4),rgba(139,92,246,.4));
+    z-index:-1;filter:blur(10px);opacity:.6}
+  .act-brand-logo img{width:100%;height:100%;object-fit:contain}
+  .act-brand-name{font-size:20px;font-weight:900;letter-spacing:-.3px;
+    background:linear-gradient(135deg,#fff 0%,#ff6b7a 50%,#a78bfa 100%);
+    background-size:200% 200%;-webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent}
+  .act-brand-sub{color:#8a8a9a;font-size:11.5px;font-weight:600;margin-top:4px;letter-spacing:.3px}
+  .act-card{background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02));
+    border:1px solid rgba(255,255,255,.1);border-radius:24px;
+    padding:28px 24px 24px;position:relative;overflow:hidden;
+    box-shadow:0 30px 60px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.06);
+    backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+  .act-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;
+    background:linear-gradient(90deg,transparent,#e11d2e 20%,#8b5cf6 80%,transparent);opacity:.8}
+  .act-lock{width:56px;height:56px;border-radius:16px;
+    background:linear-gradient(135deg,rgba(225,29,46,.15),rgba(139,92,246,.15));
     border:1px solid rgba(225,29,46,.3);
-    box-shadow:0 8px 24px rgba(225,29,46,.25)}
-  .activation-icon svg{width:36px;height:36px;fill:var(--accent-2);
-    filter:drop-shadow(0 0 8px var(--accent-glow))}
-  .activation-title{color:#fff;font-size:22px;font-weight:900;
-    letter-spacing:-.3px;margin-bottom:8px}
-  .activation-sub{color:var(--text-dim);font-size:13px;font-weight:600;
-    line-height:1.6;margin-bottom:26px;padding:0 10px}
-  .activation-input{width:100%;background:rgba(255,255,255,.05);
-    border:1.5px solid var(--border);border-radius:16px;
-    padding:16px 18px;color:#fff;font-size:16px;font-weight:700;
-    font-family:'Cairo',sans-serif;outline:none;transition:.3s;
-    text-align:center;letter-spacing:2px;direction:ltr}
-  .activation-input::placeholder{color:#5a5a70;font-weight:500;
-    letter-spacing:0;direction:rtl}
-  .activation-input:focus{border-color:var(--accent);
-    box-shadow:0 0 0 4px rgba(225,29,46,.15);
-    background:rgba(225,29,46,.05)}
-  .activation-btn{width:100%;margin-top:18px;
-    background:linear-gradient(180deg,#ff3b52,#e11d2e);
-    border:none;border-radius:16px;padding:16px;
-    color:#fff;font-size:16px;font-weight:900;
+    display:flex;justify-content:center;align-items:center;
+    margin:0 auto 16px;position:relative;
+    box-shadow:0 10px 24px rgba(225,29,46,.2),inset 0 1px 0 rgba(255,255,255,.1)}
+  .act-lock::after{content:'';position:absolute;inset:-1px;border-radius:16px;
+    background:linear-gradient(135deg,rgba(225,29,46,.3),rgba(139,92,246,.3));
+    z-index:-1;filter:blur(8px);opacity:.5}
+  .act-lock svg{width:26px;height:26px;fill:#ff3b52}
+  .act-title{text-align:center;color:#fff;font-size:19px;font-weight:900;
+    margin-bottom:6px;letter-spacing:-.2px}
+  .act-sub{text-align:center;color:#8a8a9a;font-size:12.5px;font-weight:600;
+    line-height:1.6;margin-bottom:20px;padding:0 6px}
+  .act-premium-badge{display:flex;align-items:center;justify-content:center;gap:6px;
+    padding:7px 14px;border-radius:100px;
+    background:linear-gradient(135deg,rgba(255,193,7,.15),rgba(255,152,0,.1));
+    border:1px solid rgba(255,193,7,.3);
+    color:#fbbf24;font-size:11.5px;font-weight:800;
+    margin-bottom:20px;width:fit-content;margin-inline:auto;
+    box-shadow:0 4px 12px rgba(255,193,7,.15)}
+  .act-premium-badge svg{width:14px;height:14px;fill:currentColor}
+  .act-input-wrap{position:relative;margin-bottom:6px}
+  .act-input{width:100%;background:rgba(0,0,0,.5);
+    border:1.5px solid rgba(255,255,255,.1);border-radius:14px;
+    padding:16px 50px 16px 18px;color:#fff;font-size:15px;font-weight:700;
+    font-family:ui-monospace,'Cairo',monospace;
+    outline:none;transition:.3s;text-align:center;letter-spacing:3px;direction:ltr}
+  .act-input::placeholder{color:#4a4a5a;font-weight:500;
+    letter-spacing:0;direction:rtl;font-family:'Cairo',sans-serif;font-size:13px}
+  .act-input:focus{border-color:#e11d2e;
+    box-shadow:0 0 0 4px rgba(225,29,46,.12),0 8px 24px rgba(225,29,46,.15);
+    background:rgba(225,29,46,.03)}
+  .act-input-icon{position:absolute;right:16px;top:50%;transform:translateY(-50%);
+    width:20px;height:20px;pointer-events:none;fill:#5a5a6a;transition:.3s}
+  .act-input:focus ~ .act-input-icon{fill:#e11d2e}
+  .act-input-hint{text-align:center;color:#6a6a7a;font-size:11px;
+    font-weight:600;margin-bottom:18px;margin-top:8px}
+  .act-btn{width:100%;position:relative;overflow:hidden;
+    background:linear-gradient(135deg,#ff3b52 0%,#e11d2e 50%,#c41020 100%);
+    border:none;border-radius:14px;padding:16px;
+    color:#fff;font-size:15.5px;font-weight:900;
     font-family:'Cairo',sans-serif;cursor:pointer;
     display:flex;align-items:center;justify-content:center;gap:8px;
-    box-shadow:0 10px 24px var(--accent-glow),inset 0 1px 0 rgba(255,255,255,.25);
-    transition:.2s;letter-spacing:-.2px}
-  .activation-btn:active{transform:scale(.97);box-shadow:0 5px 14px var(--accent-glow)}
-  .activation-btn:disabled{opacity:.5;cursor:not-allowed}
-  .activation-btn svg{width:18px;height:18px;fill:currentColor}
-  .activation-status{margin-top:16px;font-size:13px;font-weight:700;
-    min-height:20px;transition:.3s;line-height:1.5}
-  .activation-status.error{color:#ff6b7a}
-  .activation-status.success{color:#4ade80}
-  .activation-status .spin{display:inline-block;width:12px;height:12px;
-    border-radius:50%;border:2px solid rgba(245,158,11,.3);
-    border-top-color:#f59e0b;animation:spinRing .8s linear infinite;
-    margin-left:6px;vertical-align:middle}
-  .activation-hint{margin-top:22px;padding-top:18px;
-    border-top:1px solid rgba(255,255,255,.05)}
-  .activation-hint a{
-    display:inline-flex;align-items:center;gap:8px;
-    color:var(--accent-2);text-decoration:none;font-weight:800;font-size:13px;
-    padding:10px 18px;border-radius:100px;
-    background:rgba(225,29,46,.1);
-    border:1px solid rgba(225,29,46,.3);
-    transition:.25s}
-  .activation-hint a:active{transform:scale(.96);background:rgba(225,29,46,.2)}
-  .activation-hint a svg{width:16px;height:16px;fill:currentColor}
+    box-shadow:0 12px 28px rgba(225,29,46,.4),inset 0 1px 0 rgba(255,255,255,.25),
+               0 0 0 1px rgba(225,29,46,.5);
+    transition:.25s;letter-spacing:-.2px}
+  .act-btn::before{content:'';position:absolute;inset:0;
+    background:linear-gradient(180deg,rgba(255,255,255,.15) 0%,transparent 50%);pointer-events:none}
+  .act-btn:hover{transform:translateY(-2px);
+    box-shadow:0 16px 36px rgba(225,29,46,.55),inset 0 1px 0 rgba(255,255,255,.3),
+               0 0 0 1px rgba(225,29,46,.6)}
+  .act-btn:active{transform:translateY(0);box-shadow:0 8px 20px rgba(225,29,46,.4)}
+  .act-btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+  .act-btn svg{width:18px;height:18px;fill:currentColor;position:relative;z-index:1}
+  .act-btn span{position:relative;z-index:1}
+  .act-status{margin-top:14px;font-size:13px;font-weight:700;
+    min-height:20px;text-align:center;line-height:1.5;transition:.3s;
+    padding:8px 12px;border-radius:10px}
+  .act-status.error{color:#ff6b7a;background:rgba(225,29,46,.08);border:1px solid rgba(225,29,46,.2)}
+  .act-status.success{color:#4ade80;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2)}
+  .act-status:empty{padding:0;background:transparent;border:none}
+  .act-divider{display:flex;align-items:center;gap:12px;
+    margin:20px 0 16px;color:#5a5a6a;font-size:11px;font-weight:700}
+  .act-divider::before,.act-divider::after{content:'';flex:1;height:1px;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,.1),transparent)}
+  .act-help-btn{display:flex;align-items:center;justify-content:center;gap:8px;
+    width:100%;background:rgba(59,130,246,.08);
+    border:1px solid rgba(59,130,246,.25);border-radius:14px;
+    padding:13px 18px;text-decoration:none;
+    color:#60a5fa;font-weight:800;font-size:13px;
+    font-family:'Cairo',sans-serif;transition:.25s}
+  .act-help-btn:hover{background:rgba(59,130,246,.14);
+    border-color:rgba(59,130,246,.4);transform:translateY(-1px)}
+  .act-help-btn:active{transform:translateY(0)}
+  .act-help-btn svg{width:16px;height:16px;fill:currentColor}
+  .act-help-btn svg:last-child{opacity:.6;width:14px;height:14px}
+  .act-footer{display:flex;align-items:center;justify-content:center;gap:14px;
+    margin-top:20px;color:#5a5a6a;font-size:10.5px;font-weight:600}
+  .act-footer-item{display:flex;align-items:center;gap:5px}
+  .act-footer-item svg{width:12px;height:12px;fill:#22c55e;opacity:.8}
 
-  /* ================= APP Layout ================= */
+  /* App */
   #app{display:none;opacity:0;transition:opacity .7s;min-height:100vh;
     padding-top:calc(var(--safe-top) + 12px);
     padding-bottom:calc(96px + var(--safe-bottom));
     position:relative;z-index:1}
   #app.show{display:block;opacity:1}
-
   .app-topbar{position:sticky;top:0;z-index:50;
     padding:6px 14px 12px;margin:0 -12px 14px;
     background:linear-gradient(180deg,rgba(10,10,15,.85),rgba(10,10,15,.55) 70%,transparent);
     backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
   .app-topbar-inner{display:flex;align-items:center;gap:10px;max-width:640px;margin:0 auto}
   .app-logo{width:38px;height:38px;border-radius:11px;background:rgba(255,255,255,.06);
-    padding:4px;border:1px solid var(--border);object-fit:contain;flex-shrink:0;
-    box-shadow:0 4px 12px rgba(0,0,0,.4)}
+    padding:4px;border:1px solid var(--border);object-fit:contain;flex-shrink:0}
   .app-title-wrap{flex:1;min-width:0;text-align:right}
-  .app-title{color:#fff;font-size:14px;font-weight:800;letter-spacing:-.2px;line-height:1.1;
+  .app-title{color:#fff;font-size:14px;font-weight:800;line-height:1.1;
     white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .app-subtitle{color:var(--text-dim);font-size:10.5px;font-weight:600;margin-top:2px;
     display:flex;align-items:center;gap:5px}
@@ -204,296 +235,144 @@
   .app-topbar-btn{width:38px;height:38px;border-radius:50%;
     background:linear-gradient(180deg,#3aa8e0,#0088cc);
     display:flex;justify-content:center;align-items:center;flex-shrink:0;
-    text-decoration:none;box-shadow:0 6px 16px rgba(0,136,204,.35),inset 0 1px 0 rgba(255,255,255,.2);
-    transition:.25s}
+    text-decoration:none;box-shadow:0 6px 16px rgba(0,136,204,.35);transition:.25s}
   .app-topbar-btn:active{transform:scale(.92)}
   .app-topbar-btn svg{width:20px;height:20px;fill:#fff}
-
   .app-content{max-width:640px;margin:0 auto;padding:0 12px}
-
   .section-title{display:flex;align-items:center;gap:10px;color:#fff;font-size:15px;
-    font-weight:800;letter-spacing:-.1px;margin:6px 4px 14px}
+    font-weight:800;margin:6px 4px 14px}
   .section-title::before{content:'';width:3px;height:16px;border-radius:4px;
-    background:linear-gradient(180deg,var(--accent-2),var(--accent));box-shadow:0 0 12px var(--accent-glow)}
+    background:linear-gradient(180deg,var(--accent-2),var(--accent))}
   .section-title::after{content:'';flex:1;height:1px;
     background:linear-gradient(90deg,rgba(225,29,46,.35),transparent)}
-
-  /* ============ Matches (البوستات المباشرة) ============ */
-  #matchesSection{margin-bottom:22px}
-  .matches-scroll{display:flex;gap:12px;overflow-x:auto;
-    padding:2px 4px 8px;margin:0 -12px;padding-inline:12px;
-    scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;
-    scrollbar-width:none}
-  .matches-scroll::-webkit-scrollbar{display:none}
-  .match-card{flex:0 0 270px;scroll-snap-align:start;position:relative;
-    border-radius:16px;overflow:hidden;cursor:pointer;transition:.25s;
-    border:1px solid var(--border);background:#111;
-    aspect-ratio:16/10;box-shadow:0 10px 26px rgba(0,0,0,.5)}
-  .match-card:active{transform:scale(.97);border-color:rgba(225,29,46,.5)}
-  .match-card img{width:100%;height:100%;object-fit:cover;display:block}
-  .match-card .match-overlay{position:absolute;inset:0;
-    background:linear-gradient(180deg,rgba(0,0,0,.35) 0%,transparent 30%,transparent 50%,rgba(0,0,0,.92) 100%);
-    display:flex;flex-direction:column;justify-content:flex-end;
-    padding:12px 13px}
-  .match-card .match-badge{position:absolute;top:10px;right:10px;
-    background:linear-gradient(180deg,#ff3b52,#e11d2e);
-    color:#fff;font-size:10px;font-weight:800;
-    padding:4px 10px;border-radius:100px;
-    display:flex;align-items:center;gap:4px;
-    box-shadow:0 4px 12px var(--accent-glow)}
-  .match-card .match-badge::before{content:'';width:5px;height:5px;border-radius:50%;
-    background:#fff;animation:blink 1.2s infinite}
-  .match-card .match-time{position:absolute;top:10px;left:10px;
-    background:rgba(0,0,0,.7);backdrop-filter:blur(12px);
-    -webkit-backdrop-filter:blur(12px);
-    color:#fff;font-size:11px;font-weight:800;
-    padding:4px 10px;border-radius:100px;
-    border:1px solid rgba(255,255,255,.18)}
-  .match-card .match-title{color:#fff;font-size:14px;font-weight:800;
-    letter-spacing:-.2px;margin-bottom:3px;
-    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .match-card .match-sub{color:rgba(255,255,255,.75);font-size:11px;
-    font-weight:600;display:flex;align-items:center;gap:5px;
-    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .match-card .match-sub svg{width:11px;height:11px;fill:var(--accent-2);flex-shrink:0}
-
-  /* ============ الأقسام ============ */
-  .cats-grid{display:flex;flex-direction:column;gap:8px}
-  .cat-tile{background:linear-gradient(90deg,rgba(255,255,255,.06),rgba(255,255,255,.02));
+  .cats-grid,.channels-grid,.live-list{display:flex;flex-direction:column;gap:8px}
+  .cat-tile,.channel-tile,.live-card{background:linear-gradient(90deg,rgba(255,255,255,.06),rgba(255,255,255,.02));
     border:1px solid var(--border);border-radius:14px;padding:9px 12px;cursor:pointer;
     transition:.25s;display:flex;align-items:center;gap:12px;position:relative;overflow:hidden;
-    box-shadow:0 6px 18px rgba(0,0,0,.30);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
-  .cat-tile::before{content:'';position:absolute;right:0;top:6px;bottom:6px;width:3px;
-    background:linear-gradient(180deg,var(--accent-2),var(--purple));
-    border-radius:4px;box-shadow:0 0 10px var(--accent-glow)}
-  .cat-tile:active{transform:scale(.98);border-color:rgba(225,29,46,.5)}
-  .cat-tile .cat-logo{width:44px;height:44px;border-radius:11px;background:rgba(255,255,255,.05);
-    padding:5px;object-fit:contain;flex-shrink:0;border:1px solid var(--border);position:relative;z-index:1}
-  .cat-tile .cat-info{flex:1;min-width:0;text-align:right;position:relative;z-index:1}
-  .cat-tile .cat-name{color:#fff;font-weight:800;font-size:13.5px;white-space:nowrap;
-    overflow:hidden;text-overflow:ellipsis;margin-bottom:2px;letter-spacing:-.1px;line-height:1.2}
-  .cat-tile .cat-count{color:var(--accent-2);font-size:10.5px;font-weight:700;
-    display:inline-flex;align-items:center;gap:4px;letter-spacing:.1px;opacity:.95}
-  .cat-tile .cat-arrow{width:22px;height:22px;border-radius:50%;
-    background:rgba(255,255,255,.06);display:flex;justify-content:center;align-items:center;
-    flex-shrink:0;position:relative;z-index:1;border:1px solid var(--border)}
-  .cat-tile .cat-arrow svg{width:12px;height:12px;fill:var(--text-dim)}
-
-  .channels-grid{display:flex;flex-direction:column;gap:8px}
-  .channel-tile{background:linear-gradient(90deg,rgba(255,255,255,.06),rgba(255,255,255,.02));
-    border:1px solid var(--border);border-radius:14px;padding:9px 12px;cursor:pointer;
-    transition:.25s;display:flex;align-items:center;gap:12px;position:relative;overflow:hidden;
-    box-shadow:0 6px 18px rgba(0,0,0,.30);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+    box-shadow:0 6px 18px rgba(0,0,0,.30);
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+  .cat-tile::before,.live-card::before{content:'';position:absolute;right:0;top:6px;bottom:6px;width:3px;
+    background:linear-gradient(180deg,var(--accent-2),var(--purple));border-radius:4px}
   .channel-tile::before{content:'';position:absolute;right:0;top:6px;bottom:6px;width:3px;
-    background:linear-gradient(180deg,var(--green),#4ade80);border-radius:4px;
-    box-shadow:0 0 10px var(--green-glow)}
-  .channel-tile:not(.live)::before{background:rgba(255,255,255,.15);box-shadow:none}
+    background:linear-gradient(180deg,var(--green),#4ade80);border-radius:4px}
+  .channel-tile:not(.live)::before{background:rgba(255,255,255,.15)}
   .channel-tile:not(.live){opacity:.6}
-  .channel-tile:active{transform:scale(.98);border-color:rgba(225,29,46,.5)}
-  .channel-tile .logo{width:42px;height:42px;border-radius:10px;background:rgba(255,255,255,.05);
+  .cat-tile:active,.channel-tile:active,.live-card:active{transform:scale(.98)}
+  .cat-tile .cat-logo,.channel-tile .logo,.live-card .lc-logo{
+    width:44px;height:44px;border-radius:11px;background:rgba(255,255,255,.05);
     padding:5px;object-fit:contain;flex-shrink:0;border:1px solid var(--border);position:relative;z-index:1}
-  .channel-tile .name{color:#fff;font-weight:800;font-size:13px;flex:1;min-width:0;
-    text-align:right;position:relative;z-index:1;white-space:nowrap;overflow:hidden;
-    text-overflow:ellipsis;letter-spacing:-.1px}
-  .channel-tile .status{display:inline-flex;align-items:center;gap:4px;
-    padding:4px 11px;border-radius:100px;font-size:10px;font-weight:800;
-    position:relative;z-index:1;flex-shrink:0}
-  .channel-tile.live .status{background:linear-gradient(180deg,#4ade80,#16a34a);
-    color:#fff;box-shadow:0 4px 12px var(--green-glow)}
-  .channel-tile.live .status::before{content:'';width:5px;height:5px;border-radius:50%;
-    background:#fff;animation:blink 1.2s infinite}
-  .channel-tile:not(.live) .status{background:rgba(255,255,255,.06);color:var(--text-dim);
-    border:1px solid var(--border)}
-
-  .live-list{display:flex;flex-direction:column;gap:8px}
-  .live-card{position:relative;display:flex;align-items:center;gap:12px;
-    background:linear-gradient(90deg,rgba(225,29,46,.10),rgba(139,92,246,.06) 40%,rgba(255,255,255,.02));
-    border:1px solid rgba(225,29,46,.20);border-radius:14px;padding:9px 12px;cursor:pointer;
-    overflow:hidden;transition:.25s;box-shadow:0 6px 18px rgba(0,0,0,.30);
-    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
-  .live-card::before{content:'';position:absolute;right:0;top:6px;bottom:6px;width:3px;
-    background:linear-gradient(180deg,var(--accent-2),var(--purple));border-radius:4px;
-    box-shadow:0 0 10px var(--accent-glow)}
-  .live-card:active{transform:scale(.98)}
-  .live-card .lc-logo{width:44px;height:44px;border-radius:11px;background:rgba(255,255,255,.05);
-    padding:5px;object-fit:contain;flex-shrink:0;border:1px solid var(--border);
-    position:relative;z-index:1;box-shadow:0 4px 10px rgba(0,0,0,.35)}
-  .live-card .lc-info{flex:1;min-width:0;text-align:right;position:relative;z-index:1}
-  .live-card .lc-name{color:#fff;font-weight:800;font-size:13px;white-space:nowrap;
-    overflow:hidden;text-overflow:ellipsis;margin-bottom:2px;letter-spacing:-.1px}
-  .live-card .lc-cat{color:var(--text-dim);font-size:10px;font-weight:600;
-    display:flex;align-items:center;gap:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .live-card .lc-cat svg{width:10px;height:10px;fill:var(--accent-2);flex-shrink:0;opacity:.8}
-  .live-card .lc-badge{display:flex;align-items:center;gap:4px;padding:4px 10px;
-    border-radius:100px;font-size:10px;font-weight:800;flex-shrink:0;position:relative;z-index:1}
-  .live-card.on .lc-badge{background:linear-gradient(180deg,#4ade80,#16a34a);color:#fff;
-    box-shadow:0 4px 10px var(--green-glow)}
-  .live-card.on .lc-badge::before{content:'';width:5px;height:5px;border-radius:50%;
-    background:#fff;animation:blink 1.2s infinite}
-  .live-card.off .lc-badge{background:rgba(255,255,255,.05);color:var(--text-dim);
-    border:1px solid var(--border)}
+  .cat-tile .cat-info,.live-card .lc-info{flex:1;min-width:0;text-align:right;position:relative;z-index:1}
+  .cat-tile .cat-name,.live-card .lc-name{color:#fff;font-weight:800;font-size:13.5px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px}
+  .cat-tile .cat-count{color:var(--accent-2);font-size:10.5px;font-weight:700}
+  .channel-tile .name{color:#fff;font-weight:800;font-size:13px;flex:1;min-width:0;text-align:right;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .channel-tile .status,.live-card .lc-badge{display:inline-flex;align-items:center;gap:4px;
+    padding:4px 11px;border-radius:100px;font-size:10px;font-weight:800;flex-shrink:0}
+  .channel-tile.live .status,.live-card.on .lc-badge{background:linear-gradient(180deg,#4ade80,#16a34a);color:#fff}
+  .channel-tile:not(.live) .status,.live-card.off .lc-badge{background:rgba(255,255,255,.06);color:var(--text-dim)}
   .live-card.off{opacity:.55}
-  .live-card.off::before{background:rgba(255,255,255,.15);box-shadow:none}
-
+  .live-card .lc-cat{color:var(--text-dim);font-size:10px;font-weight:600}
   .live-header{display:flex;align-items:center;justify-content:space-between;
     padding:12px 14px;margin:0 0 12px;
     background:linear-gradient(135deg,rgba(225,29,46,.18),rgba(139,92,246,.12));
-    border:1px solid rgba(225,29,46,.22);border-radius:16px;position:relative;overflow:hidden;
-    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+    border:1px solid rgba(225,29,46,.22);border-radius:16px}
   .live-header .lh-icon{width:40px;height:40px;border-radius:12px;
     background:linear-gradient(180deg,var(--accent-2),var(--accent));
-    display:flex;justify-content:center;align-items:center;flex-shrink:0;
-    box-shadow:0 8px 20px var(--accent-glow);position:relative;z-index:1}
+    display:flex;justify-content:center;align-items:center;flex-shrink:0}
   .live-header .lh-icon svg{width:20px;height:20px;fill:#fff}
-  .live-header .lh-text{flex:1;position:relative;z-index:1;text-align:right;padding-inline-end:10px}
-  .live-header .lh-title{color:#fff;font-size:14px;font-weight:800;letter-spacing:-.2px}
+  .live-header .lh-text{flex:1;text-align:right;padding-inline-end:10px}
+  .live-header .lh-title{color:#fff;font-size:14px;font-weight:800}
   .live-header .lh-sub{color:#e8b8be;font-size:10.5px;font-weight:600;margin-top:2px}
   .live-header .lh-count{background:rgba(255,255,255,.12);color:#fff;padding:5px 12px;
-    border-radius:100px;font-size:11px;font-weight:800;
-    border:1px solid rgba(255,255,255,.15);position:relative;z-index:1}
-
-  .empty-msg{text-align:center;color:var(--text-dim);padding:50px 20px;
-    font-size:13px;line-height:2;font-weight:500}
-
+    border-radius:100px;font-size:11px;font-weight:800;border:1px solid rgba(255,255,255,.15)}
+  .empty-msg{text-align:center;color:var(--text-dim);padding:50px 20px;font-size:13px;line-height:2}
   .back-row{margin:0 4px 12px}
   .back-cat-btn{display:inline-flex;align-items:center;gap:6px;
     background:rgba(255,255,255,.06);color:#fff;padding:8px 16px;border-radius:100px;
     border:1px solid var(--border);font-weight:700;font-size:12.5px;cursor:pointer;
-    font-family:'Cairo',sans-serif;transition:.25s;
-    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
-  .back-cat-btn:active{background:rgba(225,29,46,.15);
-    border-color:rgba(225,29,46,.5);color:var(--accent-2);transform:scale(.96)}
+    font-family:'Cairo',sans-serif;transition:.25s}
+  .back-cat-btn:active{background:rgba(225,29,46,.15);transform:scale(.96)}
 
   .app-bottomnav{position:fixed;bottom:0;left:0;right:0;z-index:80;
     background:linear-gradient(180deg,rgba(10,10,15,.85),rgba(10,10,15,.98));
     backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
     border-top:1px solid rgba(255,255,255,.06);
-    padding:8px 6px calc(8px + var(--safe-bottom));
+    padding:8px 4px calc(8px + var(--safe-bottom));
     display:flex;justify-content:space-around;align-items:center;
     box-shadow:0 -8px 30px rgba(0,0,0,.5)}
   .nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;
-    padding:6px 6px;border-radius:14px;cursor:pointer;transition:.25s;
-    text-decoration:none;color:var(--text-dim);font-size:9.5px;font-weight:700;
-    font-family:'Cairo',sans-serif;background:transparent;border:none;min-width:56px}
+    padding:6px 4px;border-radius:14px;cursor:pointer;transition:.25s;
+    text-decoration:none;color:var(--text-dim);font-size:9px;font-weight:700;
+    font-family:'Cairo',sans-serif;background:transparent;border:none;min-width:50px}
   .nav-item svg{width:20px;height:20px;fill:currentColor;transition:.25s}
   .nav-item.active{color:var(--accent-2);background:rgba(225,29,46,.1)}
-  .nav-item.active svg{filter:drop-shadow(0 0 8px var(--accent-glow))}
   .nav-item:active{transform:scale(.92)}
-  .nav-item.dev{color:#a78bfa}
-  .nav-item.dev svg{fill:#a78bfa}
 
+  /* Stream View */
   #streamView{display:none;position:fixed;inset:0;background:#000;z-index:100}
   #streamView.show{display:flex;flex-direction:column}
-  .stream-player-wrap{flex:1;display:flex;justify-content:center;align-items:center;
-    background:#000;overflow:hidden;position:relative}
-  .player-box{position:relative;width:100%;height:100%;background:#000;
-    display:flex;justify-content:center;align-items:center;overflow:hidden}
-  .video-aspect{position:relative;aspect-ratio:16/9;width:100%;
-    max-width:calc(100vh * 16 / 9);background:#000;overflow:hidden}
-  .video-aspect video{width:100%;height:100%;display:block;object-fit:contain;
-    background:#000;pointer-events:none}
-
-  .stream-loader{position:absolute;inset:0;z-index:60;
-    display:flex;flex-direction:column;justify-content:center;align-items:center;gap:16px;
-    background:transparent;pointer-events:none;transition:opacity .3s ease}
+  .stream-player-wrap{flex:1;display:flex;justify-content:center;align-items:center;background:#000;overflow:hidden;position:relative}
+  .player-box{position:relative;width:100%;height:100%;background:#000;display:flex;justify-content:center;align-items:center;overflow:hidden}
+  .video-aspect{position:relative;aspect-ratio:16/9;width:100%;max-width:calc(100vh * 16 / 9);background:#000;overflow:hidden}
+  .video-aspect video{width:100%;height:100%;display:block;object-fit:contain;background:#000;pointer-events:none}
+  .stream-loader{position:absolute;inset:0;z-index:60;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:16px;pointer-events:none;transition:opacity .3s}
   .stream-loader.hidden{opacity:0;visibility:hidden}
   .loader-spinner{position:relative;width:64px;height:64px}
-  .loader-spinner::before,.loader-spinner::after{content:'';position:absolute;
-    border-radius:50%;border:3px solid transparent}
-  .loader-spinner::before{inset:0;border-top-color:var(--accent-2);
-    border-right-color:var(--accent-2);animation:spinLoader 1s linear infinite}
-  .loader-spinner::after{inset:10px;border-bottom-color:var(--purple);
-    border-left-color:var(--purple);animation:spinLoader 1.4s linear infinite reverse}
+  .loader-spinner::before,.loader-spinner::after{content:'';position:absolute;border-radius:50%;border:3px solid transparent}
+  .loader-spinner::before{inset:0;border-top-color:var(--accent-2);animation:spinLoader 1s linear infinite}
+  .loader-spinner::after{inset:10px;border-bottom-color:var(--purple);animation:spinLoader 1.4s linear infinite reverse}
   .loader-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-    width:14px;height:14px;border-radius:50%;
-    background:linear-gradient(180deg,var(--accent-2),var(--accent));
-    animation:loaderPulse 1.2s ease-in-out infinite}
+    width:14px;height:14px;border-radius:50%;background:var(--accent-2);animation:loaderPulse 1.2s infinite}
   @keyframes spinLoader{to{transform:rotate(360deg)}}
-  @keyframes loaderPulse{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:1}50%{transform:translate(-50%,-50%) scale(1.4);opacity:.7}}
-  .stream-loader span{color:#fff;font-size:13px;font-weight:800;
-    letter-spacing:.3px;animation:loaderTextPulse 1.6s ease-in-out infinite}
+  @keyframes loaderPulse{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.4)}}
+  .stream-loader span{color:#fff;font-size:13px;font-weight:800;animation:loaderTextPulse 1.6s infinite}
   @keyframes loaderTextPulse{0%,100%{opacity:.7}50%{opacity:1}}
-
   .back-btn{position:absolute;top:calc(var(--safe-top) + 14px);left:14px;z-index:40;
     background:rgba(10,10,15,.75);color:#fff;border:1px solid rgba(255,255,255,.18);
-    padding:8px 15px;font-size:12.5px;font-family:'Cairo',sans-serif;font-weight:700;
-    border-radius:100px;cursor:pointer;transition:.25s;
-    backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-    display:flex;align-items:center;gap:5px}
-  .back-btn:active{background:var(--accent);border-color:var(--accent);transform:scale(.95)}
-
+    padding:8px 15px;font-size:12.5px;font-weight:700;border-radius:100px;cursor:pointer;
+    backdrop-filter:blur(20px);display:flex;align-items:center;gap:5px}
   .mode-btn{position:absolute;top:calc(var(--safe-top) + 14px);right:14px;z-index:40;
     background:rgba(10,10,15,.75);color:#fff;border:1px solid rgba(255,255,255,.18);
-    padding:8px 15px;font-size:12.5px;font-family:'Cairo',sans-serif;font-weight:700;
-    border-radius:100px;cursor:pointer;transition:.25s;
-    backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-    display:flex;align-items:center;gap:6px;white-space:nowrap}
-  .mode-btn svg{width:15px;height:15px;fill:currentColor;flex-shrink:0}
-  .mode-btn:active{transform:scale(.95)}
-  .mode-btn.active{background:linear-gradient(180deg,var(--accent-2),var(--accent));
-    border-color:var(--accent);box-shadow:0 6px 20px var(--accent-glow)}
-
-  .custom-controls{position:absolute;bottom:0;left:0;right:0;z-index:30;
-    display:flex;align-items:center;gap:8px;
+    padding:8px 15px;font-size:12.5px;font-weight:700;border-radius:100px;cursor:pointer;
+    backdrop-filter:blur(20px);display:flex;align-items:center;gap:6px}
+  .mode-btn svg{width:15px;height:15px;fill:currentColor}
+  .mode-btn.active{background:linear-gradient(180deg,var(--accent-2),var(--accent));border-color:var(--accent)}
+  .custom-controls{position:absolute;bottom:0;left:0;right:0;z-index:30;display:flex;align-items:center;gap:8px;
     padding:16px 14px calc(16px + var(--safe-bottom));
     background:linear-gradient(transparent,rgba(0,0,0,.95));
-    opacity:1;pointer-events:auto;transition:opacity .35s ease}
+    opacity:1;pointer-events:auto;transition:opacity .35s}
   .custom-controls.hidden{opacity:0;pointer-events:none}
   .ctrl-btn{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.16);
-    width:42px;height:42px;border-radius:50%;display:flex;justify-content:center;
-    align-items:center;cursor:pointer;transition:.2s;padding:0;flex-shrink:0;
-    backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
-  .ctrl-btn:active{background:var(--accent);border-color:var(--accent);transform:scale(.9)}
-  .ctrl-btn svg{width:18px;height:18px;fill:currentColor;display:block}
+    width:42px;height:42px;border-radius:50%;display:flex;justify-content:center;align-items:center;
+    cursor:pointer;flex-shrink:0;padding:0}
+  .ctrl-btn svg{width:18px;height:18px;fill:currentColor}
   .progress-wrap{flex:1;cursor:grab;padding:14px 4px;min-width:50px;touch-action:none}
-  .progress-bar{height:4px;background:rgba(255,255,255,.20);border-radius:100px;
-    overflow:hidden;position:relative}
-  .progress-fill{height:100%;width:0;
-    background:linear-gradient(90deg,var(--accent),var(--accent-2));
-    border-radius:100px;transition:width .1s;box-shadow:0 0 12px var(--accent-glow)}
-  .time-display{color:#fff;font-size:12px;font-weight:700;white-space:nowrap;padding:0 6px;
-    display:flex;align-items:center;gap:5px}
-  .time-display .live-dot{width:6px;height:6px;border-radius:50%;background:var(--accent-2);
-    display:inline-block;box-shadow:0 0 10px var(--accent-glow);animation:blink 1.2s infinite}
-
-  .placeholder{position:absolute;inset:0;display:flex;flex-direction:column;
-    justify-content:center;align-items:center;gap:12px;color:var(--text-dim);
-    text-align:center;padding:20px;z-index:2;background:#000}
+  .progress-bar{height:4px;background:rgba(255,255,255,.20);border-radius:100px;overflow:hidden}
+  .progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent-2));border-radius:100px}
+  .time-display{color:#fff;font-size:12px;font-weight:700;white-space:nowrap;padding:0 6px;display:flex;align-items:center;gap:5px}
+  .time-display .live-dot{width:6px;height:6px;border-radius:50%;background:var(--accent-2);display:inline-block;animation:blink 1.2s infinite}
+  .placeholder{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:12px;color:var(--text-dim);text-align:center;padding:20px;z-index:2;background:#000}
   .placeholder svg{width:48px;height:48px;fill:#2a2a34;opacity:.7}
-  .placeholder span{font-size:13px;font-weight:600}
-
-  .player-box.rotate-css .video-aspect{position:fixed !important;inset:0 !important;
-    width:100% !important;height:100% !important;max-width:none !important;
-    aspect-ratio:auto !important;overflow:hidden !important;background:#000 !important;z-index:5}
-  .player-box.rotate-css video{position:absolute !important;top:50% !important;
-    left:50% !important;width:100vh !important;height:100vw !important;
-    max-width:none !important;max-height:none !important;
-    transform:translate(-50%,-50%) rotate(90deg) !important;
-    transform-origin:center center !important;object-fit:contain !important}
+  .player-box.rotate-css .video-aspect{position:fixed !important;inset:0 !important;width:100% !important;height:100% !important;max-width:none !important;aspect-ratio:auto !important;z-index:5}
+  .player-box.rotate-css video{position:absolute !important;top:50% !important;left:50% !important;
+    width:100vh !important;height:100vw !important;max-width:none !important;
+    transform:translate(-50%,-50%) rotate(90deg) !important;object-fit:contain !important}
   .player-box.rotate-css .stream-loader{transform:rotate(90deg);transform-origin:center center}
-
-  .player-box.desktop-mode .video-aspect,
-  .player-box.desktop-mode.rotate-css .video-aspect{position:fixed !important;
-    inset:0 !important;width:100% !important;height:100% !important;
-    max-width:none !important;aspect-ratio:auto !important;
-    overflow:hidden !important;background:#000 !important;z-index:5}
-  .player-box.desktop-mode video,
-  .player-box.desktop-mode.rotate-css video{position:absolute !important;
-    top:0 !important;left:0 !important;width:100% !important;height:100% !important;
-    max-width:none !important;max-height:none !important;transform:none !important;
-    transform-origin:center center !important;object-fit:contain !important}
-  .player-box.desktop-mode .stream-loader,
-  .player-box.desktop-mode.rotate-css .stream-loader{transform:none !important}
-  .player-box.desktop-mode .placeholder{z-index:6}
-
+  .player-box.desktop-mode .video-aspect,.player-box.desktop-mode.rotate-css .video-aspect{
+    position:fixed !important;inset:0 !important;width:100% !important;height:100% !important;
+    max-width:none !important;aspect-ratio:auto !important;z-index:5}
+  .player-box.desktop-mode video,.player-box.desktop-mode.rotate-css video{
+    position:absolute !important;top:0 !important;left:0 !important;
+    width:100% !important;height:100% !important;max-width:none !important;
+    transform:none !important;object-fit:contain !important}
+  .player-box.desktop-mode .stream-loader,.player-box.desktop-mode.rotate-css .stream-loader{transform:none !important}
   .toast{position:fixed;bottom:calc(90px + var(--safe-bottom));left:50%;
     transform:translateX(-50%) translateY(10px);
-    background:linear-gradient(180deg,var(--accent-2),var(--accent));
-    color:#fff;padding:11px 22px;border-radius:100px;font-weight:700;font-size:12.5px;
+    background:linear-gradient(180deg,var(--accent-2),var(--accent));color:#fff;
+    padding:11px 22px;border-radius:100px;font-weight:700;font-size:12.5px;
     z-index:999999;opacity:0;transition:.35s cubic-bezier(.34,1.56,.64,1);
-    box-shadow:0 12px 32px var(--accent-glow);pointer-events:none;
-    font-family:'Cairo',sans-serif;white-space:nowrap;max-width:90vw;
-    overflow:hidden;text-overflow:ellipsis}
+    pointer-events:none;white-space:nowrap;max-width:90vw}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
   .toast.error{background:linear-gradient(180deg,#ff3b52,#b31226)}
   .toast.success{background:linear-gradient(180deg,#4ade80,#16a34a)}
@@ -518,37 +397,79 @@
     <img class="splash-logo" src="https://i.postimg.cc/xT8rcsT1/file-000000008bb4820ebcd371e64fff0469.png" alt="">
   </div>
   <div class="splash-brand">Alankaboot Sport</div>
-  <div class="splash-tagline">
-    <span class="dot"></span>
-    <span>البث المباشر للقنوات الرياضية</span>
-  </div>
+  <div class="splash-tagline"><span class="dot"></span><span>البث المباشر للقنوات الرياضية</span></div>
   <div class="splash-progress-wrap">
     <div class="splash-progress"><div class="splash-progress-fill"></div></div>
     <div class="splash-percent" id="splashPercent">0%</div>
   </div>
 </div>
 
-<!-- ============ شاشة التفعيل ============ -->
+<!-- ═════════ شاشة التفعيل ═════════ -->
 <div id="activationScreen">
-  <div class="activation-card">
-    <div class="activation-icon">
-      <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+  <div class="act-wrapper">
+
+    <div class="act-brand">
+      <div class="act-brand-logo">
+        <img src="https://i.postimg.cc/xT8rcsT1/file-000000008bb4820ebcd371e64fff0469.png" alt="">
+      </div>
+      <div class="act-brand-name">Alankaboot Sport</div>
+      <div class="act-brand-sub">Premium Streaming Service</div>
     </div>
-    <div class="activation-title">تفعيل الاشتراك</div>
-    <div class="activation-sub">من فضلك أدخل كود التفعيل الخاص بك للمتابعة</div>
-    <input type="text" class="activation-input" id="activationInput"
-           placeholder="أدخل الكود هنا" autocomplete="off" spellcheck="false" maxlength="30">
-    <button class="activation-btn" id="activationBtn" onclick="submitActivation()">
-      <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-      <span>تفعيل</span>
-    </button>
-    <div class="activation-status" id="activationStatus"></div>
-    <div class="activation-hint">
-      <a href="https://t.me/alankabootsport" target="_blank">
+
+    <div class="act-card">
+      <div class="act-lock">
+        <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+      </div>
+
+      <div class="act-premium-badge">
+        <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+        نسخة Premium
+      </div>
+
+      <div class="act-title">تفعيل الاشتراك</div>
+      <div class="act-sub">أدخل مفتاح الترخيص الخاص بك لتفعيل الوصول الكامل</div>
+
+      <div class="act-input-wrap">
+        <input type="text" class="act-input" id="activationInput"
+               placeholder="أدخل كود الترخيص" autocomplete="off"
+               spellcheck="false" maxlength="30">
+        <svg class="act-input-icon" viewBox="0 0 24 24">
+          <path d="M12.65 10C11.83 7.67 9.61 6 7 6c-3.31 0-6 2.69-6 6s2.69 6 6 6c2.61 0 4.83-1.67 5.65-4H17v4h4v-4h2v-4H12.65zM7 14c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/>
+        </svg>
+      </div>
+      <div class="act-input-hint">المفتاح يتكون من حروف وأرقام إنجليزية</div>
+
+      <button class="act-btn" id="activationBtn" onclick="submitActivation()">
+        <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+        <span>تفعيل الاشتراك</span>
+      </button>
+
+      <div class="act-status" id="activationStatus"></div>
+
+      <div class="act-divider">ليس لديك مفتاح؟</div>
+
+      <a class="act-help-btn" href="https://t.me/alankabootsport" target="_blank">
         <svg viewBox="0 0 24 24"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg>
-        للحصول على كود تفعيل، تواصل عبر قناة التليجرام
+        <span>الحصول على مفتاح الترخيص</span>
+        <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
       </a>
     </div>
+
+    <div class="act-footer">
+      <div class="act-footer-item">
+        <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+        اتصال آمن
+      </div>
+      <div class="act-footer-item">
+        <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+        مشفر
+      </div>
+      <div class="act-footer-item">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+        موثوق
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -557,13 +478,10 @@
     <div class="app-topbar-inner">
       <img class="app-logo" src="https://i.postimg.cc/xT8rcsT1/file-000000008bb4820ebcd371e64fff0469.png" alt="">
       <div class="app-title-wrap">
-        <div class="app-title" id="appTitle">Alankaboot Sport</div>
-        <div class="app-subtitle" id="appSubtitle">
-          <span class="live-ind"></span>
-          <span>البث المباشر للقنوات</span>
-        </div>
+        <div class="app-title">Alankaboot Sport</div>
+        <div class="app-subtitle"><span class="live-ind"></span><span>البث المباشر للقنوات</span></div>
       </div>
-      <a class="app-topbar-btn" href="https://t.me/alankabootsport" target="_blank" rel="noopener">
+      <a class="app-topbar-btn" href="https://t.me/alankabootsport" target="_blank">
         <svg viewBox="0 0 24 24"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg>
       </a>
     </div>
@@ -571,16 +489,9 @@
 
   <div class="app-content">
     <div id="viewCategories">
-      <!-- ⭐ البوستات المباشرة -->
-      <div id="matchesSection" style="display:none">
-        <div class="section-title">مباشر الآن</div>
-        <div class="matches-scroll" id="matchesScroll"></div>
-      </div>
-
       <div class="section-title">الأقسام</div>
       <div class="cats-grid" id="catsGrid"></div>
     </div>
-
     <div id="viewChannels" style="display:none">
       <div class="back-row">
         <button class="back-cat-btn" onclick="backToCategories()">
@@ -591,7 +502,6 @@
       <div class="section-title" id="catTitle">قنوات القسم</div>
       <div class="channels-grid" id="channelsGrid"></div>
     </div>
-
     <div id="viewLive" style="display:none">
       <div class="back-row">
         <button class="back-cat-btn" onclick="navHome()">
@@ -599,18 +509,11 @@
           رجوع
         </button>
       </div>
-
       <div class="live-header">
-        <div class="lh-icon">
-          <svg viewBox="0 0 24 24"><path d="M21 6h-7.59l3.29-3.29L16 2l-4 4-4-4-1.29 1.41L10.59 6H3c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 13H3V8h18v11zM9 10v6l5-3-5-3z"/></svg>
-        </div>
-        <div class="lh-text">
-          <div class="lh-title">كل القنوات المباشرة</div>
-          <div class="lh-sub">اضغط على أي قناة لتشغيلها</div>
-        </div>
+        <div class="lh-icon"><svg viewBox="0 0 24 24"><path d="M21 6h-7.59l3.29-3.29L16 2l-4 4-4-4-1.29 1.41L10.59 6H3c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 13H3V8h18v11zM9 10v6l5-3-5-3z"/></svg></div>
+        <div class="lh-text"><div class="lh-title">كل القنوات المباشرة</div><div class="lh-sub">اضغط على أي قناة لتشغيلها</div></div>
         <div class="lh-count" id="liveCount">0</div>
       </div>
-
       <div class="live-list" id="liveList"></div>
     </div>
   </div>
@@ -618,60 +521,38 @@
 
 <div class="app-bottomnav" id="bottomNav" style="display:none">
   <button class="nav-item active" onclick="navHome()">
-    <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-    الرئيسية
-  </button>
+    <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>الرئيسية</button>
   <button class="nav-item" onclick="navLive()">
-    <svg viewBox="0 0 24 24"><path d="M21 6h-7.59l3.29-3.29L16 2l-4 4-4-4-1.29 1.41L10.59 6H3c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 13H3V8h18v11zM9 10v6l5-3-5-3z"/></svg>
-    مباشر
-  </button>
-  <a class="nav-item" href="https://t.me/alankabootsport" target="_blank" rel="noopener">
-    <svg viewBox="0 0 24 24"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg>
-    تيليجرام
-  </a>
-  <a class="nav-item" href="https://t.me/boost/alankabootsport" target="_blank" rel="noopener">
-    <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-    ادعمنا
-  </a>
-  <a class="nav-item dev" href="https://t.me/omrmejo" target="_blank" rel="noopener">
-    <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-    المطور
-  </a>
+    <svg viewBox="0 0 24 24"><path d="M21 6h-7.59l3.29-3.29L16 2l-4 4-4-4-1.29 1.41L10.59 6H3c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 13H3V8h18v11zM9 10v6l5-3-5-3z"/></svg>مباشر</button>
+  <a class="nav-item" href="https://t.me/alankabootsport" target="_blank">
+    <svg viewBox="0 0 24 24"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg>تيليجرام</a>
+  <a class="nav-item" href="https://t.me/boost/alankabootsport" target="_blank">
+    <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>ادعمنا</a>
+  <a class="nav-item" href="https://t.me/omrmejo" target="_blank">
+    <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>المطور</a>
 </div>
 
 <div id="streamView">
   <div class="stream-player-wrap">
     <div class="player-box" id="playerBox">
-      <div class="video-aspect">
-        <video id="video" playsinline webkit-playsinline></video>
-      </div>
-      <div class="stream-loader" id="streamLoader">
-        <div class="loader-spinner"><div class="loader-center"></div></div>
-        <span>جاري التحميل...</span>
-      </div>
+      <div class="video-aspect"><video id="video" playsinline webkit-playsinline></video></div>
+      <div class="stream-loader" id="streamLoader"><div class="loader-spinner"><div class="loader-center"></div></div><span>جاري التحميل...</span></div>
       <div class="placeholder" id="playerPlaceholder" style="display:none">
         <svg viewBox="0 0 24 24"><path d="M21 3H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h5v2h8v-2h5c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 14H3V5h18v12z"/></svg>
         <span>في انتظار بدء البث</span>
       </div>
-      <button class="back-btn" id="backBtn" onclick="closeStream()">
-        <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:currentColor"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
-        رجوع
+      <button class="back-btn" onclick="closeStream()">
+        <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:currentColor"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>رجوع
       </button>
       <button class="mode-btn" id="modeBtn" onclick="toggleDesktopMode()">
         <svg id="modeIcon" viewBox="0 0 24 24"><path d="M21 2H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h7v2H8v2h8v-2h-2v-2h7c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H3V4h18v12z"/></svg>
         <span id="modeText">وضع الشاشات</span>
       </button>
       <div class="custom-controls" id="customControls">
-        <button class="ctrl-btn" onclick="togglePlay()">
-          <svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-        </button>
-        <div class="progress-wrap" id="progressWrap">
-          <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-        </div>
+        <button class="ctrl-btn" onclick="togglePlay()"><svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
+        <div class="progress-wrap" id="progressWrap"><div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div></div>
         <span class="time-display" id="timeDisplay"><span class="live-dot"></span></span>
-        <button class="ctrl-btn" onclick="toggleMute()">
-          <svg id="volIcon" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
-        </button>
+        <button class="ctrl-btn" onclick="toggleMute()"><svg id="volIcon" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg></button>
       </div>
     </div>
   </div>
@@ -682,22 +563,18 @@
 <script>
 const PROXY_BASE = 'https://alankaboot-proxy.kamlnot61.workers.dev';
 const tokenToUrl = t => PROXY_BASE + '/s?t=' + encodeURIComponent(t);
-
 const BROKER = 'wss://broker.emqx.io:8084/mqtt';
-const TOPIC_CMD     = 'kwtspta_9f3a2b1c/cmd';
-const TOPIC_DATA    = 'kwtspta_9f3a2b1c/data';
-const TOPIC_HB      = 'kwtspta_9f3a2b1c/hb';
-const TOPIC_CODES   = 'kwtspta_9f3a2b1c/codes';
-const TOPIC_MATCHES = 'kwtspta_9f3a2b1c/matches';
+const TOPIC_CMD   = 'kwtspta_9f3a2b1c/cmd';
+const TOPIC_DATA  = 'kwtspta_9f3a2b1c/data';
+const TOPIC_HB    = 'kwtspta_9f3a2b1c/hb';
+const TOPIC_CODES = 'kwtspta_9f3a2b1c/codes';
 const MY_ID = 'v_' + Math.random().toString(36).slice(2,10);
 const ACTIVATION_KEY = 'alankaboot_activation';
 
 document.addEventListener('keydown', e=>{
-  if((e.ctrlKey||e.metaKey) && (e.key === 'u' || e.key === 'U')) e.preventDefault();
-  if((e.ctrlKey||e.metaKey) && ['+','-','=','0'].includes(e.key)) e.preventDefault();
+  if((e.ctrlKey||e.metaKey) && e.key === 'u') e.preventDefault();
   if(e.key === 'F12' || (e.ctrlKey && e.shiftKey && ['I','J','C'].includes(e.key))) e.preventDefault();
 });
-document.addEventListener('wheel', e=>{ if(e.ctrlKey) e.preventDefault(); },{passive:false});
 document.addEventListener('contextmenu', e=>e.preventDefault());
 
 const $ = id => document.getElementById(id);
@@ -711,24 +588,15 @@ const viewCategories = $('viewCategories'), viewChannels = $('viewChannels');
 const viewLive = $('viewLive'), liveList = $('liveList'), liveCount = $('liveCount');
 const catTitle = $('catTitle');
 const streamView = $('streamView'), video = $('video'), playerBox = $('playerBox');
-const placeholder = $('playerPlaceholder'), customControls = $('customControls');
-const playIcon = $('playIcon'), volIcon = $('volIcon');
+const customControls = $('customControls'), playIcon = $('playIcon'), volIcon = $('volIcon');
 const progressFill = $('progressFill'), timeDisplay = $('timeDisplay');
-const toast = $('toast');
-const bottomNav = $('bottomNav');
-const streamLoader = $('streamLoader');
+const toast = $('toast'), bottomNav = $('bottomNav'), streamLoader = $('streamLoader');
 const modeBtn = $('modeBtn'), modeText = $('modeText'), modeIcon = $('modeIcon');
 
 let hls = null, currentChannelId = null, categoriesData = [];
-let matchesData = [];
-let currentCatIndex = -1, isStreamViewOpen = false;
-let isDesktopMode = false;
-
-/* ========== حالة التفعيل ========== */
+let currentCatIndex = -1, isStreamViewOpen = false, isDesktopMode = false;
 let userCode = localStorage.getItem(ACTIVATION_KEY) || '';
-let validCodes = [];
-let codesReceived = false;
-let appStarted = false;
+let validCodes = [], codesReceived = false, appStarted = false;
 
 const ICON_DESKTOP = 'M21 2H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h7v2H8v2h8v-2h-2v-2h7c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H3V4h18v12z';
 const ICON_PHONE = 'M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z';
@@ -739,51 +607,29 @@ function showToast(msg, type){
   if(type) toast.classList.add(type);
   toast.classList.add('show');
   clearTimeout(showToast._t);
-  showToast._t = setTimeout(()=> toast.classList.remove('show'), 2500);
+  showToast._t = setTimeout(()=> toast.classList.remove('show'), 2200);
 }
-
-function setActivationStatus(text, cls){
-  activationStatus.innerHTML = text;
-  activationStatus.className = 'activation-status' + (cls ? ' ' + cls : '');
-}
-
-function showActivationScreen(){
-  activationScreen.classList.add('show');
-  app.classList.remove('show');
-  bottomNav.style.display = 'none';
-}
-function hideActivationScreen(){
-  activationScreen.classList.remove('show');
-}
+function setActStatus(t, c){ activationStatus.textContent = t; activationStatus.className = 'act-status ' + (c||''); }
 
 function submitActivation(){
   const code = activationInput.value.trim().toLowerCase();
-  if(!code){
-    setActivationStatus('من فضلك أدخل الكود', 'error');
-    return;
-  }
-  if(!codesReceived){
-    setActivationStatus('من فضلك انتظر قليلاً...', 'checking');
-    return;
-  }
+  if(!code){ setActStatus('من فضلك أدخل الكود', 'error'); return; }
+  if(!codesReceived){ setActStatus('من فضلك انتظر ثانية...', ''); return; }
   if(validCodes.includes(code)){
     userCode = code;
     localStorage.setItem(ACTIVATION_KEY, code);
-    setActivationStatus('تم التفعيل بنجاح ✅', 'success');
+    setActStatus('تم التفعيل بنجاح ✅', 'success');
     activationBtn.disabled = true;
-    showToast('تم التفعيل، جاري الدخول...', 'success');
     setTimeout(()=>{
-      hideActivationScreen();
+      activationScreen.classList.remove('show');
       enterApp();
       activationInput.value = '';
       activationBtn.disabled = false;
-      setActivationStatus('');
-    }, 900);
+      setActStatus('', '');
+    }, 700);
   } else {
-    setActivationStatus('كود غير صحيح ❌', 'error');
-    showToast('كود غير صحيح', 'error');
+    setActStatus('كود غير صحيح ❌', 'error');
     activationInput.value = '';
-    activationInput.focus();
   }
 }
 activationInput.addEventListener('keydown', e=>{ if(e.key === 'Enter') submitActivation(); });
@@ -794,7 +640,6 @@ function enterApp(){
   app.classList.add('show');
   bottomNav.style.display = 'flex';
 }
-
 function kickOut(reason){
   userCode = '';
   localStorage.removeItem(ACTIVATION_KEY);
@@ -802,13 +647,11 @@ function kickOut(reason){
   if(isStreamViewOpen) closeStreamUI();
   app.classList.remove('show');
   bottomNav.style.display = 'none';
-  showActivationScreen();
-  setActivationStatus(reason || 'تم إيقاف الكود من قِبل الإدارة', 'error');
-  activationInput.value = '';
+  activationScreen.classList.add('show');
+  setActStatus(reason || 'تم إيقاف الكود من قِبل الإدارة', 'error');
   showToast('تم إيقاف الكود', 'error');
 }
 
-/* ================== Splash init ================== */
 (function initSplash(){
   const pctEl = document.getElementById('splashPercent');
   let pct = 0;
@@ -823,25 +666,16 @@ setTimeout(()=>{
   splash.classList.add('hide');
   setTimeout(()=>{
     splash.style.display = 'none';
-    /* ⭐ لو عنده كود محفوظ → دخل على طول، لو لأ → شاشة تفعيل من غير رسالة */
-    if(userCode){
-      enterApp();
-    } else {
-      showActivationScreen();
-      /* ⭐ شيلنا رسالة "جاري التحقق من السيرفر" — نسيبها فاضية */
-      setActivationStatus('', '');
-    }
+    if(userCode){ enterApp(); }
+    else { activationScreen.classList.add('show'); }
   }, 700);
 }, 2800);
 
-/* ================== MQTT ================== */
 const client = mqtt.connect(BROKER, { clientId: MY_ID });
-
 client.on('connect', ()=>{
   client.subscribe(TOPIC_CMD);
   client.subscribe(TOPIC_DATA);
   client.subscribe(TOPIC_CODES);
-  client.subscribe(TOPIC_MATCHES);
   client.publish(TOPIC_HB, JSON.stringify({id:MY_ID}));
   setInterval(()=> client.publish(TOPIC_HB, JSON.stringify({id:MY_ID})), 5000);
 });
@@ -849,49 +683,22 @@ client.on('connect', ()=>{
 client.on('message', (topic, msg)=>{
   try{
     const data = JSON.parse(msg.toString());
-
-    /* ⭐ قائمة الأكواد */
     if(topic === TOPIC_CODES){
       validCodes = Array.isArray(data.codes) ? data.codes.map(c=>String(c).toLowerCase()) : [];
-      const firstTime = !codesReceived;
       codesReceived = true;
-
       if(userCode){
-        if(validCodes.includes(userCode)){
-          if(!appStarted){ enterApp(); }
-        } else {
-          kickOut('تم إيقاف الكود من قِبل الإدارة');
-          return;
-        }
-      }
-
-      if(!appStarted && firstTime){
-        setActivationStatus('', '');
+        if(validCodes.includes(userCode)){ if(!appStarted) enterApp(); }
+        else { kickOut('تم إيقاف الكود من قِبل الإدارة'); }
       }
       return;
     }
-
     if(topic === TOPIC_DATA){
       categoriesData = Array.isArray(data) ? data : [];
       renderCurrentView();
       return;
     }
-
-    /* ⭐ البوستات المباشرة */
-    if(topic === TOPIC_MATCHES){
-      try{
-        const parsed = JSON.parse(msg.toString());
-        matchesData = Array.isArray(parsed) ? parsed : (parsed.matches || []);
-      }catch(e){ matchesData = []; }
-      renderMatches();
-      return;
-    }
-
     if(topic === TOPIC_CMD){
-      if(data.action === 'stopAll'){
-        if(isStreamViewOpen) closeStreamUI();
-        return;
-      }
+      if(data.action === 'stopAll'){ if(isStreamViewOpen) closeStreamUI(); return; }
       if(data.action === 'play' && data.token){
         if(Date.now() - (data.ts || 0) < 60000){
           currentChannelId = data.channelId;
@@ -912,74 +719,8 @@ client.on('message', (topic, msg)=>{
   }catch(e){}
 });
 
-/* ================== Rendering ================== */
-function renderCurrentView(){
-  if(currentCatIndex === -1) renderCategories();
-  else renderChannels(currentCatIndex);
-}
+function renderCurrentView(){ if(currentCatIndex === -1) renderCategories(); else renderChannels(currentCatIndex); }
 
-/* ============ البوستات المباشرة ============ */
-function renderMatches(){
-  const section = document.getElementById('matchesSection');
-  const scroll = document.getElementById('matchesScroll');
-  if(!section || !scroll) return;
-
-  if(!matchesData.length){
-    section.style.display = 'none';
-    return;
-  }
-
-  section.style.display = 'block';
-
-  scroll.innerHTML = matchesData.map((m, i) => {
-    const isLive = m.status === 'live';
-    const badge = isLive ? '<span class="match-badge">مباشر</span>' : '';
-    const timeHtml = (m.time && !isLive)
-      ? `<div class="match-time">${escapeHtml(m.time)}</div>`
-      : '';
-    return `
-      <div class="match-card" onclick="openMatch(${i})">
-        <img src="${escapeAttr(m.poster || '')}" onerror="this.style.opacity=.15" alt="">
-        ${badge}
-        ${timeHtml}
-        <div class="match-overlay">
-          <div class="match-title">${escapeHtml(m.title || '')}</div>
-          <div class="match-sub">
-            <svg viewBox="0 0 24 24"><path d="M21 6h-7.59l3.29-3.29L16 2l-4 4-4-4-1.29 1.41L10.59 6H3c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 13H3V8h18v11zM9 10v6l5-3-5-3z"/></svg>
-            ${escapeHtml(m.subtitle || '')}
-          </div>
-        </div>
-      </div>
-    `;
-  }).join('');
-}
-
-function openMatch(i){
-  const m = matchesData[i];
-  if(!m) return;
-  if(m.channelId){
-    for(let ci = 0; ci < categoriesData.length; ci++){
-      const cat = categoriesData[ci];
-      const ch = (cat.channels || []).find(c => c.id === m.channelId);
-      if(ch){ playChannelObject(ch); return; }
-    }
-    showToast('القناة غير متاحة');
-  } else if(m.token){
-    /* تشغيل مباشر بالتوكن */
-    currentChannelId = m.id || 'match_' + i;
-    isStreamViewOpen = true;
-    streamView.classList.add('show');
-    document.body.style.overflow = 'hidden';
-    document.body.classList.add('stream-open');
-    playStream(tokenToUrl(m.token));
-    history.pushState({stream: true}, '');
-    autoRotateAndFS();
-  } else {
-    showToast(m.title || '');
-  }
-}
-
-/* ============ الأقسام ============ */
 function renderCategories(){
   if(!categoriesData.length){
     catsGrid.innerHTML = '<div class="empty-msg">📺<br>لا توجد أقسام متاحة حالياً<br>تابع قناتنا على تيليجرام ليصلك كل جديد</div>';
@@ -987,16 +728,15 @@ function renderCategories(){
   }
   catsGrid.innerHTML = categoriesData.map((cat,i)=>{
     const count = (cat.channels || []).length;
-    const liveCountVal = (cat.channels || []).filter(c => c.live).length;
-    const countText = liveCountVal > 0 ? `${liveCountVal} بث حي` : `${count} قناة`;
+    const lc = (cat.channels || []).filter(c => c.live).length;
+    const t = lc > 0 ? lc + ' بث حي' : count + ' قناة';
     return `
       <div class="cat-tile" onclick="openCategory(${i})">
-        <img class="cat-logo" src="${cat.logo||''}" onerror="this.style.opacity=.15" alt="${escapeAttr(cat.name||'')}">
-        <div class="cat-info">
-          <div class="cat-name">${escapeHtml(cat.name||'قسم')}</div>
-          <div class="cat-count">${countText}</div>
+        <img class="cat-logo" src="${cat.logo||''}" onerror="this.style.opacity=.15">
+        <div class="cat-info"><div class="cat-name">${escapeHtml(cat.name||'قسم')}</div><div class="cat-count">${t}</div></div>
+        <div style="width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.06);display:flex;justify-content:center;align-items:center;flex-shrink:0">
+          <svg viewBox="0 0 24 24" style="width:12px;height:12px;fill:#8a8a9a"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
         </div>
-        <div class="cat-arrow"><svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg></div>
       </div>`;
   }).join('');
 }
@@ -1006,57 +746,34 @@ function renderChannels(ci){
   if(!cat){ backToCategories(); return; }
   catTitle.textContent = cat.name || 'قنوات القسم';
   const list = cat.channels || [];
-  if(!list.length){
-    channelsGrid.innerHTML = '<div class="empty-msg">لا توجد قنوات في هذا القسم حالياً</div>';
-    return;
-  }
+  if(!list.length){ channelsGrid.innerHTML = '<div class="empty-msg">لا توجد قنوات في هذا القسم حالياً</div>'; return; }
   channelsGrid.innerHTML = list.map((ch,chi)=>`
     <div class="channel-tile ${ch.live?'live':''}" onclick="openChannel(${chi})">
-      <img class="logo" src="${ch.logo||''}" onerror="this.style.opacity=.15" alt="${escapeAttr(ch.name||'')}">
+      <img class="logo" src="${ch.logo||''}" onerror="this.style.opacity=.15">
       <div class="name">${escapeHtml(ch.name||'قناة')}</div>
       <span class="status">${ch.live?'مباشر':'غير متاح'}</span>
     </div>`).join('');
 }
 
 function renderLiveView(){
-  const allChannels = [];
-  categoriesData.forEach((cat, ci) => {
-    (cat.channels || []).forEach((ch, chi) => {
-      allChannels.push({ch, catName: cat.name, ci, chi});
-    });
-  });
-  allChannels.sort((a,b) => (b.ch.live?1:0) - (a.ch.live?1:0));
-  liveCount.textContent = allChannels.length;
-  if(!allChannels.length){
-    liveList.innerHTML = '<div class="empty-msg">📺<br>لا توجد قنوات متاحة حالياً<br>تابع قناتنا على تيليجرام ليصلك كل جديد</div>';
-    return;
-  }
-  liveList.innerHTML = allChannels.map(item => `
-    <div class="live-card ${item.ch.live?'on':'off'}" onclick="openLiveChannel(${item.ci},${item.chi})">
-      <img class="lc-logo" src="${item.ch.logo||''}" onerror="this.style.opacity=.15" alt="${escapeAttr(item.ch.name||'')}">
+  const all = [];
+  categoriesData.forEach((cat, ci) => { (cat.channels || []).forEach((ch, chi) => { all.push({ch, catName: cat.name, ci, chi}); }); });
+  all.sort((a,b) => (b.ch.live?1:0) - (a.ch.live?1:0));
+  liveCount.textContent = all.length;
+  if(!all.length){ liveList.innerHTML = '<div class="empty-msg">📺<br>لا توجد قنوات متاحة حالياً</div>'; return; }
+  liveList.innerHTML = all.map(it => `
+    <div class="live-card ${it.ch.live?'on':'off'}" onclick="openLiveChannel(${it.ci},${it.chi})">
+      <img class="lc-logo" src="${it.ch.logo||''}" onerror="this.style.opacity=.15">
       <div class="lc-info">
-        <div class="lc-name">${escapeHtml(item.ch.name||'قناة')}</div>
-        <div class="lc-cat">
-          <svg viewBox="0 0 24 24"><path d="M21 6h-7.59l3.29-3.29L16 2l-4 4-4-4-1.29 1.41L10.59 6H3c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 13H3V8h18v11zM9 10v6l5-3-5-3z"/></svg>
-          ${escapeHtml(item.catName||'قسم')}
-        </div>
+        <div class="lc-name">${escapeHtml(it.ch.name||'قناة')}</div>
+        <div class="lc-cat">${escapeHtml(it.catName||'قسم')}</div>
       </div>
-      <span class="lc-badge">${item.ch.live?'مباشر':'غير متاح'}</span>
+      <span class="lc-badge">${it.ch.live?'مباشر':'غير متاح'}</span>
     </div>`).join('');
 }
 
-function openLiveChannel(ci, chi){
-  const cat = categoriesData[ci];
-  if(!cat) return;
-  playChannelObject(cat.channels[chi]);
-}
-
-function escapeHtml(s){
-  return String(s).replace(/[&<>"']/g, ch => ({
-    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
-  }[ch]));
-}
-function escapeAttr(s) { return escapeHtml(s); }
+function openLiveChannel(ci, chi){ const cat = categoriesData[ci]; if(!cat) return; playChannelObject(cat.channels[chi]); }
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
 
 function openCategory(i){
   currentCatIndex = i;
@@ -1072,7 +789,6 @@ function backToCategories(){
   viewChannels.style.display = 'none';
   viewLive.style.display = 'none';
   renderCategories();
-  window.scrollTo({top:0, behavior:'smooth'});
 }
 function openChannel(chi){
   const cat = categoriesData[currentCatIndex];
@@ -1094,7 +810,6 @@ function playChannelObject(ch){
   autoRotateAndFS();
 }
 
-/* ============== وضع الشاشة ============== */
 function autoRotateAndFS(){
   if(isDesktopMode){
     playerBox.classList.add('desktop-mode');
@@ -1106,15 +821,11 @@ function autoRotateAndFS(){
   enterFullscreen();
   setTimeout(()=>{
     try {
-      if (screen.orientation && screen.orientation.lock) {
-        screen.orientation.lock('landscape').catch(()=>{});
-      } else if (screen.lockOrientation) {
-        screen.lockOrientation('landscape');
-      }
+      if (screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape').catch(()=>{});
+      else if (screen.lockOrientation) screen.lockOrientation('landscape');
     } catch(e){}
   }, 200);
 }
-
 function enterFullscreen(){
   try {
     if (document.fullscreenElement || document.webkitFullscreenElement) return;
@@ -1122,7 +833,6 @@ function enterFullscreen(){
     else if (playerBox.webkitRequestFullscreen) playerBox.webkitRequestFullscreen();
   } catch(e){}
 }
-
 function exitFsSafe(){
   playerBox.classList.remove('rotate-css');
   try {
@@ -1136,7 +846,6 @@ function exitFsSafe(){
     else if (screen.unlockOrientation) screen.unlockOrientation();
   } catch(e){}
 }
-
 function toggleDesktopMode(){
   isDesktopMode = !isDesktopMode;
   if(isDesktopMode){
@@ -1147,7 +856,6 @@ function toggleDesktopMode(){
     modeIcon.innerHTML = '<path d="'+ICON_PHONE+'"/>';
     try { if(screen.orientation && screen.orientation.unlock) screen.orientation.unlock(); } catch(e){}
     enterFullscreen();
-    resetHideTimer();
     showToast('تم تفعيل وضع الشاشات 🖥️');
   } else {
     playerBox.classList.remove('desktop-mode');
@@ -1158,30 +866,22 @@ function toggleDesktopMode(){
     if(isStreamViewOpen){
       playerBox.classList.add('rotate-css');
       try {
-        if (screen.orientation && screen.orientation.lock) {
-          screen.orientation.lock('landscape').catch(()=>{});
-        } else if (screen.lockOrientation) {
-          screen.lockOrientation('landscape');
-        }
+        if (screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape').catch(()=>{});
+        else if (screen.lockOrientation) screen.lockOrientation('landscape');
       } catch(e){}
       enterFullscreen();
     }
-    resetHideTimer();
   }
 }
 
-window.addEventListener('popstate', function() {
-  if (isStreamViewOpen) closeStreamUI();
-});
-
+window.addEventListener('popstate', ()=>{ if(isStreamViewOpen) closeStreamUI(); });
 function closeStream(){
-  if (isStreamViewOpen) {
+  if(isStreamViewOpen){
     isStreamViewOpen = false;
     closeStreamUI();
-    if (history.state && history.state.stream) history.back();
+    if(history.state && history.state.stream) history.back();
   }
 }
-
 function closeStreamUI(){
   isStreamViewOpen = false;
   currentChannelId = null;
@@ -1196,17 +896,14 @@ function playStream(url){
   if(!url){ stopStream(); return; }
   showLoader();
   if(hls){ hls.stopLoad(); hls.detachMedia(); hls.destroy(); hls = null; }
-  video.pause();
-  video.removeAttribute('src');
-  video.load();
+  video.pause(); video.removeAttribute('src'); video.load();
   setTimeout(() => {
     if(Hls.isSupported()){
       hls = new Hls({lowLatencyMode:true,enableWorker:true,maxBufferLength:30,
         maxMaxBufferLength:60,liveSyncDurationCount:3,liveMaxLatencyDurationCount:10,
         manifestLoadingTimeOut:15000,manifestLoadingMaxRetry:5,
         fragLoadingTimeOut:20000,fragLoadingMaxRetry:6});
-      hls.loadSource(url);
-      hls.attachMedia(video);
+      hls.loadSource(url); hls.attachMedia(video);
       hls.on(Hls.Events.MANIFEST_PARSED, ()=> video.play().catch(()=>{}));
       hls.on(Hls.Events.ERROR, (e,d)=>{
         if(d.fatal){
@@ -1221,39 +918,26 @@ function playStream(url){
 }
 
 let loaderTimeout = null;
-function showLoader(){
-  streamLoader.classList.remove('hidden');
-  if(loaderTimeout) clearTimeout(loaderTimeout);
-  loaderTimeout = setTimeout(()=>{ hideLoader(); }, 20000);
-}
-function hideLoader(){
-  streamLoader.classList.add('hidden');
-  if(loaderTimeout){ clearTimeout(loaderTimeout); loaderTimeout = null; }
-}
-
+function showLoader(){ streamLoader.classList.remove('hidden'); clearTimeout(loaderTimeout); loaderTimeout = setTimeout(hideLoader, 20000); }
+function hideLoader(){ streamLoader.classList.add('hidden'); clearTimeout(loaderTimeout); }
 video.addEventListener('playing', hideLoader);
 video.addEventListener('play', hideLoader);
 video.addEventListener('waiting', showLoader);
-video.addEventListener('stalled', showLoader);
 
 function stopStream(){
   if(hls){ hls.stopLoad(); hls.detachMedia(); hls.destroy(); hls = null; }
   video.pause(); video.removeAttribute('src'); video.load();
   hideLoader();
-  placeholder.style.display = 'none';
 }
-
 function togglePlay(){ video.paused ? video.play().catch(()=>{}) : video.pause(); }
 video.addEventListener('play', ()=>{ playIcon.innerHTML = '<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>'; });
 video.addEventListener('pause', ()=>{ playIcon.innerHTML = '<path d="M8 5v14l11-7z"/>'; });
-
 function toggleMute(){
   video.muted = !video.muted;
   volIcon.innerHTML = video.muted
     ? '<path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>'
     : '<path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>';
 }
-
 video.addEventListener('timeupdate', ()=>{
   if(video.duration && isFinite(video.duration) && video.duration > 0){
     progressFill.style.width = ((video.currentTime/video.duration)*100) + '%';
@@ -1263,71 +947,41 @@ video.addEventListener('timeupdate', ()=>{
     timeDisplay.innerHTML = '<span class="live-dot"></span>';
   }
 });
-
 function fmt(s){
   if(!s || isNaN(s) || !isFinite(s)) return '0:00';
-  const h = Math.floor(s/3600), m = Math.floor((s%3600)/60);
-  const sec = Math.floor(s%60).toString().padStart(2,'0');
+  const h = Math.floor(s/3600), m = Math.floor((s%3600)/60), sec = Math.floor(s%60).toString().padStart(2,'0');
   return h > 0 ? h+':'+m.toString().padStart(2,'0')+':'+sec : m+':'+sec;
 }
 
-const progressWrap = document.getElementById('progressWrap');
+const progressWrap = $('progressWrap');
 let isDraggingSeek = false;
-function seekVideo(e) {
-  if (!video.duration || !isFinite(video.duration)) return;
-  const rect = progressWrap.getBoundingClientRect();
-  let percent = (e.clientX - rect.left) / rect.width;
-  percent = Math.max(0, Math.min(1, percent));
-  video.currentTime = percent * video.duration;
-  progressFill.style.width = (percent * 100) + '%';
+function seekVideo(e){
+  if(!video.duration || !isFinite(video.duration)) return;
+  const r = progressWrap.getBoundingClientRect();
+  let p = (e.clientX - r.left) / r.width;
+  p = Math.max(0, Math.min(1, p));
+  video.currentTime = p * video.duration;
+  progressFill.style.width = (p*100) + '%';
 }
-progressWrap.addEventListener('pointerdown', (e) => {
-  isDraggingSeek = true;
-  try { progressWrap.setPointerCapture(e.pointerId); } catch(err){}
-  seekVideo(e); e.preventDefault();
-});
-progressWrap.addEventListener('pointermove', (e) => {
-  if (isDraggingSeek) { seekVideo(e); e.preventDefault(); }
-});
-progressWrap.addEventListener('pointerup', (e) => {
-  isDraggingSeek = false;
-  try { progressWrap.releasePointerCapture(e.pointerId); } catch(err){}
-});
+progressWrap.addEventListener('pointerdown', e => { isDraggingSeek = true; try{progressWrap.setPointerCapture(e.pointerId);}catch(x){} seekVideo(e); e.preventDefault(); });
+progressWrap.addEventListener('pointermove', e => { if(isDraggingSeek){ seekVideo(e); e.preventDefault(); } });
+progressWrap.addEventListener('pointerup', e => { isDraggingSeek = false; try{progressWrap.releasePointerCapture(e.pointerId);}catch(x){} });
 progressWrap.addEventListener('pointercancel', () => { isDraggingSeek = false; });
 
-let controlsVisible = true;
-let hideTimer = null;
-function showControls(){
-  customControls.classList.remove('hidden');
-  controlsVisible = true;
-  resetHideTimer();
-}
-function hideControls(){
-  customControls.classList.add('hidden');
-  controlsVisible = false;
-  if(hideTimer){ clearTimeout(hideTimer); hideTimer = null; }
-}
-function resetHideTimer(){
-  if(hideTimer) clearTimeout(hideTimer);
-  hideTimer = setTimeout(()=>{ hideControls(); }, 3500);
-}
+let controlsVisible = true, hideTimer = null;
+function showControls(){ customControls.classList.remove('hidden'); controlsVisible = true; resetHideTimer(); }
+function hideControls(){ customControls.classList.add('hidden'); controlsVisible = false; }
+function resetHideTimer(){ clearTimeout(hideTimer); hideTimer = setTimeout(hideControls, 3500); }
 resetHideTimer();
-
-playerBox.addEventListener('click', (e) => {
-  if (customControls.contains(e.target)) { resetHideTimer(); return; }
-  if (e.target.closest('.back-btn')) return;
-  if (e.target.closest('.mode-btn')) return;
-  if (isDraggingSeek) return;
-  if (controlsVisible) hideControls();
-  else showControls();
+playerBox.addEventListener('click', e => {
+  if(customControls.contains(e.target) || e.target.closest('.back-btn') || e.target.closest('.mode-btn')) return;
+  if(isDraggingSeek) return;
+  if(controlsVisible) hideControls(); else showControls();
 });
-playerBox.addEventListener('touchstart', (e) => {
-  if (customControls.contains(e.target)) { resetHideTimer(); return; }
-  if (e.target.closest('.back-btn')) return;
-  if (e.target.closest('.mode-btn')) return;
-  if (isDraggingSeek) return;
-  if (controlsVisible) hideControls();
-  else showControls();
+playerBox.addEventListener('touchstart', e => {
+  if(customControls.contains(e.target) || e.target.closest('.back-btn') || e.target.closest('.mode-btn')) return;
+  if(isDraggingSeek) return;
+  if(controlsVisible) hideControls(); else showControls();
 }, {passive:true});
 
 function navHome(){
