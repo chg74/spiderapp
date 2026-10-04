@@ -384,7 +384,7 @@
   .back-btn:active{background:var(--accent);border-color:var(--accent);
     box-shadow:0 6px 20px var(--accent-glow);transform:scale(.95)}
 
-  /* ⭐ زر وضع الكمبيوتر */
+  /* ⭐ زر وضع الشاشات */
   .mode-btn{position:absolute;top:calc(var(--safe-top) + 14px);right:14px;z-index:40;
     background:rgba(10,10,15,.75);color:#fff;border:1px solid rgba(255,255,255,.18);
     padding:8px 15px;font-size:12.5px;font-family:'Cairo',sans-serif;font-weight:700;
@@ -442,7 +442,7 @@
     transform-origin:center center;
   }
 
-  /* ⭐⭐⭐ وضع الكمبيوتر / الشاشات الكبيرة ⭐⭐⭐ */
+  /* ⭐⭐⭐ وضع الشاشات / الشاشات الكبيرة ⭐⭐⭐ */
   .player-box.desktop-mode .video-aspect,
   .player-box.desktop-mode.rotate-css .video-aspect{
     position:fixed !important;inset:0 !important;
@@ -615,10 +615,10 @@
         رجوع
       </button>
 
-      <!-- ⭐ زر وضع الكمبيوتر -->
+      <!-- ⭐ زر وضع الشاشات -->
       <button class="mode-btn" id="modeBtn" onclick="toggleDesktopMode()">
         <svg id="modeIcon" viewBox="0 0 24 24"><path d="M21 2H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h7v2H8v2h8v-2h-2v-2h7c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H3V4h18v12z"/></svg>
-        <span id="modeText">وضع الكمبيوتر</span>
+        <span id="modeText">وضع الشاشات</span>
       </button>
 
       <div class="custom-controls" id="customControls">
