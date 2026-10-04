@@ -600,6 +600,7 @@
   const TOPIC_DATA  = 'kwtspta_9f3a2b1c/data';
   const TOPIC_HB    = 'kwtspta_9f3a2b1c/hb';
   const TOPIC_CODES = 'kwtspta_9f3a2b1c/codes';
+  const TOPIC_REQ   = 'kwtspta_9f3a2b1c/req'; // 📤 طلب الأكواد من الأدمن
   const MY_ID = 'v_' + Math.random().toString(36).slice(2,10);
 
   const CODES_CACHE_KEY = 'alankaboot_codes_cache_v1';
@@ -687,7 +688,6 @@
     e.target.classList.remove('err','ok');
     lockMsg.className = 'lock-msg';
     lockMsg.textContent = '';
-    /* ❌ إلغاء أي فحص معلق */
     if(pollInterval){ clearInterval(pollInterval); pollInterval = null; }
     pendingCode = null;
   });
@@ -695,7 +695,16 @@
     if(e.key === 'Enter') submitActivationCode();
   });
 
-  /* ⚡⚡ التحقق الفوري ⚡⚡ */
+  /* ⚡ طلب الأكواد من الأدمن */
+  function requestCodesFromAdmin(){
+    try {
+      if(client && mqttConnected){
+        client.publish(TOPIC_REQ, JSON.stringify({ id: MY_ID, ts: Date.now() }), {qos:0});
+      }
+    } catch(e){}
+  }
+
+  /* ⚡⚡ الدالة الأساسية */
   function submitActivationCode(){
     const raw = codeInput.value.replace(/[^A-Za-z0-9]/g,'').toUpperCase();
     if(raw.length !== 8){
@@ -706,7 +715,7 @@
     }
     const code = raw.slice(0,4) + '-' + raw.slice(4);
 
-    /* ✅ 1) الكود اتفتح قبل كده → فتح فوري */
+    /* 1) اتحقق من المفتوحات قبل كده */
     const activated = loadActivated();
     if(activated[code]){
       const expiresAt = activated[code].expiresAt;
@@ -719,7 +728,7 @@
           durationMinutes: activated[code].durationMin
         };
         setLockMsg('✅ الكود صالح! باقي ' + fmtDuration(remain), 'ok');
-        setTimeout(()=> openApp(), 150);
+        setTimeout(()=> openApp(), 100);
         return;
       } else {
         setLockMsg('⏰ انتهت مدة هذا الكود — اطلب كود جديد من تيليجرام','err');
@@ -729,7 +738,7 @@
       }
     }
 
-    /* ✅ 2) دور في كاش الأكواد */
+    /* 2) دور في الكاش */
     const found = activationCodes.find(c =>
       String(c.code||'').toUpperCase() === code && c.active !== false
     );
@@ -738,13 +747,15 @@
       return;
     }
 
-    /* ⏳ 3) مش موجود → دور كل 500ms لحد 20 ثانية */
+    /* 3) اطلب من الأدمن + استنى */
     pendingCode = code;
     setLockBtnLoading(true);
-    setLockMsg('🔐 جاري التحقق من السيرفر...','info');
+    setLockMsg('📤 جاري طلب الكود من السيرفر...','info');
+    requestCodesFromAdmin();
 
-    if(pollInterval){ clearInterval(pollInterval); }
+    if(pollInterval) clearInterval(pollInterval);
     let pollCount = 0;
+    let requestCount = 0;
     pollInterval = setInterval(()=>{
       if(pendingCode !== code){
         clearInterval(pollInterval);
@@ -753,7 +764,13 @@
       }
       pollCount++;
 
-      /* كل دورة: دور في الكاش */
+      /* كل 2 ثانية: أعد الطلب من الأدمن */
+      if(pollCount % 4 === 0 && requestCount < 5){
+        requestCount++;
+        requestCodesFromAdmin();
+      }
+
+      /* دور كل 500ms */
       const f = activationCodes.find(c =>
         String(c.code||'').toUpperCase() === code && c.active !== false
       );
@@ -765,22 +782,21 @@
         return;
       }
 
-      /* لو عدا 20 ثانية → وقف واظهر خطأ */
+      /* بعد 20 ثانية → فشل */
       if(pollCount >= 40){
         clearInterval(pollInterval);
         pollInterval = null;
         if(pendingCode === code){
           pendingCode = null;
           setLockBtnLoading(false);
-          setLockMsg('❌ الكود غير موجود، تأكد منه أو اطلب كود جديد','err');
+          setLockMsg('❌ الكود غير موجود. تأكد إنك ولّدته من لوحة التحكم وضغطت "توليد الأكواد"','err');
           codeInput.classList.add('err');
-          setTimeout(()=> codeInput.classList.remove('err'), 900);
+          setTimeout(()=> codeInput.classList.remove('err'), 1200);
         }
       }
     }, 500);
   }
 
-  /* 💾 تفعيل + تخزين محلي */
   function activateAndCache(code, found){
     const durationMinutes = Number(found.durationMin)
       || (Number(found.duration) * 60)
@@ -812,7 +828,7 @@
 
     codeInput.classList.add('ok');
     setLockMsg('✅ تم التفعيل! باقي ' + fmtDuration(remain), 'ok');
-    setTimeout(()=> openApp(), 350);
+    setTimeout(()=> openApp(), 250);
   }
 
   function fmtDuration(ms){
@@ -954,19 +970,16 @@
       const data = JSON.parse(msg.toString());
 
       if(topic === TOPIC_CODES){
-        /* 🛡️ تحقق إنها مصفوفة قبل الحفظ */
         if(Array.isArray(data)){
           activationCodes = data;
           saveCachedCodes(activationCodes);
         }
-
         if(userSession){
           const stillValid = activationCodes.some(c =>
             String(c.code||'').toUpperCase() === userSession.code && c.active !== false
           );
           if(!stillValid){ lockUser('❌ تم إلغاء الكود من قِبل الإدارة'); }
         }
-        /* ملاحظة: مفيش فحص فوري لـ pendingCode هنا — الفحص بيتم كل 500ms في polling */
         return;
       }
 
