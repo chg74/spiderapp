@@ -171,6 +171,92 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;ba
 </head>
 <body>
 
+<!-- ═══════════════════════════════════════════════════
+     🛡️ حماية العنكبوت — مُحسّنة
+     - تعمل بدون مشاكل على الموبايل
+     - تحمي على الكمبيوتر من DevTools
+     ═══════════════════════════════════════════════════ -->
+<script>
+(function(){
+    'use strict';
+    
+    /* 1. منع Right Click */
+    document.addEventListener('contextmenu', function(e){ e.preventDefault(); return false; }, true);
+    
+    /* 2. منع اختصارات DevTools */
+    document.addEventListener('keydown', function(e){
+        const k = e.key;
+        const kc = e.keyCode;
+        
+        if(kc === 123 || k === 'F12'){ e.preventDefault(); e.stopPropagation(); return false; }
+        if(e.ctrlKey && e.shiftKey && ['I','J','C','i','j','c'].includes(k)){ e.preventDefault(); e.stopPropagation(); return false; }
+        if(e.ctrlKey && (k === 'u' || k === 'U')){ e.preventDefault(); e.stopPropagation(); return false; }
+        if(e.ctrlKey && (k === 's' || k === 'S')){ e.preventDefault(); e.stopPropagation(); return false; }
+        if(e.ctrlKey && (k === 'p' || k === 'P')){ e.preventDefault(); e.stopPropagation(); return false; }
+        if(e.metaKey && e.altKey && ['I','J','C','i','j','c'].includes(k)){ e.preventDefault(); e.stopPropagation(); return false; }
+        
+    }, true);
+    
+    /* 3. منع تحديد النص والسحب */
+    document.addEventListener('selectstart', function(e){ e.preventDefault(); }, true);
+    document.addEventListener('dragstart', function(e){ e.preventDefault(); }, true);
+    
+    /* 4. تعطيل Console */
+    try{
+        const noop = function(){};
+        ['log','debug','info','warn','error','table','trace','dir',
+         'group','groupEnd','time','timeEnd','count','assert','clear'
+        ].forEach(function(m){ try{ console[m] = noop; }catch(e){} });
+    }catch(e){}
+    
+    /* 5. كشف فتح DevTools — على الكمبيوتر بس */
+    const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+    
+    if(!isMobile){
+        let devtoolsOpen = false;
+        const threshold = 200;
+        
+        function destroyPage(){
+            try{
+                document.documentElement.innerHTML = 
+                '<html><head><title>⚠️ ممنوع</title></head>' +
+                '<body style="margin:0;background:#050510;color:#fff;font-family:Cairo,Tahoma,sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;text-align:center;flex-direction:column;gap:20px;padding:20px;">' +
+                '<div style="font-size:80px;">⛔</div>' +
+                '<div style="font-size:26px;font-weight:900;color:#ff3b52;">ممنوع!</div>' +
+                '<div style="font-size:15px;color:#8b8ba7;max-width:420px;line-height:1.9;">تم اكتشاف محاولة فتح أدوات المطور<br>يرجى إغلاق الأدوات وإعادة تحميل الصفحة</div>' +
+                '<div style="font-size:12px;color:#5a5a75;margin-top:20px;">ANKABOOT SECURITY SYSTEM</div>' +
+                '</body></html>';
+            }catch(e){}
+        }
+        
+        function checkDevTools(){
+            try{
+                const wDiff = window.outerWidth - window.innerWidth;
+                const hDiff = window.outerHeight - window.innerHeight;
+                
+                if((wDiff > threshold || hDiff > threshold) && !devtoolsOpen){
+                    devtoolsOpen = true;
+                    destroyPage();
+                }
+            }catch(e){}
+        }
+        
+        /* يبدأ الفحص بعد 3 ثواني من فتح الصفحة */
+        setTimeout(function(){
+            setInterval(checkDevTools, 1500);
+        }, 3000);
+    }
+    
+    /* 6. حماية من iframe */
+    try{
+        if(window.top !== window.self){
+            window.top.location = window.self.location;
+        }
+    }catch(e){}
+    
+})();
+</script>
+
 <div class="app">
 <div class="header">
 <img class="header-logo" src="https://i.postimg.cc/xT8rcsT1/file-000000008bb4820ebcd371e64fff0469.png" alt="">
@@ -349,11 +435,6 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;ba
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
 import { getDatabase, ref, get, onValue } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-database.js";
 
-/* ═══════════════════════════════════════════════
-   ✅ البروكسي المُحسّن:
-   - روابط HTTPS → تفتح مباشرة (زي cp11.adabmedia.com)
-   - روابط HTTP فقط → تمر عبر الـ Worker
-   ═══════════════════════════════════════════════ */
 const PROXY_BASE = "https://alankaboot-proxy.kamlnot61.workers.dev";
 
 function proxyUrl(url){
@@ -422,7 +503,6 @@ playerBox.addEventListener("click", (e)=>{
     else showControls(false);
 });
 
-/* ============ زرار وضع التليفون ============ */
 window.togglePhoneMode = async function(e){
     e.stopPropagation();
     
@@ -616,7 +696,6 @@ video.addEventListener("timeupdate", ()=>{
     }
 });
 
-/* ============ Player ============ */
 function stopPlayer(){
     if(hls){ try{ hls.destroy(); }catch(e){} hls = null; }
     try{ video.pause(); }catch(e){}
