@@ -11,6 +11,7 @@
 body{min-height:100vh;background:#050510;color:#fff;overflow-x:hidden;padding-bottom:40px;}
 body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(ellipse 700px 500px at 15% 8%,rgba(139,92,246,.22),transparent 55%),radial-gradient(ellipse 700px 500px at 85% 92%,rgba(0,255,136,.14),transparent 55%);}
 .app{width:100%;max-width:540px;margin:0 auto;padding:16px;}
+
 .header{display:flex;align-items:center;gap:12px;margin-bottom:16px;padding:0 4px;}
 .header-logo{width:46px;height:46px;border-radius:13px;object-fit:contain;background:rgba(255,255,255,.04);border:1px solid rgba(0,255,136,.3);padding:5px;flex-shrink:0;box-shadow:0 0 20px rgba(0,255,136,.3);}
 .header-text{flex:1;}
@@ -50,23 +51,12 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;ba
 
 .ctrl-top-right{display:flex;align-items:center;gap:6px;}
 
-/* زرار وضع التليفون (في الصغير) */
-.phone-mode-btn{
-background:linear-gradient(135deg,#8b5cf6,#3b82f6);
-border:0;color:#fff;
-padding:8px 13px;border-radius:100px;
-font-size:11.5px;font-weight:800;cursor:pointer;
-display:none;align-items:center;gap:5px;
-transition:.2s;
-box-shadow:0 4px 14px rgba(139,92,246,.4);
-white-space:nowrap;
-}
+.phone-mode-btn{background:linear-gradient(135deg,#8b5cf6,#3b82f6);border:0;color:#fff;padding:8px 13px;border-radius:100px;font-size:11.5px;font-weight:800;cursor:pointer;display:none;align-items:center;gap:5px;transition:.2s;box-shadow:0 4px 14px rgba(139,92,246,.4);white-space:nowrap;}
 .phone-mode-btn.show{display:flex;}
 .phone-mode-btn:active{transform:scale(.92);}
 .phone-mode-btn svg{width:13px;height:13px;fill:currentColor;}
 .phone-mode-btn.landscape-mode{background:linear-gradient(135deg,#00ff88,#00cc6a);box-shadow:0 4px 14px rgba(0,255,136,.4);}
 
-/* زرار الجودة (في الكبير بس) */
 .quality-wrap{position:relative;z-index:15;display:none;}
 .quality-wrap.show{display:block;}
 .quality-btn{background:rgba(0,0,0,.65);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.18);color:#fff;padding:7px 12px;border-radius:100px;font-size:11.5px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:5px;transition:.2s;}
@@ -91,32 +81,15 @@ white-space:nowrap;
 .ctrl-time .live-mark{color:#00ff88;font-weight:900;display:flex;align-items:center;gap:3px;}
 .ctrl-time .live-mark::before{content:'';width:5px;height:5px;border-radius:50%;background:#00ff88;box-shadow:0 0 8px #00ff88;}
 
-/* زرار القفل (تبديل الوضع) - الحل البديل */
-.force-landscape-wrap{position:relative;}
-.player.force-landscape{
-position:fixed !important;
-top:50% !important;
-left:50% !important;
-width:100vh !important;
-height:100vw !important;
-transform:translate(-50%,-50%) rotate(90deg) !important;
-transform-origin:center center !important;
-border-radius:0 !important;
-z-index:9999 !important;
-}
+.player.force-landscape{position:fixed !important;top:50% !important;left:50% !important;width:100vh !important;height:100vw !important;transform:translate(-50%,-50%) rotate(90deg) !important;transform-origin:center center !important;border-radius:0 !important;z-index:9999 !important;}
 .player.force-landscape .quality-drop{transform:rotate(-90deg);transform-origin:top right;}
 .player.force-landscape .ctrl-top{padding:14px 20px;}
 .player.force-landscape .ctrl-bottom{padding:16px 22px 14px;}
 .player.force-landscape .ctrl-btn{width:44px;height:44px;}
 .player.force-landscape .ctrl-btn svg{width:20px;height:20px;}
 
-/* Fullscreen الطبيعي */
-.player:fullscreen,
-.player:-webkit-full-screen{width:100vw !important;height:100vh !important;aspect-ratio:auto !important;border-radius:0 !important;}
-.player:fullscreen video,
-.player:fullscreen iframe,
-.player:-webkit-full-screen video,
-.player:-webkit-full-screen iframe{width:100% !important;height:100% !important;object-fit:contain !important;}
+.player:fullscreen,.player:-webkit-full-screen{width:100vw !important;height:100vh !important;aspect-ratio:auto !important;border-radius:0 !important;}
+.player:fullscreen video,.player:fullscreen iframe,.player:-webkit-full-screen video,.player:-webkit-full-screen iframe{width:100% !important;height:100% !important;object-fit:contain !important;}
 
 .inputs-card{background:linear-gradient(180deg,rgba(18,18,32,.95),rgba(10,10,22,.95));border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:18px;margin-bottom:14px;box-shadow:0 12px 40px rgba(0,0,0,.5);}
 .input-group{margin-bottom:14px;}
@@ -227,13 +200,11 @@ z-index:9999 !important;
 <div class="ctrl-badge" id="ctrlBadge"><span class="live-dot"></span><span id="ctrlBadgeName">قناة</span></div>
 
 <div class="ctrl-top-right">
-<!-- ✅ زرار وضع التليفون (يظهر في الصغير فقط) -->
 <button class="phone-mode-btn" id="phoneModeBtn" onclick="togglePhoneMode(event)">
 <svg id="phoneModeIcon" viewBox="0 0 24 24"><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/></svg>
 <span id="phoneModeLabel">وضع التليفون</span>
 </button>
 
-<!-- ✅ زرار الجودة (يظهر في الكبير فقط) -->
 <div class="quality-wrap" id="qualityWrap">
 <button class="quality-btn" onclick="toggleQuality(event)">
 <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-1 11h-4v4h-4v-4H6v-4h4V6h4v4h4v4z"/></svg>
@@ -378,8 +349,18 @@ z-index:9999 !important;
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
 import { getDatabase, ref, get, onValue } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-database.js";
 
+/* ═══════════════════════════════════════════════
+   ✅ البروكسي المُحسّن:
+   - روابط HTTPS → تفتح مباشرة (زي cp11.adabmedia.com)
+   - روابط HTTP فقط → تمر عبر الـ Worker
+   ═══════════════════════════════════════════════ */
 const PROXY_BASE = "https://alankaboot-proxy.kamlnot61.workers.dev";
-function proxyUrl(url){ if(!url) return url; return PROXY_BASE + "/?url=" + encodeURIComponent(url); }
+
+function proxyUrl(url){
+    if(!url) return url;
+    if(url.toLowerCase().startsWith("https://")) return url;
+    return PROXY_BASE + "/?url=" + encodeURIComponent(url);
+}
 
 const firebaseConfig = {
 apiKey: "AIzaSyAUc2C9hG9VE7RECiW19QXjNZqVH96sFE",
@@ -441,19 +422,16 @@ playerBox.addEventListener("click", (e)=>{
     else showControls(false);
 });
 
-/* ============ ✅ زرار وضع التليفون ============ */
+/* ============ زرار وضع التليفون ============ */
 window.togglePhoneMode = async function(e){
     e.stopPropagation();
     
     if(!isPhoneMode){
-        /* فعّل الوضع العرضي */
         isPhoneMode = true;
         playerBox.classList.add("force-landscape");
         phoneModeBtn.classList.add("landscape-mode");
         phoneModeLabel.textContent = "وضع الشاشات";
         phoneModeIcon.innerHTML = '<path d="M21 2H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h7v2H8v2h8v-2h-2v-2h7c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H3V4h18v12z"/>';
-        
-        /* ✅ زرار الجودة يظهر في الوضع العرضي */
         qualityWrap.classList.add("show");
         
         try{
@@ -474,14 +452,11 @@ window.togglePhoneMode = async function(e){
         }, 500);
         
     } else {
-        /* رجّع عمودي */
         isPhoneMode = false;
         playerBox.classList.remove("force-landscape");
         phoneModeBtn.classList.remove("landscape-mode");
         phoneModeLabel.textContent = "وضع التليفون";
         phoneModeIcon.innerHTML = '<path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/>';
-        
-        /* ✅ زرار الجودة يختفي في الوضع العادي */
         qualityWrap.classList.remove("show");
         qualityDrop.classList.remove("show");
         
@@ -500,12 +475,10 @@ window.togglePhoneMode = async function(e){
     showControls(true);
 };
 
-/* ============ Fullscreen العادي (بيلف كمان) ============ */
 window.toggleFullscreen = async function(e){
     e.stopPropagation();
     
     if(!isPhoneMode){
-        /* يعمل نفس حاجة وضع التليفون */
         isPhoneMode = true;
         playerBox.classList.add("force-landscape");
         phoneModeBtn.classList.add("landscape-mode");
@@ -555,7 +528,6 @@ window.toggleFullscreen = async function(e){
 
 document.addEventListener("fullscreenchange", ()=>{
     if(!document.fullscreenElement && !document.webkitFullscreenElement && isPhoneMode){
-        /* المستخدم خرج من fullscreen - رجّع الوضع العادي */
         isPhoneMode = false;
         playerBox.classList.remove("force-landscape");
         phoneModeBtn.classList.remove("landscape-mode");
@@ -570,7 +542,6 @@ document.addEventListener("fullscreenchange", ()=>{
     }
 });
 
-/* ============ Quality ============ */
 window.toggleQuality = function(e){ e.stopPropagation(); qualityDrop.classList.toggle("show"); };
 document.addEventListener("click", (e)=>{ if(!e.target.closest('.quality-wrap')) qualityDrop.classList.remove("show"); });
 
@@ -600,7 +571,6 @@ function applyQuality(q){
     if(bestIdx >= 0) hls.currentLevel = bestIdx;
 }
 
-/* ============ Play/Pause/Mute ============ */
 window.togglePlay = function(e){ e.stopPropagation(); if(video.paused) video.play().catch(()=>{}); else video.pause(); showControls(true); };
 video.addEventListener("play", ()=>{ playIcon.innerHTML = '<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>'; });
 video.addEventListener("pause", ()=>{ playIcon.innerHTML = '<path d="M8 5v14l11-7z"/>'; });
@@ -614,7 +584,6 @@ window.toggleMute = function(e){
     showControls(true);
 };
 
-/* ============ Progress ============ */
 function seekVideo(e){
     if(!video.duration || !isFinite(video.duration)) return;
     const rect = progressWrap.getBoundingClientRect();
