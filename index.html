@@ -50,7 +50,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;ba
 .quick-sub{color:#6d6d8a;font-size:10.5px;font-weight:600;}
 
 /* ═══════════════════════════════════════════════════
-   🎬 نافذة MX Player + Play Store
+   🎬 نافذة MX Player
    ═══════════════════════════════════════════════════ */
 .player-modal{
     position:fixed;inset:0;z-index:9999;
@@ -389,59 +389,111 @@ const playerModal = document.getElementById("playerModal");
 let activeListener = null;
 let currentStreamUrl = "";
 
-/* ═══════════════════════════════════════════════════
-   🔑 ثوابت MX Player
-   ═══════════════════════════════════════════════════ */
-const MX_PACKAGE = "com.mxtech.videoplayer.ad";
-const MX_PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=com.mxtech.videoplayer.ad";
-
 function setMsg(text, type){ mainMsg.textContent = text || ""; mainMsg.className = "msg " + (type || ""); }
 
 /* ═══════════════════════════════════════════════════
-   🎬 تشغيل في MX Player — مع Fallback ذكي لـ Google Play
+   🔍 كشف البيئة: تطبيق (WebView) ولا متصفح (Chrome)
+   ═══════════════════════════════════════════════════ */
+function isInsideApp(){
+    const ua = navigator.userAgent || "";
+    /* WebView signatures */
+    if(ua.indexOf("wv") !== -1) return true;
+    if(ua.indexOf("WebView") !== -1) return true;
+    if(ua.indexOf("Version/") !== -1 && ua.indexOf("Chrome/") !== -1 && ua.indexOf("Safari/") !== -1 && ua.indexOf("Mobile") !== -1){
+        /* Safari-like but in WebView */
+        if(ua.indexOf("CriOS") === -1 && ua.indexOf("FxiOS") === -1) return true;
+    }
+    /* Custom app markers */
+    if(typeof window.Android !== "undefined") return true;
+    if(typeof window.AndroidFunction !== "undefined") return true;
+    if(typeof window.Sketchware !== "undefined") return true;
+    /* File protocol */
+    if(window.location.protocol === "file:") return true;
+    return false;
+}
+
+/* ═══════════════════════════════════════════════════
+   🎬 تشغيل في MX Player — يدعم التطبيق والمتصفح
    ═══════════════════════════════════════════════════ */
 window.launchMXPlayer = function(){
     const url = currentStreamUrl;
     if(!url){ alert("مفيش رابط"); return; }
     
+    const MX_PACKAGE = "com.mxtech.videoplayer.ad";
+    const MX_WEB = "https://play.google.com/store/apps/details?id=" + MX_PACKAGE;
+    const MX_MARKET = "market://details?id=" + MX_PACKAGE;
+    
     const isHttps = url.toLowerCase().startsWith("https");
     const scheme = isHttps ? "https" : "http";
     const urlNoProto = url.replace(/^https?:\/\//i, "");
     
-    /* ⭐ flag: هل فتح التطبيق فعلاً؟ */
+    /* flag لمعرفة إذا التطبيق فتح */
     let appOpened = false;
     const markOpened = function(){ appOpened = true; };
-    
-    /* نضيف مستمعين للكشف عن فتح التطبيق */
     document.addEventListener("visibilitychange", markOpened, { once: true });
     window.addEventListener("pagehide", markOpened, { once: true });
     window.addEventListener("blur", markOpened, { once: true });
     
-    /* بناء الـ intent */
+    /* ═══════════════════════════════════════════
+       📱 الوضع 1: داخل تطبيق (WebView)
+       ═══════════════════════════════════════════ */
+    if(isInsideApp()){
+        
+        /* في WebView، window.open() بيفتح التطبيقات المتوافقة */
+        try{
+            window.open(url, "_blank");
+        }catch(e){}
+        
+        /* بعد 1.8 ثانية، لو لسه على الصفحة → MX مش مثبت */
+        setTimeout(function(){
+            if(!appOpened && !document.hidden){
+                /* نجرّب market:// */
+                try{
+                    window.location.href = MX_MARKET;
+                }catch(e){
+                    window.location.href = MX_WEB;
+                }
+                /* لو market:// فشل كمان → https */
+                setTimeout(function(){
+                    if(!appOpened && !document.hidden){
+                        window.location.href = MX_WEB;
+                    }
+                }, 1200);
+            }
+        }, 1800);
+        
+        return;
+    }
+    
+    /* ═══════════════════════════════════════════
+       🌐 الوضع 2: في متصفح Chrome
+       ═══════════════════════════════════════════ */
     const intentUrl = "intent://" + urlNoProto + 
         "#Intent;scheme=" + scheme + 
         ";type=video/*" + 
         ";package=" + MX_PACKAGE + 
         ";action=android.intent.action.VIEW" + 
         ";category=android.intent.category.BROWSABLE" + 
-        ";S.browser_fallback_url=" + encodeURIComponent(MX_PLAY_STORE_URL) + 
+        ";S.browser_fallback_url=" + encodeURIComponent(MX_WEB) + 
         ";end";
     
-    /* ⭐ نحاول نفتح MX Player */
     try{
         window.location.href = intentUrl;
-    } catch(e){
-        window.location.href = MX_PLAY_STORE_URL;
+    }catch(e){
+        window.location.href = MX_WEB;
         return;
     }
     
-    /* ⭐ بعد 1200ms، لو لسه على الصفحة → MX مش مثبت → Google Play */
+    /* Fallback للـ Chrome */
     setTimeout(function(){
-        if(!appOpened && document.visibilityState === "visible" && !document.hidden){
-            /* MX مش مثبت → افتح Google Play */
-            window.location.href = MX_PLAY_STORE_URL;
+        if(!appOpened && !document.hidden && !document.fullscreenElement){
+            try{
+                window.location.href = MX_MARKET;
+            }catch(e){
+                window.location.href = MX_WEB;
+            }
         }
-    }, 1200);
+    }, 1500);
 };
 
 /* ═══════════════════════════════════════════════════
@@ -490,9 +542,7 @@ async function playByCode(rawCode){
         setMsg("✓ تم التحقق — اختر MX Player", "ok");
         setTimeout(()=> setMsg("", ""), 3000);
         
-        /* ⭐ نفتح نافذة MX Player */
         showPlayerModal(data.url);
-        
         watchChannel(code);
         
     } catch(e){
