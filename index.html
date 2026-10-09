@@ -453,7 +453,7 @@ openPlayerWithUrl(ch.url, ch.name);
 }
 
 /* ═══════════════════════════════════════════════════
-   🎬 فتح المشغل من الجهاز مباشرة
+   🎬 فتح المشغل من الجهاز مباشرة (MX Player فقط)
    ═══════════════════════════════════════════════════ */
 function openPlayerWithUrl(url, name){
 showToast('جاري فتح المشغل...', 'success');
@@ -468,12 +468,13 @@ document.addEventListener("visibilitychange", mark, { once: true });
 window.addEventListener("pagehide", mark, { once: true });
 window.addEventListener("blur", mark, { once: true });
 
-/* ⭐ الطريقة 1: intent:// بدون package → يفتح قائمة المشغلات من الجهاز */
+/* ⭐ الطريقة 1: intent:// مع تحديد حزمة MX Player فقط */
 const intentUrl = "intent://" + urlNoProto + 
 "#Intent;scheme=" + scheme + 
 ";type=video/*" + 
 ";action=android.intent.action.VIEW" + 
 ";category=android.intent.category.BROWSABLE" + 
+";package=com.mxtech.videoplayer.ad" + 
 ";end";
 
 try{
@@ -543,4 +544,4 @@ window.openLiveChannel = openLiveChannel;
 </script>
 
 </body>
-</html>n
+</html>
