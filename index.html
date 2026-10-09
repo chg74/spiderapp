@@ -12,6 +12,15 @@ body{min-height:100vh;background:#050510;color:#fff;overflow-x:hidden;padding-bo
 body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(ellipse 700px 500px at 15% 8%,rgba(139,92,246,.22),transparent 55%),radial-gradient(ellipse 700px 500px at 85% 92%,rgba(0,255,136,.14),transparent 55%);}
 .app{width:100%;max-width:540px;margin:0 auto;padding:16px;}
 
+body.in-player-mode{overflow:hidden !important;padding:0 !important;}
+body.in-player-mode .app{padding:0 !important;max-width:100% !important;}
+body.in-player-mode .app > .header,
+body.in-player-mode .app > .inputs-card,
+body.in-player-mode .app > .section-head,
+body.in-player-mode .app > .quick-grid,
+body.in-player-mode .app > .footer{display:none !important;}
+body.in-player-mode .player-card{margin:0 !important;border-radius:0 !important;box-shadow:none !important;}
+
 .header{display:flex;align-items:center;gap:12px;margin-bottom:16px;padding:0 4px;}
 .header-logo{width:46px;height:46px;border-radius:13px;object-fit:contain;background:rgba(255,255,255,.04);border:1px solid rgba(0,255,136,.3);padding:5px;flex-shrink:0;box-shadow:0 0 20px rgba(0,255,136,.3);}
 .header-text{flex:1;}
@@ -81,15 +90,38 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;ba
 .ctrl-time .live-mark{color:#00ff88;font-weight:900;display:flex;align-items:center;gap:3px;}
 .ctrl-time .live-mark::before{content:'';width:5px;height:5px;border-radius:50%;background:#00ff88;box-shadow:0 0 8px #00ff88;}
 
-.player.force-landscape{position:fixed !important;top:50% !important;left:50% !important;width:100vh !important;height:100vw !important;transform:translate(-50%,-50%) rotate(90deg) !important;transform-origin:center center !important;border-radius:0 !important;z-index:9999 !important;}
-.player.force-landscape .quality-drop{transform:rotate(-90deg);transform-origin:top right;}
-.player.force-landscape .ctrl-top{padding:14px 20px;}
-.player.force-landscape .ctrl-bottom{padding:16px 22px 14px;}
-.player.force-landscape .ctrl-btn{width:44px;height:44px;}
-.player.force-landscape .ctrl-btn svg{width:20px;height:20px;}
+/* 🖥️ وضع الشاشات — ملء الشاشة عادي */
+.player.fs-screen-mode{
+    position:fixed !important;
+    inset:0 !important;
+    width:100vw !important;
+    height:100vh !important;
+    aspect-ratio:auto !important;
+    border-radius:0 !important;
+    z-index:9999 !important;
+    background:#000 !important;
+}
 
-.player:fullscreen,.player:-webkit-full-screen{width:100vw !important;height:100vh !important;aspect-ratio:auto !important;border-radius:0 !important;}
-.player:fullscreen video,.player:fullscreen iframe,.player:-webkit-full-screen video,.player:-webkit-full-screen iframe{width:100% !important;height:100% !important;object-fit:contain !important;}
+/* 📱 وضع التليفون — لف 90° */
+.player.fs-phone-mode{
+    position:fixed !important;
+    top:50% !important;
+    left:50% !important;
+    width:100vh !important;
+    height:100vw !important;
+    transform:translate(-50%,-50%) rotate(90deg) !important;
+    transform-origin:center center !important;
+    border-radius:0 !important;
+    z-index:9999 !important;
+    background:#000 !important;
+    aspect-ratio:auto !important;
+}
+.player.fs-phone-mode .quality-drop{transform:rotate(-90deg);transform-origin:top right;}
+
+.player.fs-screen-mode video,
+.player.fs-screen-mode iframe,
+.player.fs-phone-mode video,
+.player.fs-phone-mode iframe{width:100% !important;height:100% !important;object-fit:contain !important;}
 
 .inputs-card{background:linear-gradient(180deg,rgba(18,18,32,.95),rgba(10,10,22,.95));border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:18px;margin-bottom:14px;box-shadow:0 12px 40px rgba(0,0,0,.5);}
 .input-group{margin-bottom:14px;}
@@ -171,89 +203,45 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;ba
 </head>
 <body>
 
-<!-- ═══════════════════════════════════════════════════
-     🛡️ حماية العنكبوت — مُحسّنة
-     - تعمل بدون مشاكل على الموبايل
-     - تحمي على الكمبيوتر من DevTools
-     ═══════════════════════════════════════════════════ -->
+<!-- 🛡️ حماية العنكبوت -->
 <script>
 (function(){
     'use strict';
-    
-    /* 1. منع Right Click */
     document.addEventListener('contextmenu', function(e){ e.preventDefault(); return false; }, true);
-    
-    /* 2. منع اختصارات DevTools */
     document.addEventListener('keydown', function(e){
-        const k = e.key;
-        const kc = e.keyCode;
-        
+        const k = e.key, kc = e.keyCode;
         if(kc === 123 || k === 'F12'){ e.preventDefault(); e.stopPropagation(); return false; }
         if(e.ctrlKey && e.shiftKey && ['I','J','C','i','j','c'].includes(k)){ e.preventDefault(); e.stopPropagation(); return false; }
         if(e.ctrlKey && (k === 'u' || k === 'U')){ e.preventDefault(); e.stopPropagation(); return false; }
         if(e.ctrlKey && (k === 's' || k === 'S')){ e.preventDefault(); e.stopPropagation(); return false; }
         if(e.ctrlKey && (k === 'p' || k === 'P')){ e.preventDefault(); e.stopPropagation(); return false; }
         if(e.metaKey && e.altKey && ['I','J','C','i','j','c'].includes(k)){ e.preventDefault(); e.stopPropagation(); return false; }
-        
     }, true);
-    
-    /* 3. منع تحديد النص والسحب */
     document.addEventListener('selectstart', function(e){ e.preventDefault(); }, true);
     document.addEventListener('dragstart', function(e){ e.preventDefault(); }, true);
-    
-    /* 4. تعطيل Console */
     try{
         const noop = function(){};
-        ['log','debug','info','warn','error','table','trace','dir',
-         'group','groupEnd','time','timeEnd','count','assert','clear'
-        ].forEach(function(m){ try{ console[m] = noop; }catch(e){} });
+        ['log','debug','info','warn','error','table','trace','dir','group','groupEnd','time','timeEnd','count','assert','clear'].forEach(function(m){ try{ console[m] = noop; }catch(e){} });
     }catch(e){}
-    
-    /* 5. كشف فتح DevTools — على الكمبيوتر بس */
     const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
-    
     if(!isMobile){
         let devtoolsOpen = false;
         const threshold = 200;
-        
         function destroyPage(){
             try{
-                document.documentElement.innerHTML = 
-                '<html><head><title>⚠️ ممنوع</title></head>' +
-                '<body style="margin:0;background:#050510;color:#fff;font-family:Cairo,Tahoma,sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;text-align:center;flex-direction:column;gap:20px;padding:20px;">' +
-                '<div style="font-size:80px;">⛔</div>' +
-                '<div style="font-size:26px;font-weight:900;color:#ff3b52;">ممنوع!</div>' +
-                '<div style="font-size:15px;color:#8b8ba7;max-width:420px;line-height:1.9;">تم اكتشاف محاولة فتح أدوات المطور<br>يرجى إغلاق الأدوات وإعادة تحميل الصفحة</div>' +
-                '<div style="font-size:12px;color:#5a5a75;margin-top:20px;">ANKABOOT SECURITY SYSTEM</div>' +
-                '</body></html>';
+                document.documentElement.innerHTML = '<html><head><title>⚠️ ممنوع</title></head><body style="margin:0;background:#050510;color:#fff;font-family:Cairo,Tahoma,sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;text-align:center;flex-direction:column;gap:20px;padding:20px;"><div style="font-size:80px;">⛔</div><div style="font-size:26px;font-weight:900;color:#ff3b52;">ممنوع!</div><div style="font-size:15px;color:#8b8ba7;max-width:420px;line-height:1.9;">تم اكتشاف محاولة فتح أدوات المطور<br>يرجى إغلاق الأدوات وإعادة تحميل الصفحة</div><div style="font-size:12px;color:#5a5a75;margin-top:20px;">ANKABOOT SECURITY SYSTEM</div></body></html>';
             }catch(e){}
         }
-        
         function checkDevTools(){
             try{
                 const wDiff = window.outerWidth - window.innerWidth;
                 const hDiff = window.outerHeight - window.innerHeight;
-                
-                if((wDiff > threshold || hDiff > threshold) && !devtoolsOpen){
-                    devtoolsOpen = true;
-                    destroyPage();
-                }
+                if((wDiff > threshold || hDiff > threshold) && !devtoolsOpen){ devtoolsOpen = true; destroyPage(); }
             }catch(e){}
         }
-        
-        /* يبدأ الفحص بعد 3 ثواني من فتح الصفحة */
-        setTimeout(function(){
-            setInterval(checkDevTools, 1500);
-        }, 3000);
+        setTimeout(function(){ setInterval(checkDevTools, 1500); }, 3000);
     }
-    
-    /* 6. حماية من iframe */
-    try{
-        if(window.top !== window.self){
-            window.top.location = window.self.location;
-        }
-    }catch(e){}
-    
+    try{ if(window.top !== window.self){ window.top.location = window.self.location; } }catch(e){}
 })();
 </script>
 
@@ -395,12 +383,12 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;ba
 <div class="menu-text"><div class="menu-name">حول العنكبوت TV</div><div class="menu-sub">الإصدار 1.0</div></div>
 <svg class="menu-arrow-svg" viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
 </div>
-<div class="menu-item" onclick="showInfo('الأسئلة الشائعة','كيف أشغل البث؟\nأدخل كود العنكبوت واضغط تشغيل، ثم اضغط "وضع التليفون" لمشاهدة عرضية.\n\nكيف أغير الجودة؟\nافتح وضع التليفون ثم اضغط زرار الجودة في المشغل.\n\nكيف أحصل على كود؟\nمن خلال قناتنا الرسمية @alankabootsport')">
+<div class="menu-item" onclick="showInfo('الأسئلة الشائعة','كيف أشغل البث؟\nأدخل كود العنكبوت واضغط تشغيل، ثم اضغط وضع التليفون لمشاهدة عرضية.\n\nكيف أغير الجودة؟\nاضغط زرار الجودة في المشغل.\n\nكيف أحصل على كود؟\nمن خلال قناتنا الرسمية @alankabootsport')">
 <div class="menu-icon-box"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg></div>
 <div class="menu-text"><div class="menu-name">الأسئلة الشائعة</div><div class="menu-sub">إجابات على استفساراتك</div></div>
 <svg class="menu-arrow-svg" viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
 </div>
-<div class="menu-item" onclick="showInfo('إرسال ملاحظات','يسعدنا سماع ملاحظاتك واقتراحاتك لتطوير العنكبوت TV.\n\nتواصل معنا مباشرة على:\n@omrmejo')">
+<div class="menu-item" onclick="showInfo('إرسال ملاحظات','يسعدنا سماع ملاحظاتك على:\n@omrmejo')">
 <div class="menu-icon-box"><svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg></div>
 <div class="menu-text"><div class="menu-name">إرسال ملاحظات</div><div class="menu-sub">رأيك يهمنا</div></div>
 <svg class="menu-arrow-svg" viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
@@ -408,12 +396,12 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;ba
 </div>
 <div class="drawer-section">
 <div class="drawer-section-title">سياسات العنكبوت</div>
-<div class="menu-item" onclick="showInfo('سياسة الخصوصية','العنكبوت TV منصة عربية احترافية متخصصة في بث المباريات الرياضية.\n\nنحرص على تقديم أفضل تجربة مشاهدة لمستخدمينا الكرام بجودة عالية وأداء سلس.')">
+<div class="menu-item" onclick="showInfo('سياسة الخصوصية','العنكبوت TV منصة عربية احترافية متخصصة في بث المباريات الرياضية.\n\nنحرص على تقديم أفضل تجربة مشاهدة.')">
 <div class="menu-icon-box"><svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg></div>
 <div class="menu-text"><div class="menu-name">سياسة الخصوصية</div><div class="menu-sub">بياناتك آمنة</div></div>
 <svg class="menu-arrow-svg" viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
 </div>
-<div class="menu-item" onclick="showInfo('الشروط والأحكام','باستخدامك لتطبيق العنكبوت TV فإنك توافق على الشروط التالية:\n\n• الأكواد مخصصة للاستخدام الشخصي فقط.\n\n• تنتهي صلاحية الكود بانتهاء المباراة أو الحدث الرياضي المرتبط به.\n\n• يُمنع إعادة نشر أو مشاركة الأكواد مع الآخرين.')">
+<div class="menu-item" onclick="showInfo('الشروط والأحكام','باستخدامك لتطبيق العنكبوت TV فإنك توافق على:\n\n• الأكواد للاستخدام الشخصي فقط.\n• تنتهي صلاحية الكود بانتهاء المباراة.\n• يُمنع مشاركة الأكواد مع الآخرين.')">
 <div class="menu-icon-box"><svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg></div>
 <div class="menu-text"><div class="menu-name">الشروط والأحكام</div><div class="menu-sub">قواعد الاستخدام</div></div>
 <svg class="menu-arrow-svg" viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
@@ -436,12 +424,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
 import { getDatabase, ref, get, onValue } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-database.js";
 
 const PROXY_BASE = "https://alankaboot-proxy.kamlnot61.workers.dev";
-
-function proxyUrl(url){
-    if(!url) return url;
-    if(url.toLowerCase().startsWith("https://")) return url;
-    return PROXY_BASE + "/?url=" + encodeURIComponent(url);
-}
+function proxyUrl(url){ if(!url) return url; if(url.toLowerCase().startsWith("https://")) return url; return PROXY_BASE + "/?url=" + encodeURIComponent(url); }
 
 const firebaseConfig = {
 apiKey: "AIzaSyAUc2C9hG9VE7RECiW19QXjNZqVH96sFE",
@@ -485,7 +468,8 @@ let activeListener = null;
 let currentQuality = "auto";
 let controlsTimer = null;
 let isDragging = false;
-let isPhoneMode = false;
+let currentMode = "normal";
+let isTransitioning = false;
 
 function showLoading(txt){ playerLoading.querySelector("span").textContent = txt || "جاري تحميل بث العنكبوت..."; playerLoading.classList.add("show"); }
 function hideLoading(){ playerLoading.classList.remove("show"); }
@@ -503,43 +487,21 @@ playerBox.addEventListener("click", (e)=>{
     else showControls(false);
 });
 
-window.togglePhoneMode = async function(e){
-    e.stopPropagation();
+/* ═══════════════════════════════════════════════════
+   🔄 تبديل الأوضاع
+   ═══════════════════════════════════════════════════ */
+async function setPlayerMode(mode){
     
-    if(!isPhoneMode){
-        isPhoneMode = true;
-        playerBox.classList.add("force-landscape");
-        phoneModeBtn.classList.add("landscape-mode");
-        phoneModeLabel.textContent = "وضع الشاشات";
-        phoneModeIcon.innerHTML = '<path d="M21 2H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h7v2H8v2h8v-2h-2v-2h7c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H3V4h18v12z"/>';
-        qualityWrap.classList.add("show");
-        
-        try{
-            if(document.documentElement.requestFullscreen) 
-                await document.documentElement.requestFullscreen({navigationUI:"hide"});
-        }catch(err){}
-        
-        try{
-            if(screen.orientation && screen.orientation.lock){
-                screen.orientation.lock("landscape").catch(()=>{});
-            }
-        }catch(err){}
-        
-        setTimeout(()=>{
-            if(window.innerWidth > window.innerHeight){
-                playerBox.classList.remove("force-landscape");
-            }
-        }, 500);
-        
-    } else {
-        isPhoneMode = false;
-        playerBox.classList.remove("force-landscape");
-        phoneModeBtn.classList.remove("landscape-mode");
-        phoneModeLabel.textContent = "وضع التليفون";
-        phoneModeIcon.innerHTML = '<path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/>';
-        qualityWrap.classList.remove("show");
-        qualityDrop.classList.remove("show");
-        
+    isTransitioning = true;
+    currentMode = mode;
+    
+    playerBox.classList.remove("fs-screen-mode");
+    playerBox.classList.remove("fs-phone-mode");
+    document.body.classList.remove("in-player-mode");
+    qualityWrap.classList.remove("show");
+    qualityDrop.classList.remove("show");
+    
+    if(mode === "normal"){
         try{
             if(screen.orientation && screen.orientation.unlock) screen.orientation.unlock();
             if(screen.unlockOrientation) screen.unlockOrientation();
@@ -547,78 +509,96 @@ window.togglePhoneMode = async function(e){
         
         try{
             if(document.fullscreenElement || document.webkitFullscreenElement){
-                if(document.exitFullscreen) document.exitFullscreen();
+                if(document.exitFullscreen) await document.exitFullscreen().catch(()=>{});
                 else if(document.webkitExitFullscreen) document.webkitExitFullscreen();
             }
         }catch(err){}
-    }
-    showControls(true);
-};
-
-window.toggleFullscreen = async function(e){
-    e.stopPropagation();
-    
-    if(!isPhoneMode){
-        isPhoneMode = true;
-        playerBox.classList.add("force-landscape");
+        
+        phoneModeBtn.classList.remove("landscape-mode");
+        phoneModeLabel.textContent = "وضع التليفون";
+        phoneModeIcon.innerHTML = '<path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/>';
+        fsIcon.innerHTML = '<path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>';
+        
+    } else if(mode === "screen"){
+        playerBox.classList.add("fs-screen-mode");
+        document.body.classList.add("in-player-mode");
+        
+        if(!document.fullscreenElement && !document.webkitFullscreenElement){
+            try{
+                if(document.documentElement.requestFullscreen) 
+                    await document.documentElement.requestFullscreen({navigationUI:"hide"}).catch(()=>{});
+            }catch(err){}
+        }
+        
+        try{
+            if(screen.orientation && screen.orientation.lock) 
+                screen.orientation.lock("landscape").catch(()=>{});
+        }catch(err){}
+        
         phoneModeBtn.classList.add("landscape-mode");
         phoneModeLabel.textContent = "وضع الشاشات";
         phoneModeIcon.innerHTML = '<path d="M21 2H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h7v2H8v2h8v-2h-2v-2h7c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H3V4h18v12z"/>';
         qualityWrap.classList.add("show");
-        
-        try{
-            if(playerBox.requestFullscreen) await playerBox.requestFullscreen({navigationUI:"hide"});
-            else if(playerBox.webkitRequestFullscreen) playerBox.webkitRequestFullscreen();
-        }catch(err){}
-        
-        try{
-            if(screen.orientation && screen.orientation.lock) screen.orientation.lock("landscape").catch(()=>{});
-            if(screen.lockOrientation) screen.lockOrientation("landscape");
-        }catch(err){}
-        
-        setTimeout(()=>{
-            if(window.innerWidth > window.innerHeight){
-                playerBox.classList.remove("force-landscape");
-            }
-        }, 500);
-        
         fsIcon.innerHTML = '<path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/>';
-    } else {
-        isPhoneMode = false;
-        playerBox.classList.remove("force-landscape");
-        phoneModeBtn.classList.remove("landscape-mode");
-        phoneModeLabel.textContent = "وضع التليفون";
-        phoneModeIcon.innerHTML = '<path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/>';
-        qualityWrap.classList.remove("show");
-        qualityDrop.classList.remove("show");
         
-        try{
-            if(document.exitFullscreen) await document.exitFullscreen();
-            else if(document.webkitExitFullscreen) document.webkitExitFullscreen();
-        }catch(err){}
+    } else if(mode === "phone"){
+        playerBox.classList.add("fs-phone-mode");
+        document.body.classList.add("in-player-mode");
+        
+        if(!document.fullscreenElement && !document.webkitFullscreenElement){
+            try{
+                if(document.documentElement.requestFullscreen) 
+                    await document.documentElement.requestFullscreen({navigationUI:"hide"}).catch(()=>{});
+            }catch(err){}
+        }
         
         try{
             if(screen.orientation && screen.orientation.unlock) screen.orientation.unlock();
             if(screen.unlockOrientation) screen.unlockOrientation();
         }catch(err){}
         
-        fsIcon.innerHTML = '<path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>';
+        phoneModeBtn.classList.remove("landscape-mode");
+        phoneModeLabel.textContent = "وضع الشاشات";
+        phoneModeIcon.innerHTML = '<path d="M21 2H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h7v2H8v2h8v-2h-2v-2h7c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H3V4h18v12z"/>';
+        qualityWrap.classList.add("show");
+        fsIcon.innerHTML = '<path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/>';
+    }
+    
+    showControls(true);
+    
+    setTimeout(()=>{ isTransitioning = false; }, 800);
+}
+
+/* 📱 زرار وضع التليفون */
+window.togglePhoneMode = async function(e){
+    e.stopPropagation();
+    
+    if(currentMode === "normal"){
+        await setPlayerMode("phone");
+    } else if(currentMode === "phone"){
+        await setPlayerMode("screen");
+    } else {
+        await setPlayerMode("normal");
     }
 };
 
+/* ⛶ زرار Fullscreen */
+window.toggleFullscreen = async function(e){
+    e.stopPropagation();
+    
+    if(currentMode === "normal"){
+        await setPlayerMode("phone");
+    } else {
+        await setPlayerMode("normal");
+    }
+};
+
+/* عند الخروج من fullscreen يدوياً */
 document.addEventListener("fullscreenchange", ()=>{
-    if(!document.fullscreenElement && !document.webkitFullscreenElement && isPhoneMode){
-        isPhoneMode = false;
-        playerBox.classList.remove("force-landscape");
-        phoneModeBtn.classList.remove("landscape-mode");
-        phoneModeLabel.textContent = "وضع التليفون";
-        phoneModeIcon.innerHTML = '<path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/>';
-        qualityWrap.classList.remove("show");
-        try{
-            if(screen.orientation && screen.orientation.unlock) screen.orientation.unlock();
-            if(screen.unlockOrientation) screen.unlockOrientation();
-        }catch(err){}
-        fsIcon.innerHTML = '<path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>';
+    if(isTransitioning) return;
+    
+    if(!document.fullscreenElement && !document.webkitFullscreenElement && currentMode !== "normal"){
+        setPlayerMode("normal");
     }
 });
 
@@ -668,7 +648,7 @@ function seekVideo(e){
     if(!video.duration || !isFinite(video.duration)) return;
     const rect = progressWrap.getBoundingClientRect();
     let x;
-    if(isPhoneMode && playerBox.classList.contains("force-landscape")){
+    if(currentMode === "phone"){
         const clientY = e.touches ? e.touches[0].clientY : e.clientY;
         x = rect.bottom - clientY;
     } else {
@@ -811,6 +791,22 @@ function forceBack(msg){
     stopPlayer();
     showEmpty();
     setMsg(msg || "", "err");
+    currentMode = "normal";
+    playerBox.classList.remove("fs-screen-mode");
+    playerBox.classList.remove("fs-phone-mode");
+    document.body.classList.remove("in-player-mode");
+    try{
+        if(screen.orientation && screen.orientation.unlock) screen.orientation.unlock();
+        if(screen.unlockOrientation) screen.unlockOrientation();
+    }catch(err){}
+    try{
+        if(document.fullscreenElement || document.webkitFullscreenElement){
+            if(document.exitFullscreen) document.exitFullscreen().catch(()=>{});
+        }
+    }catch(err){}
+    phoneModeBtn.classList.remove("landscape-mode");
+    phoneModeLabel.textContent = "وضع التليفون";
+    phoneModeIcon.innerHTML = '<path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/>';
 }
 
 function getHistory(){ try{ return JSON.parse(localStorage.getItem("ank_history") || "[]"); }catch(e){ return []; } }
