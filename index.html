@@ -142,7 +142,7 @@ body{background:radial-gradient(1200px 600px at 50% -10%,rgba(225,29,46,.14),tra
 .pdm-note{color:#5a5a75;font-size:11px;text-align:center;margin-top:14px;line-height:1.7;font-weight:600}
 
 /* 🛡️ نافذة حظر VPN */
-#vpnBlock{position:fixed;inset:0;z-index:999999;background:radial-gradient(circle at 50% 30%,rgba(225,29,46,.25),transparent 60%),linear-gradient(180deg,#0a0a0f,#05050a);display:none;flex-direction:column;justify-content:center;align-items:center;padding:30px;text-align:center;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+#vpnBlock{position:fixed;inset:0;z-index:9999999;background:radial-gradient(circle at 50% 30%,rgba(225,29,46,.30),transparent 60%),linear-gradient(180deg,#0a0a0f,#05050a);display:none;flex-direction:column;justify-content:center;align-items:center;padding:30px;text-align:center;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
 #vpnBlock.show{display:flex;animation:fadeInModal .4s}
 .vpn-icon{width:110px;height:110px;border-radius:30px;background:linear-gradient(135deg,#ff3b52,#b31226);display:flex;align-items:center;justify-content:center;margin-bottom:26px;box-shadow:0 20px 60px rgba(225,29,46,.5);animation:vpnPulse 2s ease-in-out infinite}
 @keyframes vpnPulse{0%,100%{transform:scale(1);box-shadow:0 20px 60px rgba(225,29,46,.5)}50%{transform:scale(1.06);box-shadow:0 20px 80px rgba(225,29,46,.75)}}
@@ -152,6 +152,7 @@ body{background:radial-gradient(1200px 600px at 50% -10%,rgba(225,29,46,.14),tra
 .vpn-sub b{color:#ff6b7a;font-weight:900}
 .vpn-status{display:inline-flex;align-items:center;gap:9px;background:rgba(225,29,46,.12);border:1px solid rgba(225,29,46,.35);color:#ff6b7a;padding:11px 22px;border-radius:100px;font-size:12.5px;font-weight:800;margin-bottom:22px}
 .vpn-status .spinner{width:14px;height:14px;border:2.5px solid rgba(255,107,122,.3);border-top-color:#ff6b7a;border-radius:50%;animation:spinRing .8s linear infinite}
+.vpn-detail{color:#6a6a85;font-size:11px;margin-top:10px;font-weight:600;max-width:90%;word-break:break-word}
 .vpn-help{color:#5a5a75;font-size:11px;line-height:1.9;font-weight:600;max-width:340px;margin-top:16px}
 .vpn-help b{color:#8a8a9a}
 </style>
@@ -270,12 +271,13 @@ body{background:radial-gradient(1200px 600px at 50% -10%,rgba(225,29,46,.14),tra
 <div class="vpn-title">🚫 تم اكتشاف VPN</div>
 <div class="vpn-sub">
 لازم <b>تقفل الـ VPN</b> الأول<br>
-عشان تقدر تشغّل القنوات
+عشان تقدر تشوف القنوات وتشغّلها
 </div>
 <div class="vpn-status">
 <div class="spinner"></div>
 <span>جاري التحقق من الاتصال...</span>
 </div>
+<div class="vpn-detail" id="vpnDetail"></div>
 <div class="vpn-help">
 <b>💡 إزاي تقفل الـ VPN:</b><br>
 افتح تطبيق الـ VPN → اضغط Disconnect<br>
@@ -302,10 +304,20 @@ var toast = $('toast');
 var bottomNav = $('bottomNav');
 var downloadModal = $('playerDownloadModal');
 var vpnBlock = $('vpnBlock');
+var vpnDetail = $('vpnDetail');
 
 var categoriesData = [];
 var currentCatIndex = -1;
 var appStarted = false;
+
+/* حالة الاتصال والحماية */
+var vpnDetected = false;
+var vpnCheckRunning = false;
+var vpnBlocked = false;
+var mqttClient = null;
+var mqttConnected = false;
+var hbInterval = null;
+var lastVpnReason = '';
 
 function showToast(msg, type){
 toast.textContent = msg;
@@ -316,15 +328,45 @@ clearTimeout(showToast._t);
 showToast._t = setTimeout(function(){ toast.classList.remove('show'); }, 2500);
 }
 
-/* ============================================================
-   🛡️ نظام كشف وحظر الـ VPN
-   الطريقة: WebRTC Leak Detection + مقارنة الـ IP
-   ============================================================ */
-var vpnDetected = false;
-var vpnCheckRunning = false;
-var vpnBlocked = false;
+/* ================================================================
+   🛡️ نظام كشف VPN — 5 طبقات
+   ================================================================ */
+var VPN_KEYWORDS = [
+'vpn','nordvpn','expressvpn','surfshark','cyberghost','protonvpn','proton ag',
+'private internet access','privateinternetaccess','mullvad','ipvanish',
+'hidemyass','hide my ass','tunnelbear','windscribe','hotspot shield','hotspotshield',
+'purevpn','vyprvpn','astrill','hide.me','azirevpn','perfect privacy','ivpn',
+'ovpn','strongvpn','strong vpn','kaspersky','bitdefender','avast secureline',
+'avira','norton vpn','mcafee safe','keepsolid','betternet','hola vpn','holavpn',
+'planet vpn','turbo vpn','ufo vpn','vpn unlimited','ivacy','ivacy ltd',
+'zenmate','browsec','touchvpn','speedify','outline','wireguard','openvpn',
+'shadowsocks','v2ray','xray','trojan','hiddify','hiddify',
+'hosting','datacenter','data center','dedicated server','cloud hosting',
+'digitalocean','linode','vultr','hetzner','ovh','ovh sas','amazon.com',
+'amazon data','aws','amazonaws','google cloud','google llc','microsoft azure',
+'azure','microsoft corporation','oracle cloud','oracle corporation',
+'alibaba cloud','alibaba.com','leaseweb','choopa','m247','zenlayer',
+'quadranet','colocrossing','rackspace','softlayer','ibm cloud','hostwinds',
+'contabo','scaleway','upcloud','kamatera','ionos','1&1 ionos','liquidweb',
+'cpanel','virtual machine','kvm','openvz','hypervisor','vps','colocation',
+'colo ','serverhub','hostgator','bluehost','dreamhost','namecheap hosting',
+'akamai','cloudflare','fastly','stackpath','bunny cdn','keycdn',
+'m247 ltd','m247 europe','datacamp limited','datacamp','cdn77','tzulo',
+'frantech','buyvm','nexus','serverius','nforce','global layer','hostkey',
+'internet bolaget','abuser','abuse','hetzner online','digital ocean'
+];
 
-/* تحقق إذا كان الـ IP خاص (Private) */
+var SAFE_KEYWORDS = [
+'vodafone','etisalat','orange','we ','we telecom','telecom egypt',
+'te data','teas','linkdotnet','noor','nitel','mobinil','tedata',
+'stc','mobily','zain','ooredoo','du ',
+'verizon','at&t','comcast','spectrum','charter','cox ','t-mobile',
+'bt ','sky broadband','virgin media','talktalk','plusnet','ee limited',
+'deutsche telekom','orange s.a','orange france','sfr','bouygues',
+'telefonica','movistar','vodafone group','tim ','fastweb','tiscali',
+'saudi telecom','etisalat misr','etisalat egypt','orange egypt'
+];
+
 function isPrivateIP(ip){
 if(!ip) return true;
 var p = ip.split('.').map(Number);
@@ -334,29 +376,50 @@ if(p[0] === 127) return true;
 if(p[0] === 172 && p[1] >= 16 && p[1] <= 31) return true;
 if(p[0] === 192 && p[1] === 168) return true;
 if(p[0] === 169 && p[1] === 254) return true;
-if(p[0] === 100 && p[1] >= 64 && p[1] <= 127) return true; /* CGNAT */
+if(p[0] === 100 && p[1] >= 64 && p[1] <= 127) return true;
 return false;
 }
 
-/* الحصول على IP العام عبر HTTP */
-function fetchHttpIP(){
-return new Promise(function(resolve){
-var done = false;
-var t = setTimeout(function(){ if(!done){ done=true; resolve(null);} }, 4000);
-Promise.race([
-fetch('https://api.ipify.org?format=json', {cache:'no-store'}).then(function(r){ return r.json(); }).then(function(d){ return d.ip; }).catch(function(){ return null; }),
-fetch('https://api64.ipify.org?format=json', {cache:'no-store'}).then(function(r){ return r.json(); }).then(function(d){ return d.ip; }).catch(function(){ return null; }),
-fetch('https://ipv4.icanhazip.com/', {cache:'no-store'}).then(function(r){ return r.text(); }).then(function(t){ return t.trim(); }).catch(function(){ return null; })
-]).then(function(results){
-if(!done){ done=true; clearTimeout(t);
-var ip = results.filter(function(x){ return x && /^\d+\.\d+\.\d+\.\d+$/.test(x); })[0];
-resolve(ip || null);
+function checkKeywords(text){
+if(!text) return false;
+var lower = text.toLowerCase();
+for(var i=0;i<SAFE_KEYWORDS.length;i++){
+if(lower.indexOf(SAFE_KEYWORDS[i]) !== -1){
+for(var j=0;j<VPN_KEYWORDS.length;j++){
+if(lower.indexOf(VPN_KEYWORDS[j]) !== -1) return true;
 }
-});
-});
+return false;
+}
+}
+for(var k=0;k<VPN_KEYWORDS.length;k++){
+if(lower.indexOf(VPN_KEYWORDS[k]) !== -1) return true;
+}
+return false;
 }
 
-/* الحصول على IP العام عبر WebRTC/STUN */
+function fetchIPInfo(provider){
+var urls = {
+'ipapi': 'https://ipapi.co/json/',
+'ipwho': 'https://ipwho.is/',
+'ipinfo': 'https://ipinfo.io/json'
+};
+var url = urls[provider];
+if(!url) return Promise.resolve(null);
+return fetch(url, {cache:'no-store'})
+.then(function(r){ return r.json(); })
+.then(function(d){
+var ip = d.ip || d.query || (d.connection && d.connection.ip) || null;
+var org = d.org || d.isp || d.as || (d.connection && (d.connection.isp + ' ' + d.connection.org)) || '';
+var timezone = null;
+if(d.timezone){
+if(typeof d.timezone === 'object') timezone = d.timezone.id || d.timezone.utc || null;
+else timezone = d.timezone;
+}
+return { ip: ip, org: org, timezone: timezone };
+})
+.catch(function(){ return null; });
+}
+
 function fetchWebRTCIPs(){
 return new Promise(function(resolve){
 var ips = {};
@@ -366,118 +429,320 @@ try{
 pc = new RTCPeerConnection({
 iceServers: [
 { urls: 'stun:stun.l.google.com:19302' },
-{ urls: 'stun:stun1.l.google.com:19302' },
-{ urls: 'stun:stun.cloudflare.com:3478' }
+{ urls: 'stun:stun1.l.google.com:19302' }
 ]
 });
 }catch(e){ return resolve([]); }
-
 function finish(){
 if(resolved) return;
 resolved = true;
 try{ pc.close(); }catch(e){}
 resolve(Object.keys(ips));
 }
-
 pc.onicecandidate = function(ice){
 if(!ice || !ice.candidate){ finish(); return; }
 var cand = ice.candidate.candidate || '';
 var m = /([0-9]{1,3}(?:\.[0-9]{1,3}){3})/.exec(cand);
 if(m){
 var ip = m[1];
-/* نتجاهل الـ mDNS و الـ Private IPs */
-if(!isPrivateIP(ip) && ip !== '0.0.0.0'){
-ips[ip] = true;
-}
+if(!isPrivateIP(ip) && ip !== '0.0.0.0') ips[ip] = true;
 }
 };
-
 try{
-pc.createDataChannel('vpncheck');
+pc.createDataChannel('c');
 pc.createOffer().then(function(o){ return pc.setLocalDescription(o); }).catch(function(){ finish(); });
 }catch(e){ finish(); }
-
 setTimeout(finish, 3000);
 });
 }
 
-/* كشف الـ VPN الأساسي */
+function checkTimezoneMismatch(ipTimezone){
+if(!ipTimezone) return false;
+try{
+var browserTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+if(!browserTz) return false;
+if(browserTz === ipTimezone) return false;
+var br = browserTz.split('/')[0];
+var ir = ipTimezone.split('/')[0];
+if(br === ir) return false;
+if(br === 'Africa' && (ir === 'Europe' || ir === 'Asia')) return false;
+if(br === 'Asia' && ir === 'Africa') return false;
+if(br === 'Europe' && ir === 'Africa') return false;
+return true;
+}catch(e){}
+return false;
+}
+
 function detectVPN(){
 if(vpnCheckRunning) return Promise.resolve(vpnDetected);
 vpnCheckRunning = true;
+lastVpnReason = '';
 
-return Promise.all([fetchHttpIP(), fetchWebRTCIPs()]).then(function(res){
-var httpIP = res[0];
-var rtcIPs = res[1] || [];
+return Promise.all([
+fetchIPInfo('ipapi'),
+fetchIPInfo('ipwho'),
+fetchIPInfo('ipinfo'),
+fetchWebRTCIPs()
+]).then(function(res){
+var info1 = res[0], info2 = res[1], info3 = res[2];
+var rtcIPs = res[3] || [];
+var vpn = false;
+var reasons = [];
 
-var isVpn = false;
+/* 1: فحص الكلمات المفتاحية */
+var orgs = [];
+if(info1 && info1.org) orgs.push(info1.org);
+if(info2 && info2.org) orgs.push(info2.org);
+if(info3 && info3.org) orgs.push(info3.org);
+for(var i=0;i<orgs.length;i++){
+if(checkKeywords(orgs[i])){
+vpn = true;
+reasons.push('ISP: ' + orgs[i]);
+break;
+}
+}
 
-/* ✅ الحالة 1: عندنا HTTP IP و RTC IPs مختلفة → VPN/Proxy */
-if(httpIP && rtcIPs.length > 0){
+/* 2: IPs مختلفة من مزودين مختلفين */
+var ips = [];
+if(info1 && info1.ip && !isPrivateIP(info1.ip)) ips.push(info1.ip);
+if(info2 && info2.ip && !isPrivateIP(info2.ip)) ips.push(info2.ip);
+if(info3 && info3.ip && !isPrivateIP(info3.ip)) ips.push(info3.ip);
+var unique = ips.filter(function(v,i){ return ips.indexOf(v) === i; });
+if(unique.length > 1){
+vpn = true;
+reasons.push('IPs مختلفة: ' + unique.join(' / '));
+}
+
+/* 3: WebRTC مختلفة */
+if(unique.length > 0 && rtcIPs.length > 0){
+var httpIp = unique[0];
 var found = false;
-for(var i=0; i<rtcIPs.length; i++){
-if(rtcIPs[i] === httpIP){ found = true; break; }
+for(var j=0;j<rtcIPs.length;j++){
+if(rtcIPs[j] === httpIp){ found = true; break; }
 }
 if(!found){
-isVpn = true;
-console.log('[VPN] Mismatch: HTTP=' + httpIP + ' RTC=' + rtcIPs.join(','));
+vpn = true;
+reasons.push('WebRTC: ' + rtcIPs.join(',') + ' ≠ HTTP: ' + httpIp);
 }
 }
 
-/* ✅ الحالة 2: عندنا أكتر من IP عام في WebRTC → VPN (Split tunneling) */
-if(!isVpn && rtcIPs.length > 1){
-isVpn = true;
-console.log('[VPN] Multiple public IPs via WebRTC:', rtcIPs.join(','));
+/* 4: WebRTC متعدد */
+if(rtcIPs.length > 1){
+vpn = true;
+reasons.push('WebRTC متعدد: ' + rtcIPs.join(','));
 }
 
+/* 5: Timezone Mismatch */
+var ipTz = null;
+if(info1 && info1.timezone) ipTz = info1.timezone;
+else if(info2 && info2.timezone) ipTz = info2.timezone;
+else if(info3 && info3.timezone) ipTz = info3.timezone;
+if(ipTz && checkTimezoneMismatch(ipTz)){
+vpn = true;
+reasons.push('Timezone: IP=' + ipTz + ' vs جهاز=' + (Intl.DateTimeFormat().resolvedOptions().timeZone || '?'));
+}
+
+lastVpnReason = reasons.join(' | ');
 vpnCheckRunning = false;
-vpnDetected = isVpn;
-return isVpn;
+vpnDetected = vpn;
+console.log('[VPN]', vpn ? 'DETECTED' : 'CLEAN', '|', lastVpnReason);
+return vpn;
 }).catch(function(){
 vpnCheckRunning = false;
 return false;
 });
 }
 
-/* تطبيق حظر الـ VPN */
-function applyVpnBlock(){
-if(vpnDetected && !vpnBlocked){
-vpnBlocked = true;
-vpnBlock.classList.add('show');
-/* نقفل أي نافذة تانية */
+/* ================================================================
+   🧹 مسح كل البيانات والروابط من التطبيق والذاكرة
+   ================================================================ */
+function wipeAllData(){
+/* 1: مسح المصفوفة الرئيسية */
+categoriesData = [];
+
+/* 2: مسح كل الـ DOM */
+try{ catsGrid.innerHTML = ''; }catch(e){}
+try{ channelsGrid.innerHTML = ''; }catch(e){}
+try{ liveList.innerHTML = ''; }catch(e){}
+try{ liveCount.textContent = '0'; }catch(e){}
+
+/* 3: مسح أي روابط في الذاكرة */
+try{
+if(window.performance && performance.clearResourceTimings){
+performance.clearResourceTimings();
+}
+}catch(e){}
+
+/* 4: إخفاء كل الواجهات */
+try{
+viewCategories.style.display = 'none';
+viewChannels.style.display = 'none';
+viewLive.style.display = 'none';
+}catch(e){}
+
+/* 5: إغلاق أي نوافذ */
 try{ downloadModal.classList.remove('show'); }catch(e){}
-try{ document.body.style.overflow = 'hidden'; }catch(e){}
-}
+
+/* 6: إخفاء شريط التنقل السفلي */
+try{ bottomNav.style.display = 'none'; }catch(e){}
+
+/* 7: تصفير حالة التنقل */
+currentCatIndex = -1;
 }
 
-function removeVpnBlock(){
-if(!vpnDetected && vpnBlocked){
-vpnBlocked = false;
-vpnBlock.classList.remove('show');
-try{ document.body.style.overflow = ''; }catch(e){}
-showToast('تم إيقاف الـ VPN بنجاح ✓', 'success');
-}
+/* ================================================================
+   🔌 إدارة اتصال MQTT (يشتغل فقط بدون VPN)
+   ================================================================ */
+function connectMqtt(){
+if(mqttConnected || mqttClient) return;
+if(vpnDetected) return; /* ⛔ ممنوع الاتصال لو VPN شغال */
+
+console.log('[MQTT] Connecting...');
+mqttClient = mqtt.connect(BROKER, {
+clientId: MY_ID,
+keepalive: 30,
+reconnectPeriod: 3000,
+clean: true
+});
+
+mqttClient.on('connect', function(){
+mqttConnected = true;
+console.log('[MQTT] Connected');
+mqttClient.subscribe(TOPIC_CMD);
+mqttClient.subscribe(TOPIC_DATA);
+mqttClient.publish(TOPIC_HB, JSON.stringify({id: MY_ID}));
+if(hbInterval) clearInterval(hbInterval);
+hbInterval = setInterval(function(){
+try{ mqttClient.publish(TOPIC_HB, JSON.stringify({id: MY_ID})); }catch(e){}
+}, 5000);
+});
+
+mqttClient.on('error', function(e){
+try{ console.log('[MQTT] err', e); }catch(err){}
+});
+
+mqttClient.on('message', function(topic, msg){
+try{
+/* ⛔ حماية مزدوجة: لو VPN شغال → تجاهل أي رسالة */
+if(vpnDetected) return;
+
+var data = JSON.parse(msg.toString());
+if(topic === TOPIC_DATA){
+/* ⛔ فلتر إضافي: تأكد إن مفيش VPN */
+if(vpnDetected) return;
+
+categoriesData = Array.isArray(data) ? data : [];
+
+/* ✅ فلتر أمان: لو اكتشفنا VPN بعد ما استقبلنا البيانات → امسحها */
+if(vpnDetected){
+wipeAllData();
+return;
 }
 
-/* دورة مراقبة مستمرة — تكتشف لو المستخدم شغّل VPN بسرعة */
-function vpnWatchLoop(){
-detectVPN().then(function(isVpn){
-if(isVpn) applyVpnBlock();
-else removeVpnBlock();
+/* لو مفيش VPN → نعرض */
+if(appStarted && !vpnBlocked){
+renderCurrentView();
+}
+return;
+}
+if(topic === TOPIC_CMD){
+/* التشغيل التلقائي معطّل */
+return;
+}
+}catch(e){}
 });
 }
 
-/* نبدأ المراقبة بعد فتح التطبيق */
-setInterval(vpnWatchLoop, 2500);
+function disconnectMqtt(){
+if(hbInterval){ clearInterval(hbInterval); hbInterval = null; }
+if(mqttClient){
+try{ mqttClient.end(true); }catch(e){}
+try{ mqttClient.removeAllListeners(); }catch(e){}
+mqttClient = null;
+}
+mqttConnected = false;
+console.log('[MQTT] Disconnected');
+}
 
-/* مراقبة إضافية عند عودة المستخدم للتطبيق */
+/* ================================================================
+   🎯 معالج تغيير حالة VPN — القلب النابض للحماية
+   ================================================================ */
+function onVpnStateChanged(isVpn){
+if(isVpn){
+/* ⛔ VPN شغال → حالة حظر كاملة */
+if(!vpnBlocked){
+vpnBlocked = true;
+console.log('[VPN] Blocking — wiping all data');
+
+/* امسح كل البيانات والروابط فوراً */
+wipeAllData();
+
+/* افصل MQTT فوراً */
+disconnectMqtt();
+
+/* اعرض شاشة الحظر */
+try{
+vpnBlock.classList.add('show');
+if(vpnDetail){
+vpnDetail.textContent = lastVpnReason ? ('🔍 ' + lastVpnReason.substring(0, 140)) : '';
+}
+}catch(e){}
+
+/* اقفل تمرير الصفحة */
+try{ document.body.style.overflow = 'hidden'; }catch(e){}
+}
+} else {
+/* ✅ VPN مقفول → ارجع طبيعي */
+if(vpnBlocked){
+vpnBlocked = false;
+console.log('[VPN] Unblocking — restoring');
+
+try{ vpnBlock.classList.remove('show'); }catch(e){}
+try{ document.body.style.overflow = ''; }catch(e){}
+
+/* أرجع شريط التنقل */
+try{ bottomNav.style.display = 'flex'; }catch(e){}
+
+/* ارجع للصفحة الرئيسية */
+try{
+currentCatIndex = -1;
+viewCategories.style.display = 'block';
+viewChannels.style.display = 'none';
+viewLive.style.display = 'none';
+}catch(e){}
+
+/* اتصل MQTT من جديد عشان تجيب البيانات */
+connectMqtt();
+
+/* اعرض شاشة تحميل مؤقتة */
+try{
+catsGrid.innerHTML = '<div class="empty-msg">📺<br>جاري تحميل القنوات...</div>';
+}catch(e){}
+
+showToast('تم إيقاف الـ VPN ✓ جاري التحميل...', 'success');
+}
+}
+}
+
+/* ================================================================
+   🔄 حلقة المراقبة المستمرة
+   ================================================================ */
+function vpnWatchLoop(){
+detectVPN().then(function(isVpn){
+onVpnStateChanged(isVpn);
+});
+}
+
+/* مراقبة كل ثانيتين */
+setInterval(vpnWatchLoop, 2000);
+
+/* مراقبة عند أحداث النظام */
 document.addEventListener('visibilitychange', function(){
 if(!document.hidden) vpnWatchLoop();
 });
 window.addEventListener('focus', function(){ vpnWatchLoop(); });
-
-/* فحص أولي عند بدء التطبيق */
-setTimeout(function(){ vpnWatchLoop(); }, 500);
+window.addEventListener('online', function(){ vpnWatchLoop(); });
+window.addEventListener('pageshow', function(){ vpnWatchLoop(); });
 
 /* ===== Splash progress ===== */
 (function(){
@@ -503,47 +768,21 @@ function enterApp(){
 if(appStarted) return;
 appStarted = true;
 app.classList.add('show');
+
+/* ⭐ فحص VPN قبل أي حاجة */
+detectVPN().then(function(isVpn){
+onVpnStateChanged(isVpn);
+
+if(!isVpn){
+/* اتصال طبيعي */
 bottomNav.style.display = 'flex';
-/* فحص VPN فوراً عند فتح التطبيق */
-vpnWatchLoop();
+connectMqtt();
 }
-
-/* ===== MQTT ===== */
-var client = mqtt.connect(BROKER, {
-clientId: MY_ID,
-keepalive: 30,
-reconnectPeriod: 3000
 });
-
-client.on('connect', function(){
-client.subscribe(TOPIC_CMD);
-client.subscribe(TOPIC_DATA);
-client.publish(TOPIC_HB, JSON.stringify({id: MY_ID}));
-setInterval(function(){
-client.publish(TOPIC_HB, JSON.stringify({id: MY_ID}));
-}, 5000);
-});
-
-client.on('error', function(e){
-try{ console.log('MQTT err', e); }catch(err){}
-});
-
-client.on('message', function(topic, msg){
-try{
-var data = JSON.parse(msg.toString());
-if(topic === TOPIC_DATA){
-categoriesData = Array.isArray(data) ? data : [];
-renderCurrentView();
-return;
 }
-if(topic === TOPIC_CMD){
-/* ⛔ تم تعطيل التشغيل التلقائي نهائياً */
-return;
-}
-}catch(e){}
-});
 
 function renderCurrentView(){
+if(vpnDetected) return; /* ⛔ ممنوع أي عرض وقت الحظر */
 if(currentCatIndex === -1) renderCategories();
 else renderChannels(currentCatIndex);
 }
@@ -555,14 +794,15 @@ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch];
 }
 
 function renderCategories(){
+if(vpnDetected) return;
 if(!categoriesData.length){
 catsGrid.innerHTML = '<div class="empty-msg">📺<br>لا توجد أقسام متاحة حالياً<br>تابع قناتنا على تيليجرام ليصلك كل جديد</div>';
 return;
 }
 catsGrid.innerHTML = categoriesData.map(function(cat,i){
 var count = (cat.channels || []).length;
-var liveCountVal = (cat.channels || []).filter(function(c){ return c.live; }).length;
-var countText = liveCountVal > 0 ? (liveCountVal + ' بث حي') : (count + ' قناة');
+var lc = (cat.channels || []).filter(function(c){ return c.live; }).length;
+var countText = lc > 0 ? (lc + ' بث حي') : (count + ' قناة');
 return '<div class="cat-tile" onclick="openCategory('+i+')">' +
 '<img class="cat-logo" src="'+(cat.logo||'')+'" onerror="this.style.opacity=.15" alt="">' +
 '<div class="cat-info"><div class="cat-name">'+escapeHtml(cat.name||'قسم')+'</div>' +
@@ -572,6 +812,7 @@ return '<div class="cat-tile" onclick="openCategory('+i+')">' +
 }
 
 function renderChannels(ci){
+if(vpnDetected) return;
 var cat = categoriesData[ci];
 if(!cat){ backToCategories(); return; }
 catTitle.textContent = cat.name || 'قنوات القسم';
@@ -589,19 +830,20 @@ return '<div class="channel-tile '+(ch.live?'live':'')+'" onclick="openChannel('
 }
 
 function renderLiveView(){
-var allChannels = [];
+if(vpnDetected) return;
+var all = [];
 categoriesData.forEach(function(cat, ci){
 (cat.channels || []).forEach(function(ch, chi){
-allChannels.push({ch: ch, catName: cat.name, ci: ci, chi: chi});
+all.push({ch: ch, catName: cat.name, ci: ci, chi: chi});
 });
 });
-allChannels.sort(function(a,b){ return (b.ch.live?1:0) - (a.ch.live?1:0); });
-liveCount.textContent = allChannels.length;
-if(!allChannels.length){
-liveList.innerHTML = '<div class="empty-msg">📺<br>لا توجد قنوات متاحة حالياً<br>تابع قناتنا على تيليجرام ليصلك كل جديد</div>';
+all.sort(function(a,b){ return (b.ch.live?1:0) - (a.ch.live?1:0); });
+liveCount.textContent = all.length;
+if(!all.length){
+liveList.innerHTML = '<div class="empty-msg">📺<br>لا توجد قنوات متاحة حالياً</div>';
 return;
 }
-liveList.innerHTML = allChannels.map(function(item){
+liveList.innerHTML = all.map(function(item){
 return '<div class="live-card '+(item.ch.live?'on':'off')+'" onclick="openLiveChannel('+item.ci+','+item.chi+')">' +
 '<img class="lc-logo" src="'+(item.ch.logo||'')+'" onerror="this.style.opacity=.15" alt="">' +
 '<div class="lc-info"><div class="lc-name">'+escapeHtml(item.ch.name||'قناة')+'</div>' +
@@ -611,6 +853,7 @@ return '<div class="live-card '+(item.ch.live?'on':'off')+'" onclick="openLiveCh
 }
 
 function openCategory(i){
+if(vpnDetected){ applyBlock(); return; }
 currentCatIndex = i;
 viewCategories.style.display = 'none';
 viewChannels.style.display = 'block';
@@ -620,6 +863,7 @@ window.scrollTo({top:0, behavior:'smooth'});
 }
 
 function backToCategories(){
+if(vpnDetected){ applyBlock(); return; }
 currentCatIndex = -1;
 viewCategories.style.display = 'block';
 viewChannels.style.display = 'none';
@@ -629,47 +873,52 @@ window.scrollTo({top:0, behavior:'smooth'});
 }
 
 function openChannel(chi){
+if(vpnDetected){ applyBlock(); return; }
 var cat = categoriesData[currentCatIndex];
 if(!cat) return;
 handleChannelClick(cat.channels[chi]);
 }
 
 function openLiveChannel(ci, chi){
+if(vpnDetected){ applyBlock(); return; }
 var cat = categoriesData[ci];
 if(!cat) return;
 handleChannelClick(cat.channels[chi]);
 }
 
-/* 🛡️ فحص القناة + فحص VPN قبل التشغيل */
+function applyBlock(){
+try{ vpnBlock.classList.add('show'); }catch(e){}
+wipeAllData();
+disconnectMqtt();
+vpnBlocked = true;
+showToast('🚫 اقفل الـ VPN الأول', 'error');
+}
+
+/* 🛡️ فحص قبل التشغيل */
 function handleChannelClick(ch){
 if(!ch) return;
+if(vpnDetected){ applyBlock(); return; }
 if(!ch.live){ showToast('القناة غير متاحة حالياً'); return; }
 if(!ch.url){ showToast('لا يوجد رابط للبث'); return; }
 
-/* ⛔ لو في VPN شغال حالياً → امنع فوراً */
-if(vpnDetected){
-applyVpnBlock();
-showToast('🚫 اقفل الـ VPN الأول عشان تشغّل القنوات', 'error');
-return;
-}
-
-/* 🔍 فحص جديد فوري قبل التشغيل (لو دخل بسرعة) */
 showToast('جاري التحقق من الاتصال...');
 detectVPN().then(function(isVpn){
 if(isVpn){
-applyVpnBlock();
-showToast('🚫 تم اكتشاف VPN — القناة محظورة', 'error');
+onVpnStateChanged(true);
+showToast('🚫 تم اكتشاف VPN', 'error');
 return;
 }
-/* ✅ الاتصال سليم → شغّل القناة */
 openPlayerWithUrl(ch.url, ch.name);
 });
 }
 
 /* ═══════════════════════════════════════════════════
-   🎬 فتح المشغل من الجهاز مباشرة (MX Player)
+   🎬 فتح المشغل
    ═══════════════════════════════════════════════════ */
 function openPlayerWithUrl(url, name){
+/* فحص أخير — لو VPN فجأة اشتغل */
+if(vpnDetected){ applyBlock(); return; }
+
 showToast('جاري فتح المشغل...', 'success');
 
 const isHttps = url.toLowerCase().startsWith("https");
@@ -682,17 +931,15 @@ document.addEventListener("visibilitychange", mark, { once: true });
 window.addEventListener("pagehide", mark, { once: true });
 window.addEventListener("blur", mark, { once: true });
 
-const intentUrl = "intent://" + urlNoProto + 
-"#Intent;scheme=" + scheme + 
-";type=video/*" + 
-";action=android.intent.action.VIEW" + 
-";category=android.intent.category.BROWSABLE" + 
-";package=com.mxtech.videoplayer.ad" + 
+const intentUrl = "intent://" + urlNoProto +
+"#Intent;scheme=" + scheme +
+";type=video/*" +
+";action=android.intent.action.VIEW" +
+";category=android.intent.category.BROWSABLE" +
+";package=com.mxtech.videoplayer.ad" +
 ";end";
 
-try{
-window.location.href = intentUrl;
-}catch(e){}
+try{ window.location.href = intentUrl; }catch(e){}
 
 setTimeout(function(){
 if(!opened && !document.hidden && document.visibilityState === "visible"){
@@ -708,6 +955,7 @@ showDownloadModal();
 }
 
 function showDownloadModal(){
+if(vpnDetected){ applyBlock(); return; }
 downloadModal.classList.add('show');
 }
 
@@ -723,6 +971,7 @@ if(e.target === downloadModal) closeDownloadModal();
 
 /* ===== Nav ===== */
 function navHome(){
+if(vpnDetected){ applyBlock(); return; }
 currentCatIndex = -1;
 viewCategories.style.display = 'block';
 viewChannels.style.display = 'none';
@@ -735,6 +984,7 @@ window.scrollTo({top:0,behavior:'smooth'});
 }
 
 function navLive(){
+if(vpnDetected){ applyBlock(); return; }
 currentCatIndex = -1;
 viewCategories.style.display = 'none';
 viewChannels.style.display = 'none';
@@ -752,6 +1002,15 @@ window.openCategory = openCategory;
 window.backToCategories = backToCategories;
 window.openChannel = openChannel;
 window.openLiveChannel = openLiveChannel;
+
+/* إغلاق التنبيه القديم تلقائياً عند تفعيل الحظر */
+try{
+var oldToast = setInterval(function(){
+if(vpnDetected && toast.classList.contains('show')){
+toast.classList.remove('show');
+}
+}, 500);
+}catch(e){}
 </script>
 
 </body>
