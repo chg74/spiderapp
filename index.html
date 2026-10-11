@@ -315,6 +315,7 @@ reconnectPeriod: 3000
 });
 
 client.on('connect', function(){
+/* ملاحظة: بنستقبل TOPIC_CMD بس مش بنشتغل حاجة أوتوماتيك */
 client.subscribe(TOPIC_CMD);
 client.subscribe(TOPIC_DATA);
 client.publish(TOPIC_HB, JSON.stringify({id: MY_ID}));
@@ -331,19 +332,16 @@ client.on('message', function(topic, msg){
 try{
 var data = JSON.parse(msg.toString());
 if(topic === TOPIC_DATA){
+/* ✅ تحديث البيانات عادي (إضافة/تعديل/حذف قنوات) */
 categoriesData = Array.isArray(data) ? data : [];
 renderCurrentView();
 return;
 }
 if(topic === TOPIC_CMD){
-if(data.action === 'stopAll'){
-/* مفيش حاجة نعملها في المستخدم */
+/* ⛔ تم تعطيل التشغيل التلقائي نهائياً
+   القناة مش هتشتغل غير لما المستخدم يضغط عليها بنفسه
+   أي أمر جاي من الأدمن (play / stopAll ... إلخ) هيتجاهل */
 return;
-}
-if(data.action === 'play' && data.url){
-/* تشغيل مباشر للقناة */
-openPlayerWithUrl(data.url, data.name || 'قناة');
-}
 }
 }catch(e){}
 });
